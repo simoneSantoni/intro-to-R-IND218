@@ -2072,121 +2072,77 @@
     "href": "course/info.html",
     "title": "Course Information",
     "section": "",
-    "text": "IND215 - Introduction to R for Analytics is designed specifically for MSc students in analytics who want to develop practical programming skills for data analysis. This course provides a foundation in R programming with a focus on statistical computing, data manipulation, and the tidyverse ecosystem.",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "IND215 - Introduction to R for Analytics is designed specifically for MSc students in analytics who want to develop practical programming skills for data analysis. This course provides a foundation in R programming with a focus on statistical computing, data manipulation, and the tidyverse ecosystem."
   },
   {
     "objectID": "course/info.html#course-overview",
     "href": "course/info.html#course-overview",
     "title": "Course Information",
     "section": "",
-    "text": "IND215 - Introduction to R for Analytics is designed specifically for MSc students in analytics who want to develop practical programming skills for data analysis. This course provides a foundation in R programming with a focus on statistical computing, data manipulation, and the tidyverse ecosystem.",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "IND215 - Introduction to R for Analytics is designed specifically for MSc students in analytics who want to develop practical programming skills for data analysis. This course provides a foundation in R programming with a focus on statistical computing, data manipulation, and the tidyverse ecosystem."
   },
   {
     "objectID": "course/info.html#learning-philosophy",
     "href": "course/info.html#learning-philosophy",
     "title": "Course Information",
     "section": "Learning Philosophy",
-    "text": "Learning Philosophy\nThis course takes a practical, hands-on approach to learning R. Rather than covering every aspect of the language, we focus on the fundamental concepts and packages that analytics professionals use daily:\n\nPractical Focus: Learn by doing with real-world examples and exercises\nAnalytics-Oriented: Emphasis on statistical thinking, data manipulation, and visualization\nProgressive Learning: Build skills incrementally from basic R concepts to tidyverse mastery\nModern Tools: Use current best practices and the tidyverse ecosystem",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Learning Philosophy\nThis course takes a practical, hands-on approach to learning R. Rather than covering every aspect of the language, we focus on the fundamental concepts and packages that analytics professionals use daily:\n\nPractical Focus: Learn by doing with real-world examples and exercises\nAnalytics-Oriented: Emphasis on statistical thinking, data manipulation, and visualization\nProgressive Learning: Build skills incrementally from basic R concepts to tidyverse mastery\nModern Tools: Use current best practices and the tidyverse ecosystem"
   },
   {
     "objectID": "course/info.html#course-structure",
     "href": "course/info.html#course-structure",
     "title": "Course Information",
     "section": "Course Structure",
-    "text": "Course Structure\nThe course is organized into four substantive modules:\n\nModule 1: Getting Started with R\n\nR and RStudio installation and setup\nR as a calculator and basic operations\nUnderstanding the RStudio interface\nCreating and managing R scripts and projects\n\n\n\nModule 2: R Fundamentals\n\nObjects, assignment, and basic data types\nVectors, lists, and data frames\nFactors and their importance in statistical analysis\nControl structures (if statements, loops) and functions\nFile handling and data import/export\n\n\n\nModule 3: Introduction to Tidyverse\n\nUnderstanding the tidyverse philosophy\nData import with readr\nBasic data manipulation with dplyr\nData tidying principles with tidyr\n\n\n\nModule 4: Data Wrangling with dplyr\n\nFiltering, selecting, and arranging data\nCreating new variables with mutate\nGrouping and summarizing data\nJoining datasets and advanced data manipulation",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Course Structure\nThe course is organized into four substantive modules:\n\nModule 1: Getting Started with R\n\nR and RStudio installation and setup\nR as a calculator and basic operations\nUnderstanding the RStudio interface\nCreating and managing R scripts and projects\n\n\n\nModule 2: R Fundamentals\n\nObjects, assignment, and basic data types\nVectors, lists, and data frames\nFactors and their importance in statistical analysis\nControl structures (if statements, loops) and functions\nFile handling and data import/export\n\n\n\nModule 3: Introduction to Tidyverse\n\nUnderstanding the tidyverse philosophy\nData import with readr\nBasic data manipulation with dplyr\nData tidying principles with tidyr\n\n\n\nModule 4: Data Wrangling with dplyr\n\nFiltering, selecting, and arranging data\nCreating new variables with mutate\nGrouping and summarizing data\nJoining datasets and advanced data manipulation"
   },
   {
     "objectID": "course/info.html#learning-objectives",
     "href": "course/info.html#learning-objectives",
     "title": "Course Information",
     "section": "Learning Objectives",
-    "text": "Learning Objectives\nBy the end of this course, students will be able to:\n\nSet up and manage R environments for data analysis projects using RStudio\nWrite clean, efficient R code following tidyverse principles and best practices\nManipulate and analyze data using base R and tidyverse functions\nProcess and transform datasets using dplyr for data wrangling\nImport and export data from various file formats using readr and base R\nCreate reproducible data analysis workflows with R scripts and R Markdown\nApply statistical thinking to data exploration and basic analysis tasks",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Learning Objectives\nBy the end of this course, students will be able to:\n\nSet up and manage R environments for data analysis projects using RStudio\nWrite clean, efficient R code following tidyverse principles and best practices\nManipulate and analyze data using base R and tidyverse functions\nProcess and transform datasets using dplyr for data wrangling\nImport and export data from various file formats using readr and base R\nCreate reproducible data analysis workflows with R scripts and R Markdown\nApply statistical thinking to data exploration and basic analysis tasks"
   },
   {
     "objectID": "course/info.html#prerequisites",
     "href": "course/info.html#prerequisites",
     "title": "Course Information",
     "section": "Prerequisites",
-    "text": "Prerequisites\n\nNo prior programming experience required\nBasic computer literacy (file management, using applications)\nWillingness to learn through trial and error\nAccess to a computer for hands-on practice",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Prerequisites\n\nNo prior programming experience required\nBasic computer literacy (file management, using applications)\nWillingness to learn through trial and error\nAccess to a computer for hands-on practice"
   },
   {
     "objectID": "course/info.html#software-requirements",
     "href": "course/info.html#software-requirements",
     "title": "Course Information",
     "section": "Software Requirements",
-    "text": "Software Requirements\n\nR 4.0+ (we recommend R 4.3 or newer)\nRStudio Desktop (latest version for the best experience)\nEssential R packages (tidyverse, readr, dplyr, ggplot2, and others)\nGit for version control (optional but recommended)",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Software Requirements\n\nR 4.0+ (we recommend R 4.3 or newer)\nRStudio Desktop (latest version for the best experience)\nEssential R packages (tidyverse, readr, dplyr, ggplot2, and others)\nGit for version control (optional but recommended)"
   },
   {
     "objectID": "course/info.html#assessment-and-practice",
     "href": "course/info.html#assessment-and-practice",
     "title": "Course Information",
     "section": "Assessment and Practice",
-    "text": "Assessment and Practice\nThis course emphasizes practical skill development through:\n\nInteractive exercises embedded in each module\nHands-on coding assignments using real datasets\nProgressive projects that build on previous concepts\nSelf-assessment opportunities to check understanding",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Assessment and Practice\nThis course emphasizes practical skill development through:\n\nInteractive exercises embedded in each module\nHands-on coding assignments using real datasets\nProgressive projects that build on previous concepts\nSelf-assessment opportunities to check understanding"
   },
   {
     "objectID": "course/info.html#getting-help",
     "href": "course/info.html#getting-help",
     "title": "Course Information",
     "section": "Getting Help",
-    "text": "Getting Help\n\nUse the course materials and examples as your first reference\nPractice with the provided exercises and datasets\nConsult Python documentation and community resources\nAsk questions during class sessions or office hours",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Getting Help\n\nUse the course materials and examples as your first reference\nPractice with the provided exercises and datasets\nConsult Python documentation and community resources\nAsk questions during class sessions or office hours"
   },
   {
     "objectID": "course/info.html#success-tips",
     "href": "course/info.html#success-tips",
     "title": "Course Information",
     "section": "Success Tips",
-    "text": "Success Tips\n\nPractice regularly: Programming is a skill that improves with consistent practice\nStart small: Begin with simple examples and gradually tackle more complex problems\nRead error messages: They often contain helpful information about what went wrong\nUse online resources: The R community has excellent documentation and tutorials\nDon’t be afraid to experiment: Try different approaches and see what works\nThink in data frames: Most R operations work naturally with tabular data",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Success Tips\n\nPractice regularly: Programming is a skill that improves with consistent practice\nStart small: Begin with simple examples and gradually tackle more complex problems\nRead error messages: They often contain helpful information about what went wrong\nUse online resources: The R community has excellent documentation and tutorials\nDon’t be afraid to experiment: Try different approaches and see what works\nThink in data frames: Most R operations work naturally with tabular data"
   },
   {
     "objectID": "course/info.html#course-resources",
     "href": "course/info.html#course-resources",
     "title": "Course Information",
     "section": "Course Resources",
-    "text": "Course Resources\n\nOfficial R Documentation: r-project.org\nRStudio Resources: rstudio.com\nTidyverse Documentation: tidyverse.org\nR for Data Science Book: r4ds.had.co.nz",
-    "crumbs": [
-      "Course Information",
-      "Overview"
-    ]
+    "text": "Course Resources\n\nOfficial R Documentation: r-project.org\nRStudio Resources: rstudio.com\nTidyverse Documentation: tidyverse.org\nR for Data Science Book: r4ds.had.co.nz"
   },
   {
     "objectID": "course/schedule.html",
@@ -2270,35 +2226,55 @@
     "href": "index.html",
     "title": "Introduction to R—IND215",
     "section": "",
-    "text": "This interactive website provides a comprehensive four-part introduction to R programming specifically designed for students in analytics curricula. The course emphasizes R’s language fundamentals, the tidyverse ecosystem, and data manipulation for statistical computing and data science."
+    "text": "This interactive website provides a comprehensive four-part introduction to R programming specifically designed for students in analytics curricula. The course emphasizes R’s language fundamentals, the tidyverse ecosystem, and data manipulation for statistical computing and data science.",
+    "crumbs": [
+      "Course Information",
+      "Overview"
+    ]
   },
   {
     "objectID": "index.html#welcome-to-ind215",
     "href": "index.html#welcome-to-ind215",
     "title": "Introduction to R—IND215",
     "section": "",
-    "text": "This interactive website provides a comprehensive four-part introduction to R programming specifically designed for students in analytics curricula. The course emphasizes R’s language fundamentals, the tidyverse ecosystem, and data manipulation for statistical computing and data science."
+    "text": "This interactive website provides a comprehensive four-part introduction to R programming specifically designed for students in analytics curricula. The course emphasizes R’s language fundamentals, the tidyverse ecosystem, and data manipulation for statistical computing and data science.",
+    "crumbs": [
+      "Course Information",
+      "Overview"
+    ]
   },
   {
     "objectID": "index.html#why-r-for-analytics",
     "href": "index.html#why-r-for-analytics",
     "title": "Introduction to R—IND215",
     "section": "Why R for Analytics?",
-    "text": "Why R for Analytics?\nR has been the gold standard for statistical computing and data analysis for good reasons:\n\n🌟 Statistical Foundation\n\nCreated by statisticians for statistical analysis\nStandard tool in academia, research, and data science\nPreferred language for statistical modeling and hypothesis testing\n\n\n\n💪 Rich Ecosystem\n\nComprehensive statistical libraries (stats, MASS)\nElegant data manipulation (tidyverse: dplyr, tidyr, ggplot2)\nAdvanced visualization capabilities (ggplot2, plotly, shiny)\nMachine learning and predictive modeling (caret, randomForest)\n\n\n\n🎯 Data-First Design\n\nBuilt-in support for statistical data types (factors, time series)\nVectorized operations for efficient data processing\nSeamless integration with databases and file formats\nInteractive data exploration and analysis\nPublication-ready graphics and reports"
+    "text": "Why R for Analytics?\nR has been the gold standard for statistical computing and data analysis for good reasons:\n\n🌟 Statistical Foundation\n\nCreated by statisticians for statistical analysis\nStandard tool in academia, research, and data science\nPreferred language for statistical modeling and hypothesis testing\n\n\n\n💪 Rich Ecosystem\n\nComprehensive statistical libraries (stats, MASS)\nElegant data manipulation (tidyverse: dplyr, tidyr, ggplot2)\nAdvanced visualization capabilities (ggplot2, plotly, shiny)\nMachine learning and predictive modeling (caret, randomForest)\n\n\n\n🎯 Data-First Design\n\nBuilt-in support for statistical data types (factors, time series)\nVectorized operations for efficient data processing\nSeamless integration with databases and file formats\nInteractive data exploration and analysis\nPublication-ready graphics and reports",
+    "crumbs": [
+      "Course Information",
+      "Overview"
+    ]
   },
   {
     "objectID": "index.html#the-r-learning-journey-a-humorous-reality-check",
     "href": "index.html#the-r-learning-journey-a-humorous-reality-check",
     "title": "Introduction to R—IND215",
     "section": "The R Learning Journey: A Humorous Reality Check",
-    "text": "The R Learning Journey: A Humorous Reality Check\nLearning R is an adventure filled with “aha!” moments, head-scratching confusion, and the occasional existential crisis about why your data frame suddenly became a factor (again). Every R programmer has traveled this path, from their first 2 + 2 to their thousandth Google search about why their ggplot won’t cooperate.\nBelow is a humorous, fictitious R function that captures the universal experiences every R learner encounters. As you progress through this course, you’ll gradually understand why each of these moments is both frustrating and funny. Consider it a preview of coming attractions – if you don’t find it amusing now, bookmark it and return after a few weeks of R. You’ll be laughing (or crying) in recognition!\n\nThe Universal R Learning Timeline\nThis function documents real phenomena you’ll encounter: - Days 1-10: The honeymoon phase where everything seems logical until you meet factors - Days 10-100: The valley of despair where you discover R’s “quirks” - Days 100-365: The plateau of productivity where you can actually wrangle data (while still Googling constantly) - Days 365+: The eternal journey where you realize the tidyverse keeps evolving\n\nr_newbie_experience &lt;- function(day) {\n  # Simulates the emotional journey of learning R.\n  # Warning: Results may vary. Side effects include: false confidence,\n  # existential dread about factors, sudden urges to pipe everything,\n  # and an unhealthy relationship with Stack Overflow.\n  #\n  # Note: This function is 100% accurate based on extensive field research\n  # (aka crying over RStudio worldwide).\n\n  experiences &lt;- list(\n    `1` = \"2 + 2  # I AM A DATA SCIENTIST NOW!!!\",\n    `2` = \"x &lt;- 'R is easy'  # This arrow thing is cool!\",\n    `3` = \"c(1, 2, 3)  # Everything is a vector? Even single numbers?!\",\n    `4` = \"data.frame(x = 1:3, y = 4:6)  # Look at me making data!\",\n    `5` = \"my_data$new_column &lt;- 'value'  # Dollar signs everywhere!\",\n    `6` = \"factor(c('A', 'B', 'A'))  # Why are my letters ordered weird?\",\n    `7` = \"mean(c(1, 2, NA))  # Returns NA. R is broken.\",\n    `8` = \"mean(c(1, 2, NA), na.rm = TRUE)  # Oh... that's embarrassing\",\n    `9` = \"library(tidyverse)  # Installed 47 packages. Is this normal?\",\n    `10` = \"data %&gt;% filter()  # What is this pipe thing?\",\n    `12` = \"ggplot(data, aes(x, y)) + geom_point()  # I made a chart!\",\n    `14` = \"install.packages('everything')  # Package not found. Dreams crushed.\",\n    `15` = \"subset(data, condition)  # Why does everyone say this is bad?\",\n    `18` = \"data %&gt;% select(everything())  # Pipe addiction begins\",\n    `20` = \"for(i in 1:10) print(i)  # Loops work but everyone judges me\",\n    `25` = \"apply(matrix, 1, function(x) sum(x))  # Functions have functions?\",\n    `30` = \"str(object)  # Everything has structure. Mind = blown\",\n    `35` = \"read.csv('file.csv')  # Why are my numbers now factors?!\",\n    `40` = \"stringsAsFactors = FALSE  # The magic incantation\",\n    `45` = \"data$column[data$other_column == 'value']  # Bracket hell\",\n    `50` = \"library(dplyr); data %&gt;% filter(column == 'value')  # Enlightenment\",\n    `55` = \"Error: object 'column' not found  # But I can see it right there!\",\n    `60` = \"data %&gt;% mutate(new = old * 2)  # Mutate sounds violent\",\n    `65` = \"group_by(category) %&gt;% summarise(mean = mean(value))  # I'm a wizard!\",\n    `70` = \"left_join(df1, df2, by = 'id')  # Joins without SQL?\",\n    `75` = \"pivot_longer(data, cols = everything())  # Reshape magic\",\n    `80` = \"ggplot() + theme_minimal() + labs() + scale_x_continuous()  # Layered grammar\",\n    `85` = \"ggsave('plot.png', width = 8, height = 6, dpi = 300)  # Publication ready!\",\n    `90` = \"map(list, ~function(.x))  # Functional programming in R?\",\n    `95` = \"case_when(condition1 ~ result1, TRUE ~ default)  # Vectorized if-else\",\n    `100` = \"data[data$x &gt; 5 & data$y &lt; 10, ]  # Back to base R. Feeling dirty.\",\n    `110` = \"glue('Hello {name}!')  # String interpolation discovered\",\n    `120` = \"# Started answering R questions (incorrectly) on Stack Overflow\",\n    `130` = \"options(stringsAsFactors = FALSE)  # Set global defaults\",\n    `140` = \"library(here); here('data', 'file.csv')  # Path management zen\",\n    `150` = \"renv::init()  # Environment management. Finally!\",\n    `180` = \"Discovered R Markdown. Rewrote everything. Literate programming!\",\n    `200` = \"shiny::fluidPage()  # Interactive web apps in R?!\",\n    `250` = \"data.table vs dplyr debates. Chose sides. Lost friends.\",\n    `300` = \"Rcpp::cppFunction()  # C++ in R. Peak performance.\",\n    `365` = \"# Still googling 'how to exit vim' but my R analysis is solid\",\n    `400` = \"targets::tar_make()  # Pipeline management. Professional level.\",\n    `500` = \"Writing R packages. DESCRIPTION file mysteries solved.\",\n    `600` = \"CRAN submission. Peer review trauma begins.\",\n    `700` = \"Dreams in dplyr. Nightmares about factors.\",\n    `800` = \"Discovered {{}}.  Tidy evaluation everywhere.\",\n    `900` = \"10 years later: Still finding new CRAN packages daily\",\n    `1000` = \"Achieved enlightenment: Everything is a list (even data frames)\"\n  )\n\n  # Special milestone messages\n  if (day &lt; 0) {\n    return(\"Error: Time travel not yet implemented in R 4.x (check CRAN)\")\n  } else if (day == 0) {\n    return(\"Day 0: Googling 'R vs Excel' (preparing for enlightenment)\")\n  } else if (day == 42) {\n    return(\"Day 42: The answer to life, universe, and missing values\")\n  } else if (day == 404) {\n    return(\"Day 404: Object not found. Try ls() again later.\")\n  } else if (day == 418) {\n    return(\"Day 418: I'm a teapot. Also, discovered Easter eggs in R\")\n  } else if (day == 314) {\n    return(paste0(\"Day \", day, \": pi  # Built-in constant. Math rocks!\"))\n  } else if (as.character(day) %in% names(experiences)) {\n    return(experiences[[as.character(day)]])\n  } else if (day &gt; 1000) {\n    return(paste0(\"Day \", day, \": Realized the real R was the data we wrangled along the way\"))\n  } else if (day &gt; 365) {\n    return(paste0(\"Day \", day, \": Still discovering that everything is a vector (even confusion)\"))\n  } else {\n    states &lt;- c(\n      \"Alternating between 'I'm a data wizard' and 'I know nothing'\",\n      \"Debugging code that worked yesterday without changes\",\n      \"Adding print() statements everywhere like breadcrumbs\",\n      \"Copy-pasting from Stack Overflow with pride\",\n      \"Explaining to rubber duck why dplyr should work\",\n      \"Discovering the bug was a missing comma. Again.\",\n      \"Refactoring working code because 'tidyverse is cleaner'\",\n      \"Breaking production on a Friday at 4:59 PM\"\n    )\n    return(paste0(\"Day \", day, \": \", sample(states, 1)))\n  }\n}\n\n# Test the journey with milestone days\ncat(\"=== The R Newbie Journey: Extended Director's Cut ===\\n\\n\")\ntest_days &lt;- c(0, 1, 4, 9, 30, 42, 60, 100, 365, 404, 418, 500, 1000)\nfor (day in test_days) {\n  cat(sprintf(\"Day %4d: %s\\n\", day, r_newbie_experience(day)))\n}"
+    "text": "The R Learning Journey: A Humorous Reality Check\nLearning R is an adventure filled with “aha!” moments, head-scratching confusion, and the occasional existential crisis about why your data frame suddenly became a factor (again). Every R programmer has traveled this path, from their first 2 + 2 to their thousandth Google search about why their ggplot won’t cooperate.\nBelow is a humorous, fictitious R function that captures the universal experiences every R learner encounters. As you progress through this course, you’ll gradually understand why each of these moments is both frustrating and funny. Consider it a preview of coming attractions – if you don’t find it amusing now, bookmark it and return after a few weeks of R. You’ll be laughing (or crying) in recognition!\n\nThe Universal R Learning Timeline\nThis function documents real phenomena you’ll encounter: - Days 1-10: The honeymoon phase where everything seems logical until you meet factors - Days 10-100: The valley of despair where you discover R’s “quirks” - Days 100-365: The plateau of productivity where you can actually wrangle data (while still Googling constantly) - Days 365+: The eternal journey where you realize the tidyverse keeps evolving\n\nr_newbie_experience &lt;- function(day) {\n  # Simulates the emotional journey of learning R.\n  # Warning: Results may vary. Side effects include: false confidence,\n  # existential dread about factors, sudden urges to pipe everything,\n  # and an unhealthy relationship with Stack Overflow.\n  #\n  # Note: This function is 100% accurate based on extensive field research\n  # (aka crying over RStudio worldwide).\n\n  experiences &lt;- list(\n    `1` = \"2 + 2  # I AM A DATA SCIENTIST NOW!!!\",\n    `2` = \"x &lt;- 'R is easy'  # This arrow thing is cool!\",\n    `3` = \"c(1, 2, 3)  # Everything is a vector? Even single numbers?!\",\n    `4` = \"data.frame(x = 1:3, y = 4:6)  # Look at me making data!\",\n    `5` = \"my_data$new_column &lt;- 'value'  # Dollar signs everywhere!\",\n    `6` = \"factor(c('A', 'B', 'A'))  # Why are my letters ordered weird?\",\n    `7` = \"mean(c(1, 2, NA))  # Returns NA. R is broken.\",\n    `8` = \"mean(c(1, 2, NA), na.rm = TRUE)  # Oh... that's embarrassing\",\n    `9` = \"library(tidyverse)  # Installed 47 packages. Is this normal?\",\n    `10` = \"data %&gt;% filter()  # What is this pipe thing?\",\n    `12` = \"ggplot(data, aes(x, y)) + geom_point()  # I made a chart!\",\n    `14` = \"install.packages('everything')  # Package not found. Dreams crushed.\",\n    `15` = \"subset(data, condition)  # Why does everyone say this is bad?\",\n    `18` = \"data %&gt;% select(everything())  # Pipe addiction begins\",\n    `20` = \"for(i in 1:10) print(i)  # Loops work but everyone judges me\",\n    `25` = \"apply(matrix, 1, function(x) sum(x))  # Functions have functions?\",\n    `30` = \"str(object)  # Everything has structure. Mind = blown\",\n    `35` = \"read.csv('file.csv')  # Why are my numbers now factors?!\",\n    `40` = \"stringsAsFactors = FALSE  # The magic incantation\",\n    `45` = \"data$column[data$other_column == 'value']  # Bracket hell\",\n    `50` = \"library(dplyr); data %&gt;% filter(column == 'value')  # Enlightenment\",\n    `55` = \"Error: object 'column' not found  # But I can see it right there!\",\n    `60` = \"data %&gt;% mutate(new = old * 2)  # Mutate sounds violent\",\n    `65` = \"group_by(category) %&gt;% summarise(mean = mean(value))  # I'm a wizard!\",\n    `70` = \"left_join(df1, df2, by = 'id')  # Joins without SQL?\",\n    `75` = \"pivot_longer(data, cols = everything())  # Reshape magic\",\n    `80` = \"ggplot() + theme_minimal() + labs() + scale_x_continuous()  # Layered grammar\",\n    `85` = \"ggsave('plot.png', width = 8, height = 6, dpi = 300)  # Publication ready!\",\n    `90` = \"map(list, ~function(.x))  # Functional programming in R?\",\n    `95` = \"case_when(condition1 ~ result1, TRUE ~ default)  # Vectorized if-else\",\n    `100` = \"data[data$x &gt; 5 & data$y &lt; 10, ]  # Back to base R. Feeling dirty.\",\n    `110` = \"glue('Hello {name}!')  # String interpolation discovered\",\n    `120` = \"# Started answering R questions (incorrectly) on Stack Overflow\",\n    `130` = \"options(stringsAsFactors = FALSE)  # Set global defaults\",\n    `140` = \"library(here); here('data', 'file.csv')  # Path management zen\",\n    `150` = \"renv::init()  # Environment management. Finally!\",\n    `180` = \"Discovered R Markdown. Rewrote everything. Literate programming!\",\n    `200` = \"shiny::fluidPage()  # Interactive web apps in R?!\",\n    `250` = \"data.table vs dplyr debates. Chose sides. Lost friends.\",\n    `300` = \"Rcpp::cppFunction()  # C++ in R. Peak performance.\",\n    `365` = \"# Still googling 'how to exit vim' but my R analysis is solid\",\n    `400` = \"targets::tar_make()  # Pipeline management. Professional level.\",\n    `500` = \"Writing R packages. DESCRIPTION file mysteries solved.\",\n    `600` = \"CRAN submission. Peer review trauma begins.\",\n    `700` = \"Dreams in dplyr. Nightmares about factors.\",\n    `800` = \"Discovered {{}}.  Tidy evaluation everywhere.\",\n    `900` = \"10 years later: Still finding new CRAN packages daily\",\n    `1000` = \"Achieved enlightenment: Everything is a list (even data frames)\"\n  )\n\n  # Special milestone messages\n  if (day &lt; 0) {\n    return(\"Error: Time travel not yet implemented in R 4.x (check CRAN)\")\n  } else if (day == 0) {\n    return(\"Day 0: Googling 'R vs Excel' (preparing for enlightenment)\")\n  } else if (day == 42) {\n    return(\"Day 42: The answer to life, universe, and missing values\")\n  } else if (day == 404) {\n    return(\"Day 404: Object not found. Try ls() again later.\")\n  } else if (day == 418) {\n    return(\"Day 418: I'm a teapot. Also, discovered Easter eggs in R\")\n  } else if (day == 314) {\n    return(paste0(\"Day \", day, \": pi  # Built-in constant. Math rocks!\"))\n  } else if (as.character(day) %in% names(experiences)) {\n    return(experiences[[as.character(day)]])\n  } else if (day &gt; 1000) {\n    return(paste0(\"Day \", day, \": Realized the real R was the data we wrangled along the way\"))\n  } else if (day &gt; 365) {\n    return(paste0(\"Day \", day, \": Still discovering that everything is a vector (even confusion)\"))\n  } else {\n    states &lt;- c(\n      \"Alternating between 'I'm a data wizard' and 'I know nothing'\",\n      \"Debugging code that worked yesterday without changes\",\n      \"Adding print() statements everywhere like breadcrumbs\",\n      \"Copy-pasting from Stack Overflow with pride\",\n      \"Explaining to rubber duck why dplyr should work\",\n      \"Discovering the bug was a missing comma. Again.\",\n      \"Refactoring working code because 'tidyverse is cleaner'\",\n      \"Breaking production on a Friday at 4:59 PM\"\n    )\n    return(paste0(\"Day \", day, \": \", sample(states, 1)))\n  }\n}\n\n# Test the journey with milestone days\ncat(\"=== The R Newbie Journey: Extended Director's Cut ===\\n\\n\")\ntest_days &lt;- c(0, 1, 4, 9, 30, 42, 60, 100, 365, 404, 418, 500, 1000)\nfor (day in test_days) {\n  cat(sprintf(\"Day %4d: %s\\n\", day, r_newbie_experience(day)))\n}",
+    "crumbs": [
+      "Course Information",
+      "Overview"
+    ]
   },
   {
     "objectID": "index.html#ready-to-begin",
     "href": "index.html#ready-to-begin",
     "title": "Introduction to R—IND215",
     "section": "Ready to Begin?",
-    "text": "Ready to Begin?\nStart your R journey by:\n\n📚 Reading the Course Syllabus\n📅 Reviewing the Course Schedule\n💻 Setting up R and RStudio with our Getting Started Guide"
+    "text": "Ready to Begin?\nStart your R journey by:\n\n📚 Reading the Course Syllabus\n📅 Reviewing the Course Schedule\n💻 Setting up R and RStudio with our Getting Started Guide",
+    "crumbs": [
+      "Course Information",
+      "Overview"
+    ]
   },
   {
     "objectID": "modules/module-1/r-as-calculator.html",

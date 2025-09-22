@@ -38,8 +38,6 @@ website:
     contents:
       - section: "Course Information"
         contents:
-          - text: "Overview"
-            href: index.qmd
           - text: "Syllabus"
             href: course/syllabus.qmd
           - text: "Schedule"

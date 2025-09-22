@@ -1,0 +1,637 @@
+---
+title: "Advanced dplyr Techniques"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Beyond the Basics: Advanced dplyr
+
+Once you've mastered the core dplyr verbs, it's time to explore advanced techniques that will make your code more efficient, reusable, and elegant. This section covers programming with dplyr, performance optimization, and sophisticated data manipulation patterns.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(lubridate)
+
+# Create a comprehensive dataset for demonstrating advanced techniques
+set.seed(123)
+n_transactions <- 5000
+
+transactions <- tibble(
+  transaction_id = 1:n_transactions,
+  customer_id = sample(paste0("CUST-", str_pad(1:500, 3, pad = "0")), n_transactions, replace = TRUE),
+  product_id = sample(paste0("PROD-", str_pad(1:100, 3, pad = "0")), n_transactions, replace = TRUE),
+  store_id = sample(paste0("STORE-", 1:20), n_transactions, replace = TRUE),
+  timestamp = sample(seq(ymd_hms("2024-01-01 00:00:00"), ymd_hms("2024-12-31 23:59:59"), by = "hour"), n_transactions),
+  quantity = sample(1:10, n_transactions, replace = TRUE, prob = c(0.4, 0.3, 0.15, 0.08, 0.04, 0.02, 0.005, 0.005, 0.005, 0.005)),
+  unit_price = round(rlnorm(n_transactions, meanlog = 3, sdlog = 1), 2),
+  discount_rate = sample(c(0, 0.05, 0.10, 0.15, 0.20, 0.25), n_transactions, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.03, 0.02)),
+  payment_method = sample(c("Credit Card", "Cash", "Debit Card", "Mobile Payment"), n_transactions, replace = TRUE, prob = c(0.4, 0.25, 0.2, 0.15)),
+  customer_segment = sample(c("Regular", "Premium", "VIP"), n_transactions, replace = TRUE, prob = c(0.7, 0.25, 0.05))
+) %>%
+  mutate(
+    date = as_date(timestamp),
+    hour = hour(timestamp),
+    day_of_week = wday(date, label = TRUE),
+    month = month(date, label = TRUE),
+    quarter = quarter(date),
+    gross_amount = quantity * unit_price,
+    discount_amount = gross_amount * discount_rate,
+    net_amount = gross_amount - discount_amount
+  )
+
+cat("Created dataset with", format(nrow(transactions), big.mark = ","), "transactions\n")
+cat("Date range:", as.character(min(transactions$date)), "to", as.character(max(transactions$date)), "\n")
+cat("Total revenue: $", format(sum(transactions$net_amount), big.mark = ",", nsmall = 2), "\n")
+```
+
+## The across() Function
+
+`across()` allows you to apply operations to multiple columns simultaneously:
+
+```{r}
+#| label: across-basics
+
+# Summarize multiple columns at once
+summary_stats <- transactions %>%
+  summarise(
+    across(
+      c(quantity, unit_price, gross_amount, discount_rate, net_amount),
+      list(
+        mean = ~mean(.x, na.rm = TRUE),
+        median = ~median(.x, na.rm = TRUE),
+        sd = ~sd(.x, na.rm = TRUE),
+        min = ~min(.x, na.rm = TRUE),
+        max = ~max(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  ) %>%
+  pivot_longer(
+    everything(),
+    names_to = c("variable", "stat"),
+    names_sep = "_(?=mean|median|sd|min|max)",
+    values_to = "value"
+  ) %>%
+  pivot_wider(names_from = stat, values_from = value)
+
+print(summary_stats)
+
+# Apply transformations to multiple columns
+transactions_scaled <- transactions %>%
+  mutate(
+    across(
+      c(quantity, gross_amount, net_amount),
+      list(
+        log = ~log1p(.x),
+        sqrt = ~sqrt(.x),
+        z_score = ~(.x - mean(.x)) / sd(.x)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+
+cat("\nCreated", ncol(transactions_scaled) - ncol(transactions), "new transformed variables\n")
+```
+
+## Column Selection Helpers
+
+dplyr provides powerful helpers for selecting columns:
+
+```{r}
+#| label: selection-helpers
+
+# Various selection methods
+selection_examples <- transactions %>%
+  select(
+    # Specific columns
+    transaction_id, customer_id,
+    
+    # Range of columns
+    quantity:discount_rate,
+    
+    # Columns matching patterns
+    starts_with("customer"),
+    ends_with("amount"),
+    contains("price"),
+    
+    # Columns by type
+    where(is.numeric),
+    
+    # Exclude columns
+    -matches("^(timestamp|date)$")
+  )
+
+# Using where() with custom functions
+high_variance_cols <- transactions %>%
+  select(where(~is.numeric(.x) && var(.x, na.rm = TRUE) > 100))
+
+cat("Selected columns with high variance:\n")
+names(high_variance_cols)
+
+# Complex selections with multiple conditions
+financial_cols <- transactions %>%
+  select(
+    transaction_id,
+    where(~is.numeric(.x) && any(str_detect(names(.), "amount|price|discount")))
+  )
+
+cat("\n\nFinancial columns:", paste(names(financial_cols), collapse = ", "))
+```
+
+## Programming with dplyr
+
+Creating reusable functions with dplyr requires understanding tidy evaluation:
+
+```{r}
+#| label: programming-basics
+
+# Function to analyze any grouping variable
+analyze_by_category <- function(data, group_col, value_col) {
+  data %>%
+    group_by({{ group_col }}) %>%
+    summarise(
+      count = n(),
+      total = sum({{ value_col }}, na.rm = TRUE),
+      avg = mean({{ value_col }}, na.rm = TRUE),
+      median = median({{ value_col }}, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      percentage = total / sum(total) * 100,
+      cumulative_pct = cumsum(percentage)
+    ) %>%
+    arrange(desc(total))
+}
+
+# Use the function with different variables
+by_segment <- analyze_by_category(transactions, customer_segment, net_amount)
+by_payment <- analyze_by_category(transactions, payment_method, net_amount)
+by_store <- analyze_by_category(transactions, store_id, net_amount) %>% head(10)
+
+cat("Analysis by customer segment:\n")
+print(by_segment)
+
+cat("\n\nAnalysis by payment method:\n")
+print(by_payment)
+```
+
+## Advanced Programming Patterns
+
+```{r}
+#| label: advanced-programming
+
+# Function with dynamic column names
+create_kpi_summary <- function(data, ..., prefix = "kpi") {
+  group_vars <- enquos(...)
+  
+  data %>%
+    group_by(!!!group_vars) %>%
+    summarise(
+      "{prefix}_transactions" := n(),
+      "{prefix}_revenue" := sum(net_amount),
+      "{prefix}_units" := sum(quantity),
+      "{prefix}_avg_basket" := mean(net_amount),
+      "{prefix}_unique_customers" := n_distinct(customer_id),
+      "{prefix}_unique_products" := n_distinct(product_id),
+      .groups = "drop"
+    )
+}
+
+# Generate KPIs for different time periods
+monthly_kpis <- transactions %>%
+  create_kpi_summary(month, prefix = "monthly")
+
+quarterly_kpis <- transactions %>%
+  create_kpi_summary(quarter, customer_segment, prefix = "q")
+
+cat("Monthly KPIs (first 6 months):\n")
+print(head(monthly_kpis))
+
+# Function that accepts string inputs
+summarize_columns <- function(data, cols, funs) {
+  data %>%
+    summarise(
+      across(all_of(cols), funs, .names = "{.col}_{.fn}")
+    )
+}
+
+numeric_summary <- transactions %>%
+  summarize_columns(
+    c("quantity", "net_amount"), 
+    list(total = sum, avg = mean, sd = sd)
+  )
+
+print(numeric_summary)
+```
+
+## Row-wise Operations
+
+Sometimes you need to perform operations across rows:
+
+```{r}
+#| label: rowwise-operations
+
+# Create a dataset with multiple score columns
+performance_data <- tibble(
+  employee_id = paste0("EMP-", str_pad(1:100, 3, pad = "0")),
+  q1_score = runif(100, 60, 100),
+  q2_score = runif(100, 65, 100),
+  q3_score = runif(100, 70, 100),
+  q4_score = runif(100, 68, 100),
+  bonus_points = sample(0:10, 100, replace = TRUE)
+)
+
+# Row-wise calculations
+performance_summary <- performance_data %>%
+  rowwise() %>%
+  mutate(
+    avg_score = mean(c(q1_score, q2_score, q3_score, q4_score)),
+    min_score = min(c(q1_score, q2_score, q3_score, q4_score)),
+    max_score = max(c(q1_score, q2_score, q3_score, q4_score)),
+    total_score = sum(c(q1_score, q2_score, q3_score, q4_score, bonus_points)),
+    score_variance = var(c(q1_score, q2_score, q3_score, q4_score))
+  ) %>%
+  ungroup() %>%
+  mutate(
+    performance_category = case_when(
+      avg_score >= 90 ~ "Outstanding",
+      avg_score >= 80 ~ "Excellent",
+      avg_score >= 70 ~ "Good",
+      TRUE ~ "Needs Improvement"
+    )
+  )
+
+# Summary by performance category
+performance_summary %>%
+  count(performance_category) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Alternative using c_across()
+performance_alt <- performance_data %>%
+  rowwise() %>%
+  mutate(
+    avg_score = mean(c_across(q1_score:q4_score)),
+    score_range = max(c_across(q1_score:q4_score)) - min(c_across(q1_score:q4_score))
+  ) %>%
+  ungroup()
+```
+
+## Complex Conditional Logic
+
+Advanced use of case_when() and if_else():
+
+```{r}
+#| label: complex-conditionals
+
+# Multi-condition categorization
+transactions_categorized <- transactions %>%
+  mutate(
+    # Complex time-based categorization
+    time_category = case_when(
+      hour >= 6 & hour < 12 ~ "Morning",
+      hour >= 12 & hour < 17 ~ "Afternoon", 
+      hour >= 17 & hour < 21 ~ "Evening",
+      TRUE ~ "Night"
+    ),
+    
+    # Nested conditions
+    purchase_type = case_when(
+      quantity == 1 & net_amount < 20 ~ "Small Single Item",
+      quantity == 1 & net_amount >= 20 ~ "Large Single Item",
+      quantity > 1 & quantity <= 5 & net_amount < 50 ~ "Small Basket",
+      quantity > 1 & quantity <= 5 & net_amount >= 50 ~ "Medium Basket",
+      quantity > 5 ~ "Bulk Purchase",
+      TRUE ~ "Other"
+    ),
+    
+    # Complex business rules
+    customer_value = case_when(
+      customer_segment == "VIP" ~ "High Value",
+      customer_segment == "Premium" & net_amount > 100 ~ "High Value",
+      customer_segment == "Premium" ~ "Medium Value",
+      net_amount > 200 ~ "Potential High Value",
+      TRUE ~ "Standard"
+    ),
+    
+    # Seasonal pricing strategy
+    pricing_season = case_when(
+      month %in% c("Nov", "Dec") ~ "Holiday Premium",
+      month %in% c("Jun", "Jul", "Aug") ~ "Summer Sale",
+      month %in% c("Jan", "Feb") & discount_rate > 0.15 ~ "New Year Clearance",
+      day_of_week %in% c("Sat", "Sun") & time_category == "Morning" ~ "Weekend Special",
+      TRUE ~ "Regular Pricing"
+    )
+  )
+
+# Analyze the categorizations
+cat("Purchase type distribution:\n")
+transactions_categorized %>%
+  count(purchase_type, sort = TRUE) %>%
+  mutate(percentage = n / sum(n) * 100)
+```
+
+## Performance Optimization
+
+Tips for making dplyr operations faster:
+
+```{r}
+#| label: performance-optimization
+
+# 1. Use data.table backend for large datasets
+# library(dtplyr)
+# transactions_dt <- lazy_dt(transactions)
+
+# 2. Minimize grouping operations
+# Inefficient: multiple group_by operations
+start_time <- Sys.time()
+result_slow <- transactions %>%
+  group_by(store_id) %>%
+  mutate(store_total = sum(net_amount)) %>%
+  ungroup() %>%
+  group_by(customer_id) %>%
+  mutate(customer_total = sum(net_amount)) %>%
+  ungroup()
+time_slow <- Sys.time() - start_time
+
+# Efficient: calculate summaries separately and join
+start_time <- Sys.time()
+store_totals <- transactions %>%
+  group_by(store_id) %>%
+  summarise(store_total = sum(net_amount), .groups = "drop")
+
+customer_totals <- transactions %>%
+  group_by(customer_id) %>%
+  summarise(customer_total = sum(net_amount), .groups = "drop")
+
+result_fast <- transactions %>%
+  left_join(store_totals, by = "store_id") %>%
+  left_join(customer_totals, by = "customer_id")
+time_fast <- Sys.time() - start_time
+
+cat("Performance comparison:\n")
+cat("Multiple group_by:", format(time_slow), "\n")
+cat("Separate summaries:", format(time_fast), "\n")
+cat("Speedup:", round(as.numeric(time_slow) / as.numeric(time_fast), 2), "x\n")
+
+# 3. Use vectorized operations
+# Slow: row-wise string operations
+slow_categorize <- function(df) {
+  df %>%
+    rowwise() %>%
+    mutate(
+      description = paste(customer_segment, "customer bought", quantity, 
+                         "items via", payment_method)
+    ) %>%
+    ungroup()
+}
+
+# Fast: vectorized operations
+fast_categorize <- function(df) {
+  df %>%
+    mutate(
+      description = str_c(customer_segment, " customer bought ", quantity, 
+                         " items via ", payment_method)
+    )
+}
+
+# Compare a subset
+small_trans <- head(transactions, 1000)
+time_slow <- system.time(slow_result <- slow_categorize(small_trans))
+time_fast <- system.time(fast_result <- fast_categorize(small_trans))
+
+cat("\nString operation performance (1000 rows):\n")
+cat("Row-wise:", time_slow["elapsed"], "seconds\n")
+cat("Vectorized:", time_fast["elapsed"], "seconds\n")
+```
+
+## Advanced Joining Techniques
+
+```{r}
+#| label: advanced-joins
+
+# Rolling joins (finding the nearest match)
+price_changes <- tibble(
+  product_id = rep(paste0("PROD-", str_pad(1:10, 3, pad = "0")), each = 4),
+  effective_date = rep(c(ymd("2024-01-01"), ymd("2024-04-01"), 
+                        ymd("2024-07-01"), ymd("2024-10-01")), 10),
+  price = round(runif(40, 10, 100), 2)
+)
+
+# Function to find applicable price for each transaction
+find_applicable_price <- function(trans_data, price_data) {
+  trans_data %>%
+    left_join(
+      price_data %>%
+        rename(price_date = effective_date),
+      by = "product_id"
+    ) %>%
+    filter(date >= price_date) %>%
+    group_by(transaction_id) %>%
+    filter(price_date == max(price_date)) %>%
+    ungroup() %>%
+    select(-price_date)
+}
+
+# Apply to a subset of transactions
+sample_trans <- transactions %>%
+  filter(product_id %in% paste0("PROD-", str_pad(1:10, 3, pad = "0"))) %>%
+  slice_sample(n = 100)
+
+trans_with_prices <- find_applicable_price(sample_trans, price_changes)
+
+cat("Sample of transactions with historical prices:\n")
+trans_with_prices %>%
+  select(transaction_id, date, product_id, unit_price, price) %>%
+  rename(transaction_price = unit_price, catalog_price = price) %>%
+  slice_head(n = 5)
+```
+
+## Creating Custom Verb Functions
+
+```{r}
+#| label: custom-verbs
+
+# Create a custom verb for common operations
+add_time_features <- function(data, date_col) {
+  date_col <- enquo(date_col)
+  
+  data %>%
+    mutate(
+      year = year(!!date_col),
+      quarter = quarter(!!date_col),
+      month = month(!!date_col),
+      week = week(!!date_col),
+      day_of_month = day(!!date_col),
+      day_of_week = wday(!!date_col, label = TRUE),
+      is_weekend = wday(!!date_col) %in% c(1, 7),
+      is_month_start = day(!!date_col) <= 7,
+      is_month_end = day(!!date_col) >= day(ceiling_date(!!date_col, "month") - 1) - 6
+    )
+}
+
+# Create business metric calculations
+calculate_business_metrics <- function(data) {
+  data %>%
+    mutate(
+      margin = (net_amount - (net_amount * 0.7)) / net_amount,  # Assume 30% margin
+      margin_amount = net_amount * margin,
+      revenue_per_unit = net_amount / quantity,
+      discount_impact = discount_amount / gross_amount * 100
+    )
+}
+
+# Chain custom functions
+enhanced_transactions <- transactions %>%
+  slice_sample(n = 1000) %>%
+  add_time_features(date) %>%
+  calculate_business_metrics() %>%
+  select(transaction_id, date, is_weekend, margin, revenue_per_unit)
+
+cat("Enhanced transactions with custom features:\n")
+print(head(enhanced_transactions))
+```
+
+## Advanced Reshaping Patterns
+
+```{r}
+#| label: advanced-reshaping
+
+# Complex pivot with multiple value columns
+monthly_metrics <- transactions %>%
+  mutate(year_month = floor_date(date, "month")) %>%
+  group_by(year_month, customer_segment) %>%
+  summarise(
+    transactions = n(),
+    revenue = sum(net_amount),
+    units = sum(quantity),
+    avg_basket = mean(net_amount),
+    .groups = "drop"
+  )
+
+# Pivot with custom names
+wide_metrics <- monthly_metrics %>%
+  pivot_wider(
+    names_from = customer_segment,
+    values_from = c(transactions, revenue, units, avg_basket),
+    names_glue = "{customer_segment}_{.value}"
+  )
+
+cat("Wide format with custom column names:\n")
+names(wide_metrics)
+
+# Nested data structures
+nested_analysis <- transactions %>%
+  group_by(store_id) %>%
+  nest() %>%
+  mutate(
+    # Perform analysis on each nested dataset
+    summary = map(data, ~{
+      .x %>%
+        summarise(
+          n_trans = n(),
+          revenue = sum(net_amount),
+          top_product = names(sort(table(.x$product_id), decreasing = TRUE)[1]),
+          peak_hour = as.numeric(names(sort(table(.x$hour), decreasing = TRUE)[1]))
+        )
+    }),
+    # Extract specific metrics
+    total_revenue = map_dbl(summary, ~.x$revenue),
+    transaction_count = map_int(summary, ~.x$n_trans)
+  ) %>%
+  arrange(desc(total_revenue))
+
+cat("\nTop 5 stores by revenue:\n")
+nested_analysis %>%
+  select(store_id, total_revenue, transaction_count) %>%
+  head(5)
+```
+
+## Error Handling and Validation
+
+```{r}
+#| label: error-handling
+
+# Safe summary function with validation
+safe_summarize <- function(data, group_var, value_var) {
+  group_var <- enquo(group_var)
+  value_var <- enquo(value_var)
+  
+  # Validate inputs
+  if (!quo_name(value_var) %in% names(data)) {
+    stop("Value variable not found in data")
+  }
+  
+  if (!is.numeric(data %>% pull(!!value_var))) {
+    warning("Value variable is not numeric, converting...")
+    data <- data %>%
+      mutate(!!value_var := as.numeric(!!value_var))
+  }
+  
+  # Perform analysis with error handling
+  tryCatch({
+    data %>%
+      group_by(!!group_var) %>%
+      summarise(
+        n = n(),
+        mean = mean(!!value_var, na.rm = TRUE),
+        median = median(!!value_var, na.rm = TRUE),
+        sd = sd(!!value_var, na.rm = TRUE),
+        missing = sum(is.na(!!value_var)),
+        .groups = "drop"
+      ) %>%
+      mutate(
+        cv = sd / mean,  # Coefficient of variation
+        data_quality = case_when(
+          missing / n > 0.1 ~ "Poor",
+          cv > 1 ~ "High Variability", 
+          TRUE ~ "Good"
+        )
+      )
+  }, error = function(e) {
+    message("Error in summarization: ", e$message)
+    return(NULL)
+  })
+}
+
+# Test the function
+result <- safe_summarize(transactions, store_id, net_amount)
+cat("Safe summarization completed successfully\n")
+```
+
+## Best Practices Summary
+
+1. **Use across() for multiple columns**: More concise than multiple mutate calls
+2. **Leverage selection helpers**: starts_with(), ends_with(), contains(), where()
+3. **Program with {{}}**: For creating reusable functions
+4. **Optimize performance**: Minimize groups, use vectorized operations
+5. **Handle errors gracefully**: Validate inputs and use tryCatch()
+6. **Document your functions**: Clear names and comments
+7. **Test with small data first**: Develop on subsets before scaling up
+
+## Practice Exercises
+
+1. **Custom Analysis Function**: Create a function that performs a complete analysis pipeline
+2. **Performance Comparison**: Compare different approaches to the same problem
+3. **Complex Reshaping**: Transform nested transaction data into a report format
+4. **Error-Robust Pipeline**: Build a data processing pipeline that handles various data quality issues
+
+## Conclusion
+
+Advanced dplyr techniques enable you to write more efficient, maintainable, and powerful data manipulation code. The key is to:
+
+- Understand tidy evaluation for programming
+- Use vectorized operations whenever possible
+- Create reusable functions for common patterns
+- Optimize for performance with large datasets
+- Handle edge cases and errors gracefully
+
+These advanced skills will make you a more effective data analyst and allow you to tackle complex real-world data challenges with confidence.

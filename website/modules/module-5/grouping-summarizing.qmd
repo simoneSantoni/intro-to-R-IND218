@@ -1,0 +1,452 @@
+---
+title: "Grouping and Summarizing Data"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## The Power of Group-Wise Operations
+
+One of the most powerful features of dplyr is the ability to perform operations on groups of data. The combination of `group_by()` and `summarise()` allows you to calculate statistics for each group in your data, implementing the split-apply-combine strategy that's fundamental to data analysis.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+
+# Load the sample dataset from Module 5 index
+set.seed(123)
+sales_raw <- tibble(
+  order_id = paste0("ORD-", str_pad(1:1000, 4, pad = "0")),
+  customer_id = sample(paste0("CUST-", 1:200), 1000, replace = TRUE),
+  product_id = sample(paste0("PROD-", 1:50), 1000, replace = TRUE),
+  order_date = sample(seq(ymd("2023-01-01"), ymd("2024-12-31"), by = "day"), 1000, replace = TRUE),
+  quantity = sample(1:10, 1000, replace = TRUE),
+  unit_price = round(runif(1000, 5, 200), 2),
+  discount_pct = sample(c(0, 0.05, 0.10, 0.15, 0.20), 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05)),
+  sales_rep = sample(c("Alice Johnson", "Bob Smith", "Charlie Brown", "Diana Prince", "Eve Wilson"), 1000, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"), 1000, replace = TRUE),
+  customer_type = sample(c("Individual", "Small Business", "Enterprise"), 1000, replace = TRUE, prob = c(0.5, 0.3, 0.2))
+) %>%
+  mutate(
+    sales_rep = ifelse(row_number() %in% sample(1:1000, 50), NA, sales_rep),
+    discount_pct = ifelse(row_number() %in% sample(1:1000, 30), NA, discount_pct),
+    gross_amount = quantity * unit_price,
+    discount_amount = gross_amount * coalesce(discount_pct, 0),
+    net_amount = gross_amount - discount_amount,
+    unit_price = ifelse(row_number() %in% sample(1:1000, 5), unit_price * 100, unit_price),
+    quantity = ifelse(row_number() %in% sample(1:1000, 3), 0, quantity)
+  )
+
+cat("Working with", nrow(sales_raw), "sales transactions\n")
+```
+
+## Understanding group_by()
+
+The `group_by()` function doesn't change the data itself - it adds metadata that tells dplyr to perform subsequent operations by group.
+
+```{r}
+#| label: basic-grouping
+
+# Group by a single variable
+sales_by_region <- sales_raw %>%
+  group_by(region)
+
+# The data looks the same, but it's now grouped
+cat("Grouped data has", n_groups(sales_by_region), "groups\n")
+cat("Group sizes:\n")
+count(sales_by_region, region)
+
+# Group by multiple variables
+sales_by_region_type <- sales_raw %>%
+  group_by(region, customer_type)
+
+cat("\nGrouping by region and customer type creates", n_groups(sales_by_region_type), "groups\n")
+```
+
+## Basic Summarization
+
+`summarise()` (or `summarize()`) reduces grouped data to summary statistics:
+
+```{r}
+#| label: basic-summarize
+
+# Calculate summary statistics by region
+regional_summary <- sales_raw %>%
+  group_by(region) %>%
+  summarise(
+    total_sales = sum(net_amount),
+    avg_sale = mean(net_amount),
+    median_sale = median(net_amount),
+    total_orders = n(),
+    unique_customers = n_distinct(customer_id),
+    .groups = "drop"  # Good practice to specify group handling
+  )
+
+print(regional_summary)
+
+# Multiple grouping variables
+detailed_summary <- sales_raw %>%
+  filter(quantity > 0) %>%  # Exclude invalid orders
+  group_by(region, customer_type) %>%
+  summarise(
+    revenue = sum(net_amount),
+    orders = n(),
+    avg_order_value = mean(net_amount),
+    avg_discount = mean(discount_pct, na.rm = TRUE) * 100,
+    .groups = "drop"
+  ) %>%
+  arrange(desc(revenue))
+
+cat("\nTop 5 segments by revenue:\n")
+print(head(detailed_summary, 5))
+```
+
+## Common Summary Functions
+
+dplyr provides many useful functions for summarization:
+
+```{r}
+#| label: summary-functions
+
+# Comprehensive summary statistics
+sales_raw %>%
+  filter(!is.na(sales_rep), quantity > 0) %>%
+  group_by(sales_rep) %>%
+  summarise(
+    # Count functions
+    total_orders = n(),
+    distinct_customers = n_distinct(customer_id),
+    distinct_products = n_distinct(product_id),
+    
+    # Central tendency
+    mean_sale = mean(net_amount),
+    median_sale = median(net_amount),
+    
+    # Spread
+    sd_sale = sd(net_amount),
+    min_sale = min(net_amount),
+    max_sale = max(net_amount),
+    range = max_sale - min_sale,
+    
+    # Position
+    q25 = quantile(net_amount, 0.25),
+    q75 = quantile(net_amount, 0.75),
+    iqr = IQR(net_amount),
+    
+    # Totals
+    total_revenue = sum(net_amount),
+    total_units = sum(quantity),
+    
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_revenue))
+```
+
+## Grouped Mutations
+
+You can also use `mutate()` with grouped data to add group-wise calculations:
+
+```{r}
+#| label: grouped-mutate
+
+# Add group-level statistics to each row
+sales_with_stats <- sales_raw %>%
+  filter(quantity > 0) %>%
+  group_by(region) %>%
+  mutate(
+    regional_avg = mean(net_amount),
+    pct_of_regional_avg = net_amount / regional_avg * 100,
+    regional_rank = row_number(desc(net_amount)),
+    regional_percentile = percent_rank(net_amount)
+  ) %>%
+  ungroup()
+
+# Show top performers in each region
+sales_with_stats %>%
+  filter(regional_rank <= 3) %>%
+  select(order_id, region, net_amount, regional_avg, pct_of_regional_avg, regional_rank) %>%
+  arrange(region, regional_rank)
+```
+
+## Window Functions
+
+Window functions are particularly useful with grouped data:
+
+```{r}
+#| label: window-functions
+
+# Various window functions
+monthly_sales <- sales_raw %>%
+  filter(quantity > 0) %>%
+  mutate(
+    year_month = floor_date(order_date, "month")
+  ) %>%
+  group_by(year_month, region) %>%
+  summarise(
+    total_sales = sum(net_amount),
+    .groups = "drop"
+  ) %>%
+  group_by(region) %>%
+  arrange(year_month) %>%
+  mutate(
+    # Cumulative functions
+    cumulative_sales = cumsum(total_sales),
+    
+    # Lag and lead
+    prev_month_sales = lag(total_sales, 1),
+    next_month_sales = lead(total_sales, 1),
+    
+    # Month-over-month growth
+    mom_growth = (total_sales - prev_month_sales) / prev_month_sales * 100,
+    
+    # Rolling calculations (3-month average)
+    rolling_avg_3m = (lag(total_sales, 2) + lag(total_sales, 1) + total_sales) / 3
+  ) %>%
+  ungroup()
+
+# Show recent trends
+monthly_sales %>%
+  filter(year_month >= "2024-01-01") %>%
+  select(year_month, region, total_sales, mom_growth, rolling_avg_3m) %>%
+  arrange(region, year_month)
+```
+
+## Multiple Summary Statistics at Once
+
+You can calculate multiple statistics for multiple variables efficiently:
+
+```{r}
+#| label: multiple-summaries
+
+# Summary statistics for multiple numeric variables
+sales_raw %>%
+  filter(quantity > 0, unit_price <= 500) %>%
+  group_by(customer_type) %>%
+  summarise(
+    across(
+      c(quantity, gross_amount, discount_pct, net_amount),
+      list(
+        mean = ~mean(.x, na.rm = TRUE),
+        median = ~median(.x, na.rm = TRUE),
+        sd = ~sd(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    ),
+    n_orders = n(),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    across(where(is.numeric), ~round(.x, 2))
+  )
+```
+
+## Handling Missing Values in Groups
+
+Proper handling of missing values is crucial in grouped operations:
+
+```{r}
+#| label: missing-values-groups
+
+# Compare different approaches to missing values
+missing_comparison <- sales_raw %>%
+  group_by(region) %>%
+  summarise(
+    # Different ways to handle NAs
+    total_orders = n(),
+    orders_with_rep = sum(!is.na(sales_rep)),
+    orders_missing_rep = sum(is.na(sales_rep)),
+    
+    # Average discount - different approaches
+    avg_discount_na_rm = mean(discount_pct, na.rm = TRUE) * 100,
+    avg_discount_zeros = mean(coalesce(discount_pct, 0)) * 100,
+    
+    # Count of discounted orders
+    discounted_orders = sum(discount_pct > 0, na.rm = TRUE),
+    
+    .groups = "drop"
+  )
+
+print(missing_comparison)
+```
+
+## Advanced Grouping Techniques
+
+### Dynamic Grouping
+
+```{r}
+#| label: dynamic-grouping
+
+# Function to analyze sales by any grouping variable
+analyze_by_group <- function(data, group_var) {
+  data %>%
+    group_by({{ group_var }}) %>%
+    summarise(
+      revenue = sum(net_amount),
+      orders = n(),
+      avg_order = mean(net_amount),
+      customers = n_distinct(customer_id),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      revenue_pct = revenue / sum(revenue) * 100
+    ) %>%
+    arrange(desc(revenue))
+}
+
+# Apply to different grouping variables
+cat("Analysis by sales rep:\n")
+sales_raw %>%
+  filter(!is.na(sales_rep)) %>%
+  analyze_by_group(sales_rep)
+
+cat("\nAnalysis by customer type:\n")
+sales_raw %>%
+  analyze_by_group(customer_type)
+```
+
+### Conditional Grouping
+
+```{r}
+#| label: conditional-grouping
+
+# Group by calculated categories
+sales_categorized <- sales_raw %>%
+  filter(quantity > 0) %>%
+  mutate(
+    order_size = case_when(
+      net_amount < 100 ~ "Small",
+      net_amount < 500 ~ "Medium",
+      net_amount < 1000 ~ "Large",
+      TRUE ~ "Enterprise"
+    ),
+    discount_category = case_when(
+      is.na(discount_pct) | discount_pct == 0 ~ "No discount",
+      discount_pct <= 0.05 ~ "Low discount",
+      discount_pct <= 0.10 ~ "Medium discount",
+      TRUE ~ "High discount"
+    )
+  ) %>%
+  group_by(order_size, discount_category) %>%
+  summarise(
+    orders = n(),
+    revenue = sum(net_amount),
+    avg_margin = mean((net_amount - gross_amount * 0.6) / net_amount) * 100,  # Assuming 60% cost
+    .groups = "drop"
+  ) %>%
+  arrange(order_size, desc(revenue))
+
+print(sales_categorized)
+```
+
+## Performance Tips
+
+When working with large grouped datasets:
+
+```{r}
+#| label: performance-tips
+
+# Efficient grouping - calculate once, use multiple times
+efficient_summary <- sales_raw %>%
+  filter(quantity > 0) %>%
+  group_by(region, customer_type) %>%
+  summarise(
+    n = n(),
+    revenue = sum(net_amount),
+    .groups = "drop"
+  )
+
+# Add multiple calculated fields after summarizing
+efficient_summary <- efficient_summary %>%
+  mutate(
+    avg_order = revenue / n,
+    revenue_share = revenue / sum(revenue) * 100,
+    cumulative_share = cumsum(revenue_share)
+  ) %>%
+  arrange(desc(revenue))
+
+cat("Most efficient to summarize first, then calculate derived metrics\n")
+print(head(efficient_summary, 10))
+```
+
+## Common Patterns and Use Cases
+
+### Top N per Group
+
+```{r}
+#| label: top-n-per-group
+
+# Find top 3 customers in each region
+top_customers <- sales_raw %>%
+  filter(quantity > 0) %>%
+  group_by(region, customer_id) %>%
+  summarise(
+    total_spent = sum(net_amount),
+    order_count = n(),
+    .groups = "drop"
+  ) %>%
+  group_by(region) %>%
+  slice_max(total_spent, n = 3) %>%
+  ungroup()
+
+cat("Top 3 customers by region:\n")
+print(top_customers)
+```
+
+### Year-over-Year Comparisons
+
+```{r}
+#| label: yoy-comparison
+
+# Year-over-year analysis
+yoy_analysis <- sales_raw %>%
+  filter(quantity > 0) %>%
+  mutate(
+    year = year(order_date),
+    month = month(order_date)
+  ) %>%
+  group_by(year, month, region) %>%
+  summarise(
+    revenue = sum(net_amount),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = year,
+    values_from = revenue,
+    names_prefix = "year_"
+  ) %>%
+  mutate(
+    yoy_change = (year_2024 - year_2023) / year_2023 * 100
+  ) %>%
+  filter(!is.na(yoy_change))
+
+cat("Year-over-year revenue change by region and month:\n")
+print(yoy_analysis)
+```
+
+## Practice Exercises
+
+1. **Customer Segmentation**: Group customers by their total purchase value and analyze their behavior
+2. **Time-Based Analysis**: Create weekly summaries showing trends and patterns
+3. **Product Performance**: Identify best and worst performing products by region
+4. **Sales Team Metrics**: Create a comprehensive dashboard for sales rep performance
+
+## Summary
+
+Grouping and summarizing are essential skills for data analysis. Key takeaways:
+
+- `group_by()` creates groups for subsequent operations
+- `summarise()` reduces groups to single rows with summary statistics
+- Use `.groups = "drop"` to avoid unexpected behavior
+- Grouped `mutate()` adds group-level calculations to each row
+- Window functions provide powerful tools for within-group calculations
+- Always consider how to handle missing values in grouped operations
+- Think about performance when working with large datasets
+
+Next, we'll explore how to combine multiple datasets with [Joining Data](joining-data.qmd).

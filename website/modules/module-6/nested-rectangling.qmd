@@ -1,0 +1,988 @@
+---
+title: "Nested Data and Rectangling: Advanced Data Structures"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Understanding Nested Data Structures 🗂️
+
+In the real world, data often comes in complex, nested formats - think JSON from APIs, lists within data frames, or hierarchical structures from databases. tidyr's "rectangling" functions help you transform these complex structures into the rectangular, tidy format that R analysis tools expect.
+
+## What is Nested Data?
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(jsonlite)
+
+cat("NESTED DATA STRUCTURES - Common Forms:\n\n")
+
+# Example 1: List-columns in data frames
+survey_nested <- tibble(
+  survey_id = 1:4,
+  participant = c("Alice", "Bob", "Carol", "David"),
+  responses = list(
+    c(5, 4, 3, 5, 4),
+    c(3, 3, 4, 2, 5),
+    c(4, 5, 5, 4, 4),
+    c(2, 3, 3, 3, 2)
+  ),
+  demographics = list(
+    list(age = 25, education = "Bachelor", income = 50000),
+    list(age = 34, education = "Master", income = 75000),
+    list(age = 28, education = "PhD", income = 85000),
+    list(age = 42, education = "Bachelor", income = 60000)
+  )
+)
+
+cat("Example 1: Survey data with list-columns\n")
+print(survey_nested)
+cat("Column types:", sapply(survey_nested, class), "\n")
+
+# Example 2: JSON-like nested structure
+api_response <- tibble(
+  endpoint = c("/users", "/products", "/orders"),
+  data = list(
+    list(
+      users = list(
+        list(id = 1, name = "John", email = "john@example.com", purchases = c(100, 250, 150)),
+        list(id = 2, name = "Jane", email = "jane@example.com", purchases = c(300, 180))
+      )
+    ),
+    list(
+      products = list(
+        list(id = "A1", name = "Widget", price = 25.99, categories = c("electronics", "gadgets")),
+        list(id = "B2", name = "Gadget", price = 45.50, categories = c("electronics"))
+      )
+    ),
+    list(
+      orders = list(
+        list(order_id = 1001, customer_id = 1, items = c("A1", "B2"), total = 71.49),
+        list(order_id = 1002, customer_id = 2, items = c("A1"), total = 25.99)
+      )
+    )
+  )
+)
+
+cat("\nExample 2: API response with deeply nested structure\n")
+str(api_response, max.level = 2)
+```
+
+## `unnest()`: Expanding List-Columns
+
+### Basic Unnesting Operations
+
+```{r}
+#| label: unnest-basics
+
+# Unnest simple vector lists
+responses_unnested <- survey_nested %>%
+  select(survey_id, participant, responses) %>%
+  unnest(responses) %>%
+  group_by(survey_id, participant) %>%
+  mutate(question = paste0("Q", row_number())) %>%
+  ungroup()
+
+cat("Unnested survey responses:\n")
+print(responses_unnested)
+
+# Create analysis-ready format
+responses_wide <- responses_unnested %>%
+  pivot_wider(names_from = question, values_from = responses)
+
+cat("\nAnalysis-ready wide format:\n")
+print(responses_wide)
+
+# Unnest named lists (demographics)
+demographics_unnested <- survey_nested %>%
+  select(survey_id, participant, demographics) %>%
+  unnest_wider(demographics)
+
+cat("\nUnnested demographics (wide format):\n")
+print(demographics_unnested)
+```
+
+### Complex Unnesting Scenarios
+
+```{r}
+#| label: complex-unnesting
+
+# E-commerce order data with multiple levels
+ecommerce_data <- tibble(
+  order_id = 1:3,
+  customer = c("Alice Johnson", "Bob Smith", "Carol Davis"),
+  order_date = as.Date(c("2023-01-15", "2023-01-18", "2023-01-22")),
+  items = list(
+    list(
+      list(product_id = "WIDGET_A", name = "Premium Widget", quantity = 2, unit_price = 25.99),
+      list(product_id = "GADGET_B", name = "Smart Gadget", quantity = 1, unit_price = 45.50)
+    ),
+    list(
+      list(product_id = "WIDGET_A", name = "Premium Widget", quantity = 3, unit_price = 25.99),
+      list(product_id = "DEVICE_C", name = "IoT Device", quantity = 1, unit_price = 89.99)
+    ),
+    list(
+      list(product_id = "GADGET_B", name = "Smart Gadget", quantity = 2, unit_price = 45.50)
+    )
+  ),
+  shipping = list(
+    list(method = "Standard", cost = 5.99, estimated_days = 5),
+    list(method = "Express", cost = 12.99, estimated_days = 2),
+    list(method = "Standard", cost = 5.99, estimated_days = 5)
+  )
+)
+
+cat("Complex e-commerce nested data:\n")
+str(ecommerce_data, max.level = 2)
+
+# Unnest items to get order details
+order_items <- ecommerce_data %>%
+  select(order_id, customer, order_date, items) %>%
+  unnest(items) %>%
+  unnest_wider(items) %>%
+  mutate(
+    line_total = quantity * unit_price,
+    item_number = row_number()
+  )
+
+cat("\nOrder items unnested:\n")
+print(order_items)
+
+# Unnest shipping information
+shipping_info <- ecommerce_data %>%
+  select(order_id, shipping) %>%
+  unnest_wider(shipping)
+
+cat("\nShipping information unnested:\n")
+print(shipping_info)
+
+# Combine for complete order analysis
+complete_orders <- order_items %>%
+  group_by(order_id, customer, order_date) %>%
+  summarise(
+    total_items = sum(quantity),
+    order_total = sum(line_total),
+    unique_products = n(),
+    .groups = "drop"
+  ) %>%
+  left_join(shipping_info, by = "order_id") %>%
+  mutate(
+    grand_total = order_total + cost,
+    total_delivery_days = estimated_days
+  )
+
+cat("\nComplete order analysis:\n")
+print(complete_orders)
+```
+
+### Working with Varied List Structures
+
+```{r}
+#| label: varied-structures
+
+# Customer data with inconsistent nested structures
+customer_profiles <- tibble(
+  customer_id = 1:5,
+  profile = list(
+    list(name = "Alice", age = 25, preferences = c("electronics", "books"),
+         contact = list(email = "alice@email.com", phone = "555-0123")),
+    list(name = "Bob", age = 34, preferences = c("sports", "electronics"),
+         contact = list(email = "bob@email.com")),  # No phone
+    list(name = "Carol", age = 28, preferences = c("fashion", "beauty", "books"),
+         contact = list(email = "carol@email.com", phone = "555-0156", address = "123 Main St")),
+    list(name = "David", preferences = c("music"),  # No age
+         contact = list(phone = "555-0189")),       # No email
+    list(name = "Emma", age = 31, preferences = c("travel", "photography"))  # No contact
+  )
+)
+
+cat("Customer profiles with inconsistent structures:\n")
+str(customer_profiles, max.level = 2)
+
+# Safe unnesting with error handling
+basic_info <- customer_profiles %>%
+  unnest_wider(profile) %>%
+  select(customer_id, name, age) %>%
+  mutate(age = as.numeric(age))  # Handle missing ages
+
+cat("\nBasic customer information:\n")
+print(basic_info)
+
+# Handle preferences (vector lists)
+preferences_unnested <- customer_profiles %>%
+  unnest_wider(profile) %>%
+  select(customer_id, name, preferences) %>%
+  unnest(preferences)
+
+cat("\nCustomer preferences (long format):\n")
+print(preferences_unnested)
+
+# Handle contact information (nested lists with varying structures)
+contact_info <- customer_profiles %>%
+  unnest_wider(profile) %>%
+  select(customer_id, name, contact) %>%
+  # Handle missing contact info
+  filter(!is.null(contact)) %>%
+  unnest_wider(contact)
+
+cat("\nContact information:\n")
+print(contact_info)
+
+# Comprehensive customer analysis
+customer_summary <- basic_info %>%
+  left_join(
+    preferences_unnested %>%
+      group_by(customer_id) %>%
+      summarise(
+        preference_count = n(),
+        top_preferences = paste(preferences, collapse = ", "),
+        .groups = "drop"
+      ),
+    by = "customer_id"
+  ) %>%
+  left_join(
+    contact_info %>%
+      select(customer_id, email, phone),
+    by = "customer_id"
+  ) %>%
+  mutate(
+    age_group = case_when(
+      age < 25 ~ "Under 25",
+      age < 35 ~ "25-34",
+      age < 45 ~ "35-44",
+      TRUE ~ "45+"
+    ),
+    contact_completeness = case_when(
+      !is.na(email) & !is.na(phone) ~ "Complete",
+      !is.na(email) | !is.na(phone) ~ "Partial",
+      TRUE ~ "Missing"
+    )
+  )
+
+cat("\nComprehensive customer summary:\n")
+print(customer_summary)
+```
+
+## `hoist()`: Extracting Specific Elements
+
+### Selective Extraction from Nested Lists
+
+```{r}
+#| label: hoist-basics
+
+# Product catalog with nested specifications
+product_catalog <- tibble(
+  product_id = c("LAPTOP_001", "PHONE_002", "TABLET_003"),
+  category = c("Electronics", "Electronics", "Electronics"),
+  specifications = list(
+    list(
+      brand = "TechCorp",
+      model = "UltraBook Pro",
+      specs = list(cpu = "Intel i7", ram = "16GB", storage = "512GB SSD"),
+      features = c("Touchscreen", "Backlit Keyboard", "Fingerprint Reader"),
+      price = list(base = 1299.99, sale = 1199.99, currency = "USD")
+    ),
+    list(
+      brand = "MobileTech",
+      model = "SmartPhone X",
+      specs = list(cpu = "Snapdragon 888", ram = "8GB", storage = "128GB"),
+      features = c("5G", "Wireless Charging", "Water Resistant"),
+      price = list(base = 899.99, sale = 799.99, currency = "USD")
+    ),
+    list(
+      brand = "TabletCorp",
+      model = "Tablet Pro",
+      specs = list(cpu = "A14 Bionic", ram = "6GB", storage = "256GB"),
+      features = c("Apple Pencil Support", "Face ID", "Retina Display"),
+      price = list(base = 649.99, currency = "USD")  # No sale price
+    )
+  )
+)
+
+cat("Product catalog with complex nested specifications:\n")
+str(product_catalog, max.level = 2)
+
+# Use hoist() to extract specific elements
+products_hoisted <- product_catalog %>%
+  hoist(specifications,
+    brand = "brand",
+    model = "model",
+    base_price = c("price", "base"),
+    sale_price = c("price", "sale"),
+    cpu = c("specs", "cpu"),
+    ram = c("specs", "ram")
+  ) %>%
+  mutate(
+    has_sale = !is.na(sale_price),
+    discount_percent = round((base_price - sale_price) / base_price * 100, 1)
+  )
+
+cat("\nProducts with hoisted key information:\n")
+print(products_hoisted)
+
+# Extract features using unnest after hoist
+product_features <- product_catalog %>%
+  hoist(specifications, features = "features") %>%
+  select(product_id, category, features) %>%
+  unnest(features)
+
+cat("\nProduct features extracted:\n")
+print(product_features)
+```
+
+### Advanced Hoisting Techniques
+
+```{r}
+#| label: advanced-hoisting
+
+# Financial data with nested time series and metadata
+financial_data <- tibble(
+  symbol = c("AAPL", "GOOGL", "MSFT"),
+  data = list(
+    list(
+      company = "Apple Inc.",
+      sector = "Technology",
+      prices = list(
+        "2023-01-01" = 150.25,
+        "2023-01-02" = 152.10,
+        "2023-01-03" = 149.80
+      ),
+      metrics = list(
+        pe_ratio = 25.4,
+        market_cap = "2.8T",
+        dividend_yield = 0.52
+      ),
+      analysts = list(
+        rating = "Buy",
+        target_price = 180.00,
+        consensus = list(buy = 15, hold = 3, sell = 1)
+      )
+    ),
+    list(
+      company = "Alphabet Inc.",
+      sector = "Technology",
+      prices = list(
+        "2023-01-01" = 88.73,
+        "2023-01-02" = 89.45,
+        "2023-01-03" = 87.92
+      ),
+      metrics = list(
+        pe_ratio = 18.7,
+        market_cap = "1.1T",
+        dividend_yield = 0.0
+      ),
+      analysts = list(
+        rating = "Buy",
+        target_price = 120.00,
+        consensus = list(buy = 18, hold = 2, sell = 0)
+      )
+    ),
+    list(
+      company = "Microsoft Corporation",
+      sector = "Technology",
+      prices = list(
+        "2023-01-01" = 240.22,
+        "2023-01-02" = 242.15,
+        "2023-01-03" = 238.90
+      ),
+      metrics = list(
+        pe_ratio = 28.1,
+        market_cap = "1.8T",
+        dividend_yield = 0.73
+      ),
+      analysts = list(
+        rating = "Strong Buy",
+        target_price = 280.00,
+        consensus = list(buy = 20, hold = 1, sell = 0)
+      )
+    )
+  )
+)
+
+cat("Financial data with deeply nested structure:\n")
+str(financial_data, max.level = 2)
+
+# Extract key financial metrics
+financial_metrics <- financial_data %>%
+  hoist(data,
+    company = "company",
+    sector = "sector",
+    pe_ratio = c("metrics", "pe_ratio"),
+    market_cap = c("metrics", "market_cap"),
+    dividend_yield = c("metrics", "dividend_yield"),
+    analyst_rating = c("analysts", "rating"),
+    target_price = c("analysts", "target_price"),
+    buy_ratings = c("analysts", "consensus", "buy"),
+    hold_ratings = c("analysts", "consensus", "hold")
+  ) %>%
+  mutate(
+    total_ratings = buy_ratings + hold_ratings,
+    buy_percentage = round(buy_ratings / total_ratings * 100, 1)
+  )
+
+cat("\nExtracted financial metrics:\n")
+print(financial_metrics)
+
+# Extract and process price data
+price_data <- financial_data %>%
+  hoist(data, prices = "prices") %>%
+  select(symbol, prices) %>%
+  unnest_longer(prices, indices_to = "date") %>%
+  mutate(
+    date = as.Date(date),
+    price = as.numeric(prices)
+  ) %>%
+  select(-prices) %>%
+  group_by(symbol) %>%
+  mutate(
+    price_change = price - lag(price),
+    price_change_pct = round((price / lag(price) - 1) * 100, 2)
+  ) %>%
+  ungroup()
+
+cat("\nProcessed price data:\n")
+print(price_data)
+
+# Combine for investment analysis
+investment_analysis <- financial_metrics %>%
+  left_join(
+    price_data %>%
+      group_by(symbol) %>%
+      summarise(
+        avg_price = round(mean(price), 2),
+        price_volatility = round(sd(price_change, na.rm = TRUE), 2),
+        latest_price = last(price),
+        .groups = "drop"
+      ),
+    by = "symbol"
+  ) %>%
+  mutate(
+    upside_potential = round((target_price - latest_price) / latest_price * 100, 1),
+    investment_score = round((buy_percentage / 100) * (upside_potential / 10) + (dividend_yield * 10), 1)
+  ) %>%
+  arrange(desc(investment_score))
+
+cat("\nInvestment analysis summary:\n")
+print(investment_analysis)
+```
+
+## `unnest_longer()` and `unnest_wider()`: Specialized Unnesting
+
+### Understanding the Difference
+
+```{r}
+#| label: unnest-comparison
+
+# Sample data for comparison
+sample_nested <- tibble(
+  id = 1:3,
+  measurements = list(
+    list(height = 175, weight = 70, bmi = 22.9),
+    list(height = 180, weight = 75, bmi = 23.1),
+    list(height = 165, weight = 60, bmi = 22.0)
+  ),
+  tags = list(
+    c("healthy", "active", "young"),
+    c("athletic", "healthy"),
+    c("young", "active", "healthy", "student")
+  )
+)
+
+cat("Sample nested data:\n")
+print(sample_nested)
+
+# unnest_wider: Spreads list elements into columns
+measurements_wide <- sample_nested %>%
+  select(id, measurements) %>%
+  unnest_wider(measurements)
+
+cat("\nunnest_wider result (measurements as columns):\n")
+print(measurements_wide)
+
+# unnest_longer: Stacks list elements into rows
+tags_long <- sample_nested %>%
+  select(id, tags) %>%
+  unnest_longer(tags)
+
+cat("\nunnest_longer result (tags as rows):\n")
+print(tags_long)
+
+# Combined approach for comprehensive analysis
+complete_analysis <- sample_nested %>%
+  unnest_wider(measurements) %>%
+  left_join(
+    tags_long %>%
+      group_by(id) %>%
+      summarise(tag_list = paste(tags, collapse = ", "), .groups = "drop"),
+    by = "id"
+  )
+
+cat("\nCombined analysis:\n")
+print(complete_analysis)
+```
+
+### Real-World JSON Processing
+
+```{r}
+#| label: json-processing
+
+# Simulate API response data (like from a social media platform)
+social_media_data <- tibble(
+  user_id = 1:4,
+  profile = list(
+    list(
+      username = "tech_alice",
+      followers = 1250,
+      following = 340,
+      posts = list(
+        list(id = 1, text = "Great day at the conference!", likes = 45, comments = 8, hashtags = c("tech", "networking")),
+        list(id = 2, text = "New project launching soon", likes = 32, comments = 12, hashtags = c("startup", "innovation"))
+      ),
+      interests = c("technology", "startups", "design")
+    ),
+    list(
+      username = "fitness_bob",
+      followers = 890,
+      following = 180,
+      posts = list(
+        list(id = 3, text = "Morning workout complete!", likes = 67, comments = 4, hashtags = c("fitness", "morning")),
+        list(id = 4, text = "Healthy meal prep tips", likes = 89, comments = 15, hashtags = c("nutrition", "health"))
+      ),
+      interests = c("fitness", "nutrition", "wellness")
+    ),
+    list(
+      username = "travel_carol",
+      followers = 2100,
+      following = 450,
+      posts = list(
+        list(id = 5, text = "Amazing sunset in Bali", likes = 156, comments = 23, hashtags = c("travel", "sunset", "bali")),
+        list(id = 6, text = "Travel tips for budget backpacking", likes = 98, comments = 31, hashtags = c("travel", "budget", "backpacking"))
+      ),
+      interests = c("travel", "photography", "culture")
+    ),
+    list(
+      username = "foodie_david",
+      followers = 670,
+      following = 290,
+      posts = list(
+        list(id = 7, text = "Homemade pasta recipe", likes = 78, comments = 19, hashtags = c("cooking", "pasta", "homemade"))
+      ),
+      interests = c("cooking", "food", "recipes")
+    )
+  )
+)
+
+cat("Social media nested data structure:\n")
+str(social_media_data, max.level = 2)
+
+# Extract user profile information
+user_profiles <- social_media_data %>%
+  hoist(profile,
+    username = "username",
+    followers = "followers",
+    following = "following",
+    interests = "interests"
+  ) %>%
+  select(-profile) %>%
+  unnest_longer(interests) %>%
+  group_by(user_id, username, followers, following) %>%
+  summarise(
+    interest_count = n(),
+    interest_list = paste(interests, collapse = ", "),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    follower_ratio = round(followers / following, 2),
+    popularity_tier = case_when(
+      followers >= 2000 ~ "High",
+      followers >= 1000 ~ "Medium",
+      TRUE ~ "Low"
+    )
+  )
+
+cat("\nUser profile analysis:\n")
+print(user_profiles)
+
+# Extract and analyze posts
+posts_analysis <- social_media_data %>%
+  hoist(profile, username = "username", posts = "posts") %>%
+  select(user_id, username, posts) %>%
+  unnest_longer(posts) %>%
+  unnest_wider(posts) %>%
+  unnest_longer(hashtags) %>%
+  group_by(user_id, username, id, text, likes, comments) %>%
+  summarise(
+    hashtag_count = n(),
+    hashtag_list = paste(hashtags, collapse = ", "),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    engagement_rate = round((likes + comments) / likes * 100, 1),
+    content_category = case_when(
+      str_detect(text, "workout|fitness|health") ~ "Fitness",
+      str_detect(text, "travel|trip|vacation") ~ "Travel",
+      str_detect(text, "food|recipe|cooking") ~ "Food",
+      str_detect(text, "tech|project|conference") ~ "Technology",
+      TRUE ~ "Other"
+    )
+  )
+
+cat("\nPost analysis:\n")
+print(posts_analysis)
+
+# Content performance by category
+category_performance <- posts_analysis %>%
+  group_by(content_category) %>%
+  summarise(
+    post_count = n(),
+    avg_likes = round(mean(likes), 1),
+    avg_comments = round(mean(comments), 1),
+    avg_hashtags = round(mean(hashtag_count), 1),
+    avg_engagement = round(mean(engagement_rate), 1),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(avg_engagement))
+
+cat("\nContent performance by category:\n")
+print(category_performance)
+```
+
+## Advanced Rectangling Patterns
+
+### Handling Deeply Nested JSON-like Structures
+
+```{r}
+#| label: advanced-rectangling
+
+# Complex enterprise data structure
+enterprise_data <- tibble(
+  department_id = 1:3,
+  department_info = list(
+    list(
+      name = "Engineering",
+      budget = 2500000,
+      teams = list(
+        list(
+          team_name = "Backend",
+          members = list(
+            list(name = "Alice", role = "Senior", salary = 120000, skills = c("Python", "AWS", "Docker")),
+            list(name = "Bob", role = "Junior", salary = 80000, skills = c("Python", "MySQL"))
+          ),
+          projects = list(
+            list(name = "API Redesign", status = "Active", budget = 150000),
+            list(name = "Database Migration", status = "Planning", budget = 200000)
+          )
+        ),
+        list(
+          team_name = "Frontend",
+          members = list(
+            list(name = "Carol", role = "Senior", salary = 115000, skills = c("React", "TypeScript", "CSS")),
+            list(name = "David", role = "Mid", salary = 95000, skills = c("Vue", "JavaScript"))
+          ),
+          projects = list(
+            list(name = "UI Refresh", status = "Active", budget = 100000)
+          )
+        )
+      )
+    ),
+    list(
+      name = "Marketing",
+      budget = 800000,
+      teams = list(
+        list(
+          team_name = "Digital",
+          members = list(
+            list(name = "Emma", role = "Manager", salary = 105000, skills = c("SEO", "Analytics", "AdWords")),
+            list(name = "Frank", role = "Specialist", salary = 70000, skills = c("Social Media", "Content"))
+          ),
+          projects = list(
+            list(name = "Brand Campaign", status = "Active", budget = 250000),
+            list(name = "Website Optimization", status = "Completed", budget = 75000)
+          )
+        )
+      )
+    ),
+    list(
+      name = "Sales",
+      budget = 1200000,
+      teams = list(
+        list(
+          team_name = "Enterprise",
+          members = list(
+            list(name = "Grace", role = "Director", salary = 140000, skills = c("B2B Sales", "Negotiation")),
+            list(name = "Henry", role = "Rep", salary = 85000, skills = c("Cold Calling", "CRM"))
+          ),
+          projects = list(
+            list(name = "Q1 Targets", status = "Active", budget = 50000)
+          )
+        )
+      )
+    )
+  )
+)
+
+cat("Complex enterprise data structure:\n")
+str(enterprise_data, max.level = 3)
+
+# Extract department overview
+departments <- enterprise_data %>%
+  hoist(department_info,
+    dept_name = "name",
+    budget = "budget",
+    teams = "teams"
+  )
+
+cat("\nDepartment overview:\n")
+print(departments)
+
+# Extract team and member information
+team_members <- departments %>%
+  unnest_longer(teams) %>%
+  hoist(teams,
+    team_name = "team_name",
+    members = "members"
+  ) %>%
+  unnest_longer(members) %>%
+  unnest_wider(members) %>%
+  unnest_longer(skills) %>%
+  group_by(department_id, dept_name, budget, team_name, name, role, salary) %>%
+  summarise(
+    skill_count = n(),
+    skill_list = paste(skills, collapse = ", "),
+    .groups = "drop"
+  )
+
+cat("\nTeam members with skills:\n")
+print(team_members)
+
+# Department analytics
+dept_analytics <- team_members %>%
+  group_by(department_id, dept_name, budget) %>%
+  summarise(
+    total_employees = n(),
+    avg_salary = round(mean(salary), 0),
+    total_payroll = sum(salary),
+    skill_diversity = length(unique(unlist(str_split(skill_list, ", ")))),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    payroll_ratio = round(total_payroll / budget * 100, 1),
+    budget_per_employee = round(budget / total_employees, 0)
+  ) %>%
+  arrange(desc(budget))
+
+cat("\nDepartment analytics:\n")
+print(dept_analytics)
+
+# Skills analysis across organization
+skills_analysis <- team_members %>%
+  select(dept_name, team_name, name, skill_list) %>%
+  separate_rows(skill_list, sep = ", ") %>%
+  rename(skill = skill_list) %>%
+  group_by(skill) %>%
+  summarise(
+    employee_count = n(),
+    departments = length(unique(dept_name)),
+    teams = length(unique(paste(dept_name, team_name))),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(employee_count))
+
+cat("\nSkills analysis across organization:\n")
+print(skills_analysis)
+```
+
+## Performance Considerations and Best Practices
+
+```{r}
+#| label: performance-best-practices
+
+cat("🚀 PERFORMANCE OPTIMIZATION FOR NESTED DATA:\n\n")
+
+cat("1. MEMORY MANAGEMENT:\n")
+cat("   - Process nested data in chunks for large datasets\n")
+cat("   - Remove unnecessary nesting levels early\n")
+cat("   - Use specific hoist() extractions instead of full unnesting\n")
+cat("   - Consider data.table::rbindlist() for very large list processing\n\n")
+
+cat("2. STRATEGIC APPROACH:\n")
+cat("   - Plan your rectangling strategy before starting\n")
+cat("   - Extract what you need, not everything\n")
+cat("   - Combine unnest operations efficiently\n")
+cat("   - Validate structure at each step\n\n")
+
+# Demonstrate efficient vs inefficient approaches
+cat("EFFICIENT APPROACH:\n")
+cat("data %>%\n")
+cat("  hoist(column, key1 = 'key1', key2 = c('nested', 'key2')) %>%\n")
+cat("  select(needed_columns) %>%\n")
+cat("  process_further()\n\n")
+
+cat("LESS EFFICIENT APPROACH:\n")
+cat("data %>%\n")
+cat("  unnest_wider(column) %>%          # Expands everything\n")
+cat("  unnest_wider(nested_column) %>%   # More expansion\n")
+cat("  select(needed_columns) %>%        # Selection after expansion\n")
+cat("  process_further()\n\n")
+
+cat("3. ERROR HANDLING:\n")
+error_safe_unnest <- function(data, col) {
+  tryCatch({
+    data %>% unnest_wider(!!sym(col))
+  }, error = function(e) {
+    warning(paste("Unnesting failed for column", col, ":", e$message))
+    return(data)
+  })
+}
+
+cat("   - Use tryCatch() for robust unnesting\n")
+cat("   - Check for NULL values before unnesting\n")
+cat("   - Validate list structures before processing\n")
+cat("   - Provide default values for missing elements\n\n")
+
+cat("4. VALIDATION HELPERS:\n")
+check_list_structure <- function(data, col) {
+  col_data <- data[[col]]
+  if (is.list(col_data)) {
+    list(
+      is_list_column = TRUE,
+      length = length(col_data),
+      first_element_type = class(col_data[[1]]),
+      has_names = !is.null(names(col_data[[1]]))
+    )
+  } else {
+    list(is_list_column = FALSE)
+  }
+}
+
+cat("   - Create helper functions to inspect list structures\n")
+cat("   - Use str() and glimpse() liberally during development\n")
+cat("   - Test with small samples before processing large datasets\n")
+```
+
+## Integration with Other tidyr Functions
+
+```{r}
+#| label: integration-workflow
+
+# Complete data processing pipeline combining all tidyr functions
+complex_workflow_data <- tibble(
+  survey_id = 1:3,
+  metadata = c("Study_A|2023|Online", "Study_B|2023|Phone", "Study_C|2024|Online"),
+  responses = list(
+    list(
+      demographics = list(age = "25-34", income = "50-75K", education = "Bachelor"),
+      ratings = list(q1 = 4, q2 = 5, q3 = 3, q4 = 4),
+      comments = list(positive = c("Great service", "Easy to use"),
+                     negative = c("Slow response"))
+    ),
+    list(
+      demographics = list(age = "35-44", income = "75-100K", education = "Master"),
+      ratings = list(q1 = 3, q2 = 4, q3 = 4, q4 = 5),
+      comments = list(positive = c("Professional staff"),
+                     negative = c("Website issues", "Long wait"))
+    ),
+    list(
+      demographics = list(age = "45-54", income = "100K+", education = "PhD"),
+      ratings = list(q1 = 5, q2 = 5, q3 = 4, q4 = 4),
+      comments = list(positive = c("Excellent quality", "Quick delivery", "Good value"))
+    )
+  )
+)
+
+cat("Complex survey data requiring multiple tidyr operations:\n")
+str(complex_workflow_data, max.level = 2)
+
+# Complete processing pipeline
+processed_survey <- complex_workflow_data %>%
+  # Step 1: Separate metadata
+  separate(metadata, into = c("study", "year", "method"), sep = "\\|") %>%
+
+  # Step 2: Extract demographics using hoist
+  hoist(responses,
+    age_group = c("demographics", "age"),
+    income_bracket = c("demographics", "income"),
+    education_level = c("demographics", "education"),
+    ratings = "ratings",
+    comments = "comments"
+  ) %>%
+
+  # Step 3: Process ratings (unnest_wider)
+  unnest_wider(ratings) %>%
+  rename_with(~ paste0("rating_", .x), .cols = c(q1, q2, q3, q4)) %>%
+
+  # Step 4: Calculate rating metrics
+  rowwise() %>%
+  mutate(
+    avg_rating = mean(c(rating_q1, rating_q2, rating_q3, rating_q4)),
+    rating_variance = var(c(rating_q1, rating_q2, rating_q3, rating_q4))
+  ) %>%
+  ungroup() %>%
+
+  # Step 5: Process comments separately
+  select(-comments) %>%
+  left_join(
+    complex_workflow_data %>%
+      select(survey_id, responses) %>%
+      hoist(responses, comments = "comments") %>%
+      unnest_wider(comments) %>%
+      mutate(
+        positive_count = map_dbl(positive, length),
+        negative_count = map_dbl(negative, length),
+        sentiment_ratio = positive_count / (positive_count + negative_count)
+      ) %>%
+      select(survey_id, positive_count, negative_count, sentiment_ratio),
+    by = "survey_id"
+  ) %>%
+
+  # Step 6: Create final analysis metrics
+  mutate(
+    satisfaction_score = round((avg_rating * 25) + (sentiment_ratio * 25), 1),
+    response_completeness = ifelse(is.na(rating_variance), "Incomplete", "Complete")
+  )
+
+cat("\nFinal processed survey data:\n")
+print(processed_survey)
+
+# Summary analysis
+cat("\nSurvey analysis summary:\n")
+processed_survey %>%
+  group_by(study, method) %>%
+  summarise(
+    responses = n(),
+    avg_satisfaction = round(mean(satisfaction_score, na.rm = TRUE), 1),
+    avg_rating = round(mean(avg_rating, na.rm = TRUE), 2),
+    avg_sentiment = round(mean(sentiment_ratio, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(avg_satisfaction)) %>%
+  print()
+```
+
+## Summary
+
+Mastering nested data and rectangling enables you to:
+
+- **🗂️ Handle complex data structures**: Transform JSON, APIs, and hierarchical data into analysis-ready formats
+- **🎯 Extract precisely what you need**: Use `hoist()` for selective extraction instead of full unnesting
+- **📊 Process real-world data**: Handle inconsistent structures and missing elements gracefully
+- **🔄 Integrate workflows**: Combine rectangling with other tidyr functions for complete data pipelines
+- **⚡ Optimize performance**: Choose the right unnesting strategy for your data size and structure
+
+Key principles to remember:
+
+- **Plan your approach**: Understand the nested structure before choosing your rectangling strategy
+- **Extract strategically**: Use `hoist()` for specific elements, unnesting for comprehensive expansion
+- **Handle variation**: Real-world nested data is often inconsistent - prepare for missing elements
+- **Validate continuously**: Check structure and results at each transformation step
+- **Combine techniques**: Rectangling works best when integrated with pivoting, separating, and filtering
+
+These advanced data structure skills unlock the ability to work with modern, complex data sources that are increasingly common in data science! 🎯

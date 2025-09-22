@@ -1,0 +1,514 @@
+---
+title: "Tibbles: Modern Data Frames"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## What are Tibbles?
+
+Tibbles are a modern reimagining of data frames, designed to work seamlessly within the tidyverse. While they behave like data frames in most ways, tibbles have several improvements that make them safer and more user-friendly for data analysis.
+
+```{r}
+#| label: setup
+library(tidyverse)
+```
+
+## Creating Tibbles
+
+### From Scratch with `tibble()`
+
+The most common way to create a tibble is with the `tibble()` function:
+
+```{r}
+#| label: create-tibble
+
+# Create a tibble
+my_tibble <- tibble(
+  id = 1:5,
+  name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+  score = c(85.5, 92.3, 78.9, 95.1, 88.7),
+  passed = score >= 80
+)
+
+my_tibble
+```
+
+### Converting Data Frames to Tibbles
+
+You can convert existing data frames to tibbles:
+
+```{r}
+#| label: convert-to-tibble
+
+# Traditional data frame
+df <- data.frame(
+  x = 1:3,
+  y = c("a", "b", "c")
+)
+
+# Convert to tibble
+tbl <- as_tibble(df)
+
+# Compare the printing
+print(df)
+print(tbl)
+```
+
+### Using `tribble()` for Row-wise Creation
+
+`tribble()` allows you to create tibbles row-by-row, which is great for small datasets:
+
+```{r}
+#| label: tribble
+
+# Create a tibble row by row
+grades <- tribble(
+  ~student,  ~math, ~science, ~english,
+  #---------|------|---------|---------|
+  "Alice",      85,       90,       88,
+  "Bob",        92,       88,       85,
+  "Charlie",    78,       82,       90,
+  "Diana",      95,       92,       87
+)
+
+grades
+```
+
+## Key Differences from Data Frames
+
+### 1. Enhanced Printing
+
+Tibbles have a more informative print method:
+
+```{r}
+#| label: enhanced-printing
+
+# Create a larger tibble
+large_tibble <- tibble(
+  id = 1:1000,
+  value = rnorm(1000),
+  category = sample(letters[1:5], 1000, replace = TRUE),
+  timestamp = Sys.time() + 1:1000
+)
+
+# Tibble shows first 10 rows and all columns that fit on screen
+large_tibble
+
+# Data frame would print all 1000 rows!
+# df <- as.data.frame(large_tibble)
+# df  # Don't run this - it would print everything!
+```
+
+### 2. Column Types are Preserved
+
+Tibbles don't automatically convert strings to factors:
+
+```{r}
+#| label: preserve-types
+
+# Data frame converts strings to factors (in older R versions)
+df <- data.frame(
+  text = c("apple", "banana", "cherry"),
+  value = 1:3
+)
+
+# Tibble preserves strings as character vectors
+tbl <- tibble(
+  text = c("apple", "banana", "cherry"),
+  value = 1:3
+)
+
+# Check the types
+str(df)
+str(tbl)
+```
+
+### 3. Stricter Subsetting
+
+Tibbles are more strict about subsetting:
+
+```{r}
+#| label: strict-subsetting
+#| error: true
+
+# Create a tibble
+tbl <- tibble(x = 1:3, y = 4:6)
+
+# Single bracket always returns a tibble
+tbl[1]       # Returns a tibble with one column
+tbl["x"]     # Returns a tibble with column x
+
+# Double bracket and $ extract the column
+tbl[[1]]     # Returns the vector
+tbl$x        # Returns the vector
+tbl[["x"]]   # Returns the vector
+
+# Tibbles don't do partial matching
+# tbl$xy     # This would error - no partial matching!
+```
+
+## Working with Tibbles
+
+### Adding and Modifying Columns
+
+```{r}
+#| label: modify-columns
+
+# Start with a basic tibble
+students <- tibble(
+  name = c("Alice", "Bob", "Charlie"),
+  midterm = c(85, 78, 92),
+  final = c(88, 82, 90)
+)
+
+# Add columns with mutate
+students <- students %>%
+  mutate(
+    average = (midterm + final) / 2,
+    grade = case_when(
+      average >= 90 ~ "A",
+      average >= 80 ~ "B",
+      average >= 70 ~ "C",
+      TRUE ~ "D"
+    )
+  )
+
+students
+```
+
+### Accessing Tibble Information
+
+```{r}
+#| label: tibble-info
+
+# Create a sample tibble
+data <- tibble(
+  id = 1:100,
+  group = sample(LETTERS[1:4], 100, replace = TRUE),
+  value = rnorm(100, mean = 50, sd = 10)
+)
+
+# Get dimensions
+nrow(data)
+ncol(data)
+dim(data)
+
+# Get column names
+names(data)
+colnames(data)
+
+# Check if it's a tibble
+is_tibble(data)
+is.data.frame(data)  # TRUE - tibbles are also data frames
+
+# Get a glimpse of the structure
+glimpse(data)
+```
+
+## Advanced Tibble Features
+
+### List Columns
+
+Tibbles can contain list columns, allowing complex data structures:
+
+```{r}
+#| label: list-columns
+
+# Create a tibble with list columns
+complex_data <- tibble(
+  id = 1:3,
+  name = c("Experiment A", "Experiment B", "Experiment C"),
+  measurements = list(
+    c(1.2, 1.5, 1.3),
+    c(2.1, 2.3, 2.2, 2.4),
+    c(3.1, 3.0)
+  ),
+  metadata = list(
+    list(date = "2024-01-01", operator = "Alice"),
+    list(date = "2024-01-02", operator = "Bob"),
+    list(date = "2024-01-03", operator = "Charlie")
+  )
+)
+
+complex_data
+
+# Access list column elements
+complex_data$measurements[[1]]
+complex_data$metadata[[2]]$operator
+```
+
+### Nested Tibbles
+
+You can nest tibbles within tibbles:
+
+```{r}
+#| label: nested-tibbles
+
+# Create nested data
+sales_data <- tibble(
+  region = c("North", "South", "East", "West"),
+  data = list(
+    tibble(month = 1:3, sales = c(100, 120, 110)),
+    tibble(month = 1:3, sales = c(80, 85, 90)),
+    tibble(month = 1:3, sales = c(95, 100, 105)),
+    tibble(month = 1:3, sales = c(110, 115, 125))
+  )
+)
+
+sales_data
+
+# Access nested tibble
+sales_data$data[[1]]
+
+# Work with nested data using purrr
+sales_data %>%
+  mutate(total_sales = map_dbl(data, ~sum(.x$sales)))
+```
+
+### Tibble Validation
+
+Tibbles perform validation to ensure data integrity:
+
+```{r}
+#| label: validation
+#| error: true
+
+# Recycling rules are stricter
+# This works - length 1 recycles
+tibble(x = 1:4, y = 1)
+
+# This errors - inconsistent lengths
+# tibble(x = 1:4, y = 1:3)  # Error!
+
+# Column names must be unique
+# tibble(x = 1, x = 2)  # Error!
+
+# All columns must have the same length (or length 1)
+tibble(
+  x = 1:3,
+  y = 1,      # Length 1 - OK, will be recycled
+  z = 4:6     # Length 3 - OK
+)
+```
+
+## Tibbles in Data Analysis Workflows
+
+### Example: Customer Analysis Pipeline
+
+```{r}
+#| label: analysis-workflow
+
+# Create customer data
+customers <- tibble(
+  customer_id = 1:20,
+  age = sample(18:65, 20, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"), 20, replace = TRUE),
+  purchases = sample(0:50, 20, replace = TRUE),
+  member_since = sample(2018:2024, 20, replace = TRUE)
+)
+
+# Analysis pipeline
+customer_summary <- customers %>%
+  mutate(
+    years_member = 2024 - member_since,
+    age_group = case_when(
+      age < 30 ~ "Young",
+      age < 50 ~ "Middle",
+      TRUE ~ "Senior"
+    )
+  ) %>%
+  group_by(region, age_group) %>%
+  summarize(
+    n_customers = n(),
+    avg_purchases = mean(purchases),
+    total_purchases = sum(purchases),
+    avg_tenure = mean(years_member),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_purchases))
+
+customer_summary
+```
+
+### Combining Multiple Tibbles
+
+```{r}
+#| label: combining-tibbles
+
+# Product information
+products <- tibble(
+  product_id = 1:5,
+  product_name = c("Widget A", "Widget B", "Gadget C", "Gadget D", "Tool E"),
+  price = c(19.99, 29.99, 49.99, 39.99, 24.99)
+)
+
+# Sales records
+sales <- tibble(
+  sale_id = 1:10,
+  product_id = sample(1:5, 10, replace = TRUE),
+  quantity = sample(1:5, 10, replace = TRUE),
+  date = seq.Date(from = as.Date("2024-01-01"),
+                  length.out = 10,
+                  by = "day")
+)
+
+# Join tibbles
+sales_details <- sales %>%
+  left_join(products, by = "product_id") %>%
+  mutate(revenue = quantity * price) %>%
+  select(sale_id, date, product_name, quantity, price, revenue)
+
+sales_details
+```
+
+## Best Practices with Tibbles
+
+### 1. Use Consistent Naming
+
+```{r}
+#| label: naming-practices
+
+# Good: Consistent, descriptive names
+good_tibble <- tibble(
+  customer_id = 1:3,
+  customer_name = c("Alice", "Bob", "Charlie"),
+  customer_age = c(25, 30, 35),
+  purchase_amount = c(100, 200, 150)
+)
+
+# Better: Even more consistent with snake_case
+better_tibble <- tibble(
+  id = 1:3,
+  name = c("Alice", "Bob", "Charlie"),
+  age = c(25, 30, 35),
+  amount_purchased = c(100, 200, 150)
+)
+```
+
+### 2. Document Complex Structures
+
+```{r}
+#| label: document-structures
+
+# Document what each column represents
+experiment_data <- tibble(
+  # Unique identifier for each experiment
+  exp_id = 1:5,
+
+  # Timestamp when experiment started (UTC)
+  start_time = Sys.time() + 0:4 * 3600,
+
+  # List of measurements taken during experiment
+  measurements = list(
+    rnorm(10), rnorm(12), rnorm(8), rnorm(15), rnorm(10)
+  ),
+
+  # Nested metadata about experimental conditions
+  conditions = list(
+    list(temp = 20, pressure = 1.0),
+    list(temp = 25, pressure = 1.0),
+    list(temp = 20, pressure = 1.5),
+    list(temp = 25, pressure = 1.5),
+    list(temp = 22.5, pressure = 1.25)
+  )
+)
+
+glimpse(experiment_data)
+```
+
+### 3. Prefer Tibbles for New Code
+
+```{r}
+#| label: prefer-tibbles
+
+# When reading data, get tibbles directly
+# read_csv() returns a tibble
+# read.csv() returns a data frame
+
+# When creating data, use tibble() not data.frame()
+modern_approach <- tibble(
+  x = 1:3,
+  y = c("a", "b", "c")
+)
+
+# When converting existing data frames
+legacy_df <- data.frame(x = 1:3, y = 4:6)
+modernized <- as_tibble(legacy_df)
+```
+
+## Common Operations Reference
+
+```{r}
+#| label: operations-reference
+
+# Create a reference tibble
+ref <- tibble(
+  id = 1:5,
+  value = c(10, 20, 30, 40, 50),
+  category = c("A", "B", "A", "B", "A")
+)
+
+# Selection operations
+ref %>% select(id, value)              # Select columns
+ref %>% select(-category)              # Drop columns
+ref %>% filter(value > 20)             # Filter rows
+ref %>% slice(1:3)                     # Select rows by position
+
+# Modification operations
+ref %>% mutate(double = value * 2)     # Add column
+ref %>% rename(val = value)            # Rename column
+ref %>% arrange(desc(value))           # Sort rows
+
+# Aggregation operations
+ref %>%
+  group_by(category) %>%
+  summarize(
+    mean_value = mean(value),
+    total = sum(value),
+    count = n()
+  )
+```
+
+## Exercises
+
+### Exercise 1: Create and Explore
+Create a tibble with information about 5 books (title, author, year, pages). Print it and use `glimpse()` to examine its structure.
+
+### Exercise 2: List Columns
+Create a tibble where each row represents a student and includes:
+- Name (character)
+- Grades (list of numeric scores)
+- Subjects (list of course names)
+
+### Exercise 3: Tibble vs Data Frame
+Create the same dataset as both a data frame and a tibble. Compare:
+- How they print
+- How they handle column access
+- What happens with partial name matching
+
+### Exercise 4: Complex Analysis
+Using the built-in `diamonds` dataset (convert to tibble first):
+1. Group by cut and color
+2. Calculate average price and carat
+3. Create a list column with all clarity values per group
+4. Find which combination has the highest average price
+
+## Summary
+
+Tibbles are the foundation of tidy data analysis:
+
+- **Safer defaults**: No automatic type conversion, no partial matching
+- **Better printing**: Shows only what fits, includes type information
+- **Modern features**: List columns, nested data structures
+- **Consistent behavior**: Predictable subsetting and modification
+- **Tidyverse integration**: Works seamlessly with all tidyverse functions
+
+As you work more with the tidyverse, tibbles will become your default data structure. They eliminate many of the surprises and inconsistencies of traditional data frames while adding powerful new capabilities.
+
+Next, we'll learn about [importing data with readr](readr-import.qmd) to get your data into tibble format!

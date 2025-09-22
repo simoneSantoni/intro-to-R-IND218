@@ -1,0 +1,808 @@
+---
+title: "Filtering and Selecting Data"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Data Subsetting
+
+Filtering and selecting are fundamental operations in data analysis. The `filter()` function chooses which rows to keep based on conditions, while `select()` chooses which columns to keep. These are often the first steps in any data analysis pipeline.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+
+# Load the sample dataset from Module 5 index
+set.seed(123)
+sales_raw <- tibble(
+  order_id = paste0("ORD-", str_pad(1:1000, 4, pad = "0")),
+  customer_id = sample(paste0("CUST-", 1:200), 1000, replace = TRUE),
+  product_id = sample(paste0("PROD-", 1:50), 1000, replace = TRUE),
+  order_date = sample(seq(ymd("2023-01-01"), ymd("2024-12-31"), by = "day"), 1000, replace = TRUE),
+  quantity = sample(1:10, 1000, replace = TRUE),
+  unit_price = round(runif(1000, 5, 200), 2),
+  discount_pct = sample(c(0, 0.05, 0.10, 0.15, 0.20), 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05)),
+  sales_rep = sample(c("Alice Johnson", "Bob Smith", "Charlie Brown", "Diana Prince", "Eve Wilson"), 1000, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"), 1000, replace = TRUE),
+  customer_type = sample(c("Individual", "Small Business", "Enterprise"), 1000, replace = TRUE, prob = c(0.5, 0.3, 0.2))
+) %>%
+  mutate(
+    sales_rep = ifelse(row_number() %in% sample(1:1000, 50), NA, sales_rep),
+    discount_pct = ifelse(row_number() %in% sample(1:1000, 30), NA, discount_pct),
+    gross_amount = quantity * unit_price,
+    discount_amount = gross_amount * coalesce(discount_pct, 0),
+    net_amount = gross_amount - discount_amount,
+    unit_price = ifelse(row_number() %in% sample(1:1000, 5), unit_price * 100, unit_price),
+    quantity = ifelse(row_number() %in% sample(1:1000, 3), 0, quantity)
+  )
+
+cat("Working with", nrow(sales_raw), "sales transactions\n")
+cat("Columns:", ncol(sales_raw), "variables\n")
+```
+
+## Filtering Rows with filter()
+
+### Basic Filtering
+
+```{r}
+#| label: basic-filtering
+
+# Single condition
+large_orders <- sales_raw %>%
+  filter(net_amount > 1000)
+
+cat("Large orders (>$1000):", nrow(large_orders), "transactions\n")
+
+# Multiple conditions with AND (comma-separated or &)
+premium_orders <- sales_raw %>%
+  filter(
+    net_amount > 500,
+    customer_type == "Enterprise",
+    quantity >= 5
+  )
+
+cat("Premium enterprise orders:", nrow(premium_orders), "transactions\n")
+
+# OR conditions
+discount_or_large <- sales_raw %>%
+  filter(discount_pct > 0.1 | net_amount > 800)
+
+cat("High discount or large orders:", nrow(discount_or_large), "transactions\n")
+
+# NOT conditions
+no_discount <- sales_raw %>%
+  filter(discount_pct == 0 | is.na(discount_pct))
+
+cat("Orders without discount:", nrow(no_discount), "transactions\n")
+```
+
+### Working with Dates
+
+```{r}
+#| label: date-filtering
+
+# Recent orders (last 6 months)
+recent_cutoff <- ymd("2024-06-01")
+recent_orders <- sales_raw %>%
+  filter(order_date >= recent_cutoff)
+
+cat("Recent orders (since June 2024):", nrow(recent_orders), "transactions\n")
+
+# Specific date ranges
+q4_2024 <- sales_raw %>%
+  filter(
+    order_date >= ymd("2024-10-01"),
+    order_date <= ymd("2024-12-31")
+  )
+
+cat("Q4 2024 orders:", nrow(q4_2024), "transactions\n")
+
+# Using between() for ranges
+summer_2024 <- sales_raw %>%
+  filter(between(order_date, ymd("2024-06-01"), ymd("2024-08-31")))
+
+cat("Summer 2024 orders:", nrow(summer_2024), "transactions\n")
+
+# Filtering by day of week or month
+weekend_orders <- sales_raw %>%
+  filter(wday(order_date, label = TRUE) %in% c("Sat", "Sun"))
+
+december_orders <- sales_raw %>%
+  filter(month(order_date) == 12)
+
+cat("Weekend orders:", nrow(weekend_orders), "\n")
+cat("December orders:", nrow(december_orders), "\n")
+```
+
+### String Filtering
+
+```{r}
+#| label: string-filtering
+
+# Exact matches
+alice_orders <- sales_raw %>%
+  filter(sales_rep == "Alice Johnson")
+
+# Pattern matching with str_detect()
+johnson_reps <- sales_raw %>%
+  filter(str_detect(sales_rep, "Johnson"))
+
+# Case-insensitive patterns
+alice_any_case <- sales_raw %>%
+  filter(str_detect(str_to_lower(sales_rep), "alice"))
+
+# Multiple string patterns
+senior_reps <- sales_raw %>%
+  filter(sales_rep %in% c("Alice Johnson", "Diana Prince"))
+
+# String starts with or ends with
+north_products <- sales_raw %>%
+  filter(str_starts(product_id, "PROD-1"))
+
+cat("Alice's orders:", nrow(alice_orders), "\n")
+cat("Johnson family reps:", nrow(johnson_reps), "\n")
+cat("Senior reps orders:", nrow(senior_reps), "\n")
+```
+
+### Handling Missing Values
+
+```{r}
+#| label: missing-value-filtering
+
+# Remove rows with missing sales rep
+complete_sales_rep <- sales_raw %>%
+  filter(!is.na(sales_rep))
+
+# Only rows with missing values
+missing_sales_rep <- sales_raw %>%
+  filter(is.na(sales_rep))
+
+# Complete cases only (no missing values in any column)
+complete_cases <- sales_raw %>%
+  filter(complete.cases(.))
+
+# Rows with any missing values
+any_missing <- sales_raw %>%
+  filter(!complete.cases(.))
+
+cat("Orders with sales rep assigned:", nrow(complete_sales_rep), "\n")
+cat("Orders missing sales rep:", nrow(missing_sales_rep), "\n")
+cat("Complete cases (no missing data):", nrow(complete_cases), "\n")
+cat("Cases with any missing data:", nrow(any_missing), "\n")
+```
+
+### Advanced Filtering Techniques
+
+```{r}
+#| label: advanced-filtering
+
+# Using %in% for multiple values
+target_regions <- c("North", "East")
+target_region_orders <- sales_raw %>%
+  filter(region %in% target_regions)
+
+# Complex logical conditions
+complex_filter <- sales_raw %>%
+  filter(
+    (customer_type == "Enterprise" & net_amount > 500) |
+    (customer_type == "Small Business" & net_amount > 200) |
+    (customer_type == "Individual" & net_amount > 100)
+  )
+
+# Filtering based on ranking
+top_10_percent <- sales_raw %>%
+  filter(net_amount >= quantile(net_amount, 0.9, na.rm = TRUE))
+
+# Outlier detection and removal
+q1 <- quantile(sales_raw$net_amount, 0.25, na.rm = TRUE)
+q3 <- quantile(sales_raw$net_amount, 0.75, na.rm = TRUE)
+iqr <- q3 - q1
+outlier_bounds <- c(q1 - 1.5 * iqr, q3 + 1.5 * iqr)
+
+no_outliers <- sales_raw %>%
+  filter(between(net_amount, outlier_bounds[1], outlier_bounds[2]))
+
+cat("Target regions:", nrow(target_region_orders), "orders\n")
+cat("Complex filter:", nrow(complex_filter), "orders\n")
+cat("Top 10% by value:", nrow(top_10_percent), "orders\n")
+cat("After removing outliers:", nrow(no_outliers), "orders\n")
+```
+
+## Selecting Columns with select()
+
+### Basic Column Selection
+
+```{r}
+#| label: basic-selecting
+
+# Select specific columns
+basic_info <- sales_raw %>%
+  select(order_id, customer_id, order_date, net_amount)
+
+# Select columns by position
+first_five <- sales_raw %>%
+  select(1:5)
+
+# Select all except certain columns
+no_internals <- sales_raw %>%
+  select(-gross_amount, -discount_amount)
+
+# Reorder columns
+reordered <- sales_raw %>%
+  select(order_id, order_date, customer_id, region, everything())
+
+cat("Basic info columns:", ncol(basic_info), "\n")
+cat("First five columns:", ncol(first_five), "\n")
+cat("Without internal calculations:", ncol(no_internals), "\n")
+cat("Reordered columns:", paste(names(reordered)[1:6], collapse = ", "), "...\n")
+```
+
+### Helper Functions for Selection
+
+```{r}
+#| label: selection-helpers
+
+# Select columns by name pattern
+id_columns <- sales_raw %>%
+  select(ends_with("_id"))
+
+# Select by data type
+numeric_columns <- sales_raw %>%
+  select(where(is.numeric))
+
+character_columns <- sales_raw %>%
+  select(where(is.character))
+
+# Select columns containing certain text
+amount_columns <- sales_raw %>%
+  select(contains("amount"))
+
+# Select columns matching regex
+date_and_id <- sales_raw %>%
+  select(matches("(date|_id)"))
+
+# Multiple helper functions
+key_metrics <- sales_raw %>%
+  select(starts_with("order"), contains("amount"), region, customer_type)
+
+cat("ID columns:", ncol(id_columns), "variables\n")
+cat("Numeric columns:", ncol(numeric_columns), "variables\n")
+cat("Character columns:", ncol(character_columns), "variables\n")
+cat("Amount columns:", ncol(amount_columns), "variables\n")
+cat("Key metrics:", ncol(key_metrics), "variables\n")
+
+# Show the helper function results
+cat("\nID columns:", paste(names(id_columns), collapse = ", "), "\n")
+cat("Amount columns:", paste(names(amount_columns), collapse = ", "), "\n")
+```
+
+### Renaming During Selection
+
+```{r}
+#| label: rename-select
+
+# Rename while selecting
+renamed_selection <- sales_raw %>%
+  select(
+    order = order_id,
+    customer = customer_id,
+    date = order_date,
+    value = net_amount,
+    rep = sales_rep
+  )
+
+# Rename with everything()
+cleaner_names <- sales_raw %>%
+  select(
+    order_number = order_id,
+    customer_number = customer_id,
+    everything()
+  )
+
+cat("Renamed selection columns:\n")
+print(names(renamed_selection))
+
+cat("\nCleaner names (first 8 columns):\n")
+print(names(cleaner_names)[1:8])
+```
+
+## Combining filter() and select()
+
+### Common Patterns
+
+```{r}
+#| label: filter-select-combo
+
+# Filter then select (most common)
+recent_summary <- sales_raw %>%
+  filter(
+    order_date >= ymd("2024-01-01"),
+    !is.na(sales_rep)
+  ) %>%
+  select(order_id, order_date, sales_rep, region, net_amount, customer_type)
+
+# Select then filter (less common, but sometimes useful)
+high_value_basics <- sales_raw %>%
+  select(order_id, customer_id, net_amount, customer_type) %>%
+  filter(net_amount > 500)
+
+# Complex combination with multiple steps
+analysis_ready <- sales_raw %>%
+  # Remove problematic data
+  filter(
+    quantity > 0,                    # No zero quantities
+    unit_price <= 300,               # Remove pricing errors
+    !is.na(sales_rep)                # Must have assigned rep
+  ) %>%
+  # Select relevant columns
+  select(
+    order_id,
+    customer_id,
+    order_date,
+    quantity,
+    unit_price,
+    discount_pct,
+    net_amount,
+    sales_rep,
+    region,
+    customer_type
+  ) %>%
+  # Add derived columns for analysis
+  mutate(
+    order_month = floor_date(order_date, "month"),
+    is_discounted = !is.na(discount_pct) & discount_pct > 0,
+    order_size = case_when(
+      net_amount >= 1000 ~ "Large",
+      net_amount >= 300 ~ "Medium",
+      TRUE ~ "Small"
+    )
+  )
+
+cat("Recent summary:", nrow(recent_summary), "rows,", ncol(recent_summary), "columns\n")
+cat("Analysis ready:", nrow(analysis_ready), "rows,", ncol(analysis_ready), "columns\n")
+
+# Show the first few rows of analysis-ready data
+print(head(analysis_ready, 5))
+```
+
+### Working with Grouped Data
+
+```{r}
+#| label: grouped-filtering
+
+# Filter within groups
+top_orders_by_region <- sales_raw %>%
+  group_by(region) %>%
+  filter(net_amount >= quantile(net_amount, 0.9, na.rm = TRUE)) %>%
+  ungroup()
+
+# Select and filter with grouping
+regional_summaries <- sales_raw %>%
+  filter(!is.na(sales_rep)) %>%
+  group_by(region, sales_rep) %>%
+  select(region, sales_rep, net_amount, quantity) %>%
+  summarise(
+    total_sales = sum(net_amount),
+    total_orders = n(),
+    avg_order_value = mean(net_amount),
+    .groups = "drop"
+  )
+
+cat("Top orders by region:", nrow(top_orders_by_region), "orders\n")
+cat("Regional summaries:", nrow(regional_summaries), "rep-region combinations\n")
+
+print(head(regional_summaries))
+```
+
+## Advanced Filtering Techniques
+
+### Using filter() with Window Functions
+
+```{r}
+#| label: window-filtering
+
+# Top N orders per customer
+top_orders_per_customer <- sales_raw %>%
+  group_by(customer_id) %>%
+  filter(rank(desc(net_amount)) <= 3) %>%
+  arrange(customer_id, desc(net_amount)) %>%
+  ungroup()
+
+# Orders above regional average
+above_regional_avg <- sales_raw %>%
+  group_by(region) %>%
+  filter(net_amount > mean(net_amount, na.rm = TRUE)) %>%
+  ungroup()
+
+# Recent orders within each customer
+recent_per_customer <- sales_raw %>%
+  group_by(customer_id) %>%
+  filter(order_date >= max(order_date) - days(30)) %>%
+  ungroup()
+
+cat("Top 3 orders per customer:", nrow(top_orders_per_customer), "orders\n")
+cat("Above regional average:", nrow(above_regional_avg), "orders\n")
+cat("Recent per customer:", nrow(recent_per_customer), "orders\n")
+```
+
+### Conditional Filtering
+
+```{r}
+#| label: conditional-filtering
+
+# Filter based on conditions in other columns
+inconsistent_discounts <- sales_raw %>%
+  filter(
+    case_when(
+      customer_type == "Enterprise" ~ discount_pct <= 0.15,
+      customer_type == "Small Business" ~ discount_pct <= 0.10,
+      customer_type == "Individual" ~ discount_pct <= 0.05,
+      TRUE ~ TRUE
+    )
+  )
+
+# Filter using if_else logic
+weekend_enterprise <- sales_raw %>%
+  filter(
+    if_else(
+      wday(order_date) %in% c(1, 7),  # Weekend
+      customer_type == "Enterprise",   # Only enterprise on weekends
+      TRUE                            # Any customer type on weekdays
+    )
+  )
+
+cat("Consistent discount policies:", nrow(inconsistent_discounts), "orders\n")
+cat("Weekend enterprise filter:", nrow(weekend_enterprise), "orders\n")
+```
+
+## Performance and Best Practices
+
+### Efficient Filtering
+
+```{r}
+#| label: efficient-filtering
+
+# Early filtering reduces computation
+# Good: Filter early
+efficient_pipeline <- sales_raw %>%
+  filter(
+    order_date >= ymd("2024-01-01"),
+    !is.na(sales_rep),
+    net_amount > 100
+  ) %>%
+  select(order_id, customer_id, order_date, net_amount, region) %>%
+  mutate(
+    quarter = quarter(order_date),
+    high_value = net_amount > 500
+  )
+
+# Less efficient: Filter after expensive operations
+# (We won't run this, but it shows the pattern to avoid)
+# inefficient_pipeline <- sales_raw %>%
+#   mutate(complex_calculation = net_amount * some_expensive_function()) %>%
+#   left_join(large_table) %>%
+#   filter(order_date >= ymd("2024-01-01"))
+
+# Use specific conditions instead of complex ones
+# Good: Specific numeric ranges
+specific_range <- sales_raw %>%
+  filter(between(net_amount, 100, 1000))
+
+# Less good: Complex calculations in filter
+# avoid_complex <- sales_raw %>%
+#   filter(log(net_amount) > some_threshold)
+
+cat("Efficient pipeline result:", nrow(efficient_pipeline), "rows\n")
+cat("Specific range filter:", nrow(specific_range), "rows\n")
+```
+
+### Readable Filter Conditions
+
+```{r}
+#| label: readable-filters
+
+# Create intermediate variables for complex conditions
+high_value_threshold <- 1000
+recent_date_cutoff <- ymd("2024-06-01")
+target_customer_types <- c("Enterprise", "Small Business")
+
+readable_filter <- sales_raw %>%
+  filter(
+    net_amount >= high_value_threshold,
+    order_date >= recent_date_cutoff,
+    customer_type %in% target_customer_types,
+    !is.na(sales_rep)
+  )
+
+# Use meaningful helper functions
+is_valid_order <- function(data) {
+  data %>%
+    filter(
+      quantity > 0,
+      unit_price > 0,
+      unit_price <= 500,  # Remove pricing errors
+      !is.na(sales_rep)
+    )
+}
+
+valid_orders <- sales_raw %>%
+  is_valid_order()
+
+cat("Readable filter:", nrow(readable_filter), "orders\n")
+cat("Valid orders:", nrow(valid_orders), "orders\n")
+```
+
+## Real-World Examples
+
+### Example 1: Customer Segmentation Analysis
+
+```{r}
+#| label: customer-segmentation
+
+# Identify different customer segments for targeted analysis
+customer_segments <- sales_raw %>%
+  filter(
+    !is.na(sales_rep),
+    quantity > 0,
+    order_date >= ymd("2024-01-01")
+  ) %>%
+  group_by(customer_id) %>%
+  summarise(
+    total_orders = n(),
+    total_spent = sum(net_amount),
+    avg_order_value = mean(net_amount),
+    first_order = min(order_date),
+    last_order = max(order_date),
+    customer_type = first(customer_type),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    recency_days = as.numeric(Sys.Date() - last_order),
+    customer_lifetime = as.numeric(last_order - first_order),
+    segment = case_when(
+      total_spent >= 5000 & recency_days <= 30 ~ "VIP Active",
+      total_spent >= 5000 & recency_days > 30 ~ "VIP At Risk",
+      total_spent >= 1000 & recency_days <= 60 ~ "Regular Active",
+      total_spent >= 1000 & recency_days > 60 ~ "Regular At Risk",
+      recency_days <= 30 ~ "New Active",
+      TRUE ~ "Low Value"
+    )
+  )
+
+# Filter for each segment
+vip_customers <- customer_segments %>%
+  filter(str_starts(segment, "VIP"))
+
+at_risk_customers <- customer_segments %>%
+  filter(str_ends(segment, "At Risk"))
+
+# Segment summary
+segment_summary <- customer_segments %>%
+  count(segment, sort = TRUE) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1))
+
+cat("Customer segmentation results:\n")
+print(segment_summary)
+
+cat("\nVIP customers:", nrow(vip_customers), "\n")
+cat("At-risk customers:", nrow(at_risk_customers), "\n")
+```
+
+### Example 2: Sales Performance Analysis
+
+```{r}
+#| label: sales-performance
+
+# Analyze sales rep performance with filters
+rep_performance <- sales_raw %>%
+  filter(
+    !is.na(sales_rep),
+    order_date >= ymd("2024-01-01"),
+    quantity > 0,
+    unit_price <= 300  # Remove pricing errors
+  ) %>%
+  group_by(sales_rep, region) %>%
+  summarise(
+    total_sales = sum(net_amount),
+    order_count = n(),
+    avg_order_value = mean(net_amount),
+    unique_customers = n_distinct(customer_id),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    performance_score = scale(total_sales)[,1] + scale(unique_customers)[,1],
+    performance_tier = case_when(
+      performance_score >= 1 ~ "Top Performer",
+      performance_score >= 0 ~ "Good Performer",
+      performance_score >= -1 ~ "Average Performer",
+      TRUE ~ "Needs Improvement"
+    )
+  )
+
+# Filter for different performance tiers
+top_performers <- rep_performance %>%
+  filter(performance_tier == "Top Performer")
+
+underperformers <- rep_performance %>%
+  filter(performance_tier == "Needs Improvement")
+
+cat("Sales rep performance analysis:\n")
+print(rep_performance %>% arrange(desc(performance_score)))
+
+cat("\nTop performers:", nrow(top_performers), "\n")
+cat("Need improvement:", nrow(underperformers), "\n")
+```
+
+### Example 3: Product Analysis
+
+```{r}
+#| label: product-analysis
+
+# Analyze product performance across different dimensions
+product_analysis <- sales_raw %>%
+  filter(
+    !is.na(sales_rep),
+    quantity > 0,
+    order_date >= ymd("2024-01-01")
+  ) %>%
+  group_by(product_id, region, customer_type) %>%
+  summarise(
+    units_sold = sum(quantity),
+    revenue = sum(net_amount),
+    orders = n(),
+    avg_price = mean(unit_price),
+    .groups = "drop"
+  ) %>%
+  group_by(product_id) %>%
+  mutate(
+    product_total_revenue = sum(revenue),
+    regional_share = revenue / product_total_revenue
+  ) %>%
+  ungroup()
+
+# Filter for top products
+top_products <- product_analysis %>%
+  group_by(product_id) %>%
+  summarise(total_revenue = sum(revenue), .groups = "drop") %>%
+  filter(total_revenue >= quantile(total_revenue, 0.8)) %>%
+  pull(product_id)
+
+top_product_details <- product_analysis %>%
+  filter(product_id %in% top_products) %>%
+  arrange(desc(revenue))
+
+# Products that perform well in specific segments
+enterprise_favorites <- product_analysis %>%
+  filter(customer_type == "Enterprise") %>%
+  group_by(product_id) %>%
+  summarise(enterprise_revenue = sum(revenue), .groups = "drop") %>%
+  filter(enterprise_revenue >= quantile(enterprise_revenue, 0.9))
+
+cat("Product analysis results:\n")
+cat("Top products (top 20%):", length(top_products), "products\n")
+cat("Enterprise favorites (top 10%):", nrow(enterprise_favorites), "products\n")
+
+print(head(top_product_details))
+```
+
+## Common Pitfalls and Solutions
+
+### Missing Data Handling
+
+```{r}
+#| label: missing-data-pitfalls
+
+# Pitfall: Forgetting about NA values in conditions
+# This might not work as expected
+# problematic_filter <- sales_raw %>%
+#   filter(discount_pct > 0.1)  # Excludes NA values!
+
+# Better: Explicitly handle NA values
+explicit_na_handling <- sales_raw %>%
+  filter(!is.na(discount_pct) & discount_pct > 0.1)
+
+# Or include NA values if appropriate
+include_na <- sales_raw %>%
+  filter(is.na(discount_pct) | discount_pct > 0.1)
+
+cat("Explicit NA handling:", nrow(explicit_na_handling), "rows\n")
+cat("Including NA values:", nrow(include_na), "rows\n")
+```
+
+### Logical Operator Precedence
+
+```{r}
+#| label: logical-precedence
+
+# Pitfall: Operator precedence can cause unexpected results
+# This might not work as intended:
+# ambiguous <- sales_raw %>%
+#   filter(customer_type == "Enterprise" | customer_type == "Small Business" & net_amount > 500)
+
+# Better: Use parentheses for clarity
+clear_logic <- sales_raw %>%
+  filter(
+    (customer_type == "Enterprise" | customer_type == "Small Business") &
+    net_amount > 500
+  )
+
+# Or use %in% for multiple values
+cleaner_multiple <- sales_raw %>%
+  filter(
+    customer_type %in% c("Enterprise", "Small Business"),
+    net_amount > 500
+  )
+
+cat("Clear logic with parentheses:", nrow(clear_logic), "rows\n")
+cat("Cleaner multiple value filter:", nrow(cleaner_multiple), "rows\n")
+```
+
+## Exercises
+
+### Exercise 1: Data Quality Assessment
+Using the sales dataset:
+1. Filter for orders with potential data quality issues
+2. Identify orders with suspicious pricing (very high or very low)
+3. Find orders with missing critical information
+4. Create a "clean" dataset by removing problematic records
+
+### Exercise 2: Time-Based Analysis
+Create filters for:
+1. Orders from the last quarter
+2. Weekend vs weekday patterns
+3. Month-end effects (last 3 days of each month)
+4. Seasonal patterns (summer vs winter orders)
+
+### Exercise 3: Customer Analysis
+Filter and analyze:
+1. First-time customers vs repeat customers
+2. High-value customers (top 10% by total spending)
+3. Customers with recent activity
+4. Customers who haven't ordered in 90+ days
+
+### Exercise 4: Advanced Selection
+Practice column selection:
+1. Create different views of the data for different stakeholders
+2. Select columns based on data types and patterns
+3. Rename columns for better readability
+4. Create summary datasets with only key metrics
+
+## Summary
+
+Filtering and selecting are the foundation of data manipulation in dplyr:
+
+### Key Functions:
+- **filter()**: Choose rows based on conditions
+- **select()**: Choose columns by name, pattern, or type
+- **Helper functions**: `starts_with()`, `ends_with()`, `contains()`, `where()`
+
+### Best Practices:
+- **Filter early** in your pipeline to improve performance
+- **Handle missing values explicitly** in filter conditions
+- **Use meaningful variable names** for complex conditions
+- **Combine multiple simple filters** rather than one complex filter
+- **Test filters incrementally** to ensure they work as expected
+
+### Common Patterns:
+- Filter then select (most common workflow)
+- Use `%in%` for multiple value matching
+- Combine with date functions for time-based analysis
+- Use window functions for relative filtering
+
+### Remember:
+- Logical operators: `&` (AND), `|` (OR), `!` (NOT)
+- Missing values require special handling
+- Use parentheses to clarify complex logical conditions
+- Performance matters: filter early and select what you need
+
+Mastering filtering and selecting sets you up for success with all other dplyr operations. These skills form the foundation for every data analysis pipeline!
+
+Next: **[Mutating and Arranging Data](mutating-arranging.qmd)**

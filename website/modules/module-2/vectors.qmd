@@ -1,0 +1,597 @@
+---
+title: "Vectors: R's Building Blocks"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Vectors
+
+Vectors are the most fundamental data structure in R. In fact, even single values in R are vectors with one element! Understanding vectors is crucial because virtually everything in R is built upon them.
+
+A **vector** is a sequence of data elements of the same type. Think of it as a container that holds multiple values in a specific order.
+
+## Creating Vectors
+
+### The `c()` Function
+
+The most common way to create vectors is using the `c()` function (which stands for "combine" or "concatenate"):
+
+```{r}
+#| label: vector-creation
+
+# Numeric vectors
+numbers <- c(1, 2, 3, 4, 5)
+temperatures <- c(72.5, 75.2, 68.9, 80.1, 77.3)
+
+# Character vectors
+names <- c("Alice", "Bob", "Charlie", "Diana")
+colors <- c("red", "green", "blue", "yellow")
+
+# Logical vectors
+answers <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+
+# Print the vectors
+print(numbers)
+print(names)
+print(answers)
+```
+
+### Vector Properties
+
+Every vector has important properties:
+
+```{r}
+#| label: vector-properties
+
+scores <- c(85, 92, 78, 96, 88)
+
+# Length: number of elements
+length(scores)
+
+# Type: what kind of data
+typeof(scores)
+
+# Class: object class
+class(scores)
+
+# Structure: comprehensive overview
+str(scores)
+```
+
+### Creating Sequences
+
+R provides several ways to create vectors with patterns:
+
+```{r}
+#| label: vector-sequences
+
+# Simple sequences
+seq1 <- 1:10          # 1, 2, 3, ..., 10
+seq2 <- 10:1          # 10, 9, 8, ..., 1
+
+# Using seq() function
+seq3 <- seq(from = 0, to = 100, by = 10)    # 0, 10, 20, ..., 100
+seq4 <- seq(0, 1, length.out = 11)         # 11 equally spaced numbers
+
+# Repeated values
+rep1 <- rep(5, times = 8)                  # 5, 5, 5, 5, 5, 5, 5, 5
+rep2 <- rep(c(1, 2, 3), times = 3)        # 1, 2, 3, 1, 2, 3, 1, 2, 3
+rep3 <- rep(c(1, 2, 3), each = 3)         # 1, 1, 1, 2, 2, 2, 3, 3, 3
+
+print(seq3)
+print(rep2)
+print(rep3)
+```
+
+## Vector Indexing and Subsetting
+
+### Accessing Elements by Position
+
+```{r}
+#| label: vector-indexing
+
+fruits <- c("apple", "banana", "cherry", "date", "elderberry")
+
+# Single element (note: R uses 1-based indexing!)
+fruits[1]     # First element
+fruits[3]     # Third element
+fruits[5]     # Last element
+
+# Multiple elements
+fruits[c(1, 3, 5)]    # Elements 1, 3, and 5
+fruits[1:3]           # Elements 1 through 3
+fruits[c(2, 4)]       # Elements 2 and 4
+```
+
+### Negative Indexing
+
+Use negative indices to exclude elements:
+
+```{r}
+#| label: negative-indexing
+
+numbers <- c(10, 20, 30, 40, 50)
+
+# Exclude specific elements
+numbers[-1]           # All except the first
+numbers[-c(1, 5)]     # All except first and last
+numbers[-(2:4)]       # All except elements 2 through 4
+
+print(numbers[-c(1, 5)])
+```
+
+### Logical Indexing
+
+Use logical vectors to subset based on conditions:
+
+```{r}
+#| label: logical-indexing
+
+ages <- c(23, 35, 28, 42, 19, 31, 27)
+
+# Find elements meeting a condition
+ages > 30             # Logical vector
+ages[ages > 30]       # Elements where condition is TRUE
+
+# Multiple conditions
+ages[ages >= 25 & ages <= 35]     # Ages between 25 and 35
+ages[ages < 25 | ages > 40]       # Ages less than 25 OR greater than 40
+
+# Store logical vector for reuse
+adults <- ages >= 18
+ages[adults]
+```
+
+### Subsetting with Names
+
+Vectors can have named elements:
+
+```{r}
+#| label: named-vectors
+
+# Create named vector
+student_grades <- c(alice = 92, bob = 87, charlie = 95, diana = 89)
+print(student_grades)
+
+# Access by name
+student_grades["alice"]
+student_grades[c("alice", "charlie")]
+
+# Get names
+names(student_grades)
+
+# Add names to existing vector
+scores <- c(85, 90, 78, 92)
+names(scores) <- c("Math", "Science", "English", "History")
+print(scores)
+```
+
+## Element-wise Operations
+
+One of R's greatest strengths is **vectorization** - operations work on entire vectors automatically:
+
+### Arithmetic Operations
+
+```{r}
+#| label: vector-arithmetic
+
+# Create vectors
+a <- c(2, 4, 6, 8, 10)
+b <- c(1, 2, 3, 4, 5)
+
+# Element-wise arithmetic
+a + b     # Add corresponding elements
+a - b     # Subtract corresponding elements
+a * b     # Multiply corresponding elements
+a / b     # Divide corresponding elements
+a ^ b     # Raise a to the power of b
+
+# Operations with single values (recycling)
+a + 10    # Add 10 to each element
+a * 2     # Multiply each element by 2
+a / 2     # Divide each element by 2
+
+print(a + b)
+print(a * 2)
+```
+
+### Comparison Operations
+
+```{r}
+#| label: vector-comparisons
+
+scores <- c(85, 92, 78, 96, 88, 74, 91)
+
+# Comparisons return logical vectors
+high_scores <- scores > 90
+passing_scores <- scores >= 80
+failing_scores <- scores < 70
+
+print(high_scores)
+print(passing_scores)
+
+# Count TRUE values
+sum(high_scores)      # How many scored above 90?
+sum(passing_scores)   # How many passed?
+
+# Percentage calculations
+mean(high_scores) * 100    # Percentage with high scores
+```
+
+### Logical Operations
+
+```{r}
+#| label: vector-logical
+
+x <- c(TRUE, FALSE, TRUE, FALSE, TRUE)
+y <- c(FALSE, FALSE, TRUE, TRUE, TRUE)
+
+# Element-wise logical operations
+x & y     # AND operation
+x | y     # OR operation
+!x        # NOT operation
+
+print(x & y)
+print(x | y)
+```
+
+## Vector Functions
+
+R provides many built-in functions that work with vectors:
+
+### Mathematical Functions
+
+```{r}
+#| label: vector-math-functions
+
+values <- c(1, 4, 9, 16, 25)
+
+# Basic functions
+sum(values)           # Sum of all elements
+mean(values)          # Average
+median(values)        # Median
+min(values)           # Minimum value
+max(values)           # Maximum value
+range(values)         # Min and max
+var(values)           # Variance
+sd(values)            # Standard deviation
+
+# Element-wise mathematical functions
+sqrt(values)          # Square root of each element
+log(values)           # Natural logarithm
+round(sqrt(values), 2) # Round to 2 decimal places
+
+print(sqrt(values))
+```
+
+### Statistical Functions
+
+```{r}
+#| label: vector-stats
+
+# Generate some sample data
+set.seed(123)
+sample_data <- round(rnorm(20, mean = 75, sd = 10))
+
+# Comprehensive statistics
+summary(sample_data)
+
+# Quantiles
+quantile(sample_data)
+quantile(sample_data, probs = c(0.25, 0.5, 0.75, 0.95))
+
+# Ranking and ordering
+sort(sample_data)                    # Sort in ascending order
+sort(sample_data, decreasing = TRUE) # Sort in descending order
+order(sample_data)                   # Indices that would sort the vector
+rank(sample_data)                    # Ranks of each element
+```
+
+### Finding and Counting
+
+```{r}
+#| label: vector-finding
+
+grades <- c(85, 92, 78, 96, 88, 74, 91, 89)
+
+# Find specific values
+which(grades > 90)           # Positions of elements > 90
+which.max(grades)            # Position of maximum value
+which.min(grades)            # Position of minimum value
+
+# Check for presence
+85 %in% grades               # Is 85 in the vector?
+c(85, 100) %in% grades       # Which of these are in the vector?
+
+# Count specific values
+sum(grades == 85)            # How many times does 85 appear?
+sum(grades > 90)             # How many scores above 90?
+
+# Unique values
+duplicated_values <- c(1, 2, 2, 3, 3, 3, 4)
+unique(duplicated_values)    # Get unique values
+duplicated(duplicated_values) # Which are duplicates?
+```
+
+## Modifying Vectors
+
+### Adding Elements
+
+```{r}
+#| label: vector-modification
+
+# Start with a vector
+original <- c(1, 2, 3)
+
+# Add elements to the end
+extended <- c(original, 4, 5)
+print(extended)
+
+# Add elements to the beginning
+prepended <- c(0, original)
+print(prepended)
+
+# Insert elements in the middle
+# (This requires more complex indexing)
+middle_insert <- c(original[1:2], 2.5, original[3])
+print(middle_insert)
+```
+
+### Replacing Elements
+
+```{r}
+#| label: vector-replacement
+
+scores <- c(85, 92, 78, 96, 88)
+
+# Replace specific positions
+scores[3] <- 82          # Replace 3rd element
+scores[c(1, 5)] <- c(87, 90)  # Replace 1st and 5th elements
+
+print(scores)
+
+# Conditional replacement
+ages <- c(23, 35, 28, 42, 19, 31, 27)
+ages[ages < 25] <- 25    # Set minimum age to 25
+print(ages)
+```
+
+### Removing Elements
+
+```{r}
+#| label: vector-removal
+
+numbers <- c(10, 20, 30, 40, 50)
+
+# Remove by position
+shortened <- numbers[-3]              # Remove 3rd element
+multiple_removed <- numbers[-c(1, 5)] # Remove 1st and 5th
+
+print(shortened)
+print(multiple_removed)
+
+# Remove by condition
+grades <- c(85, 92, 78, 96, 88, 74, 91)
+passing_only <- grades[grades >= 80]  # Keep only passing grades
+print(passing_only)
+```
+
+## Working with Missing Values
+
+### Creating and Detecting Missing Values
+
+```{r}
+#| label: missing-values
+
+# Vector with missing values
+incomplete_data <- c(1, 2, NA, 4, 5, NA, 7)
+
+# Detect missing values
+is.na(incomplete_data)
+which(is.na(incomplete_data))     # Positions of NA values
+sum(is.na(incomplete_data))       # Count of NA values
+
+# Complete cases (non-missing)
+complete.cases(incomplete_data)
+incomplete_data[complete.cases(incomplete_data)]
+```
+
+### Handling Missing Values in Calculations
+
+```{r}
+#| label: na-calculations
+
+data_with_na <- c(10, 15, NA, 20, 25, NA, 30)
+
+# Many functions return NA if any element is NA
+mean(data_with_na)           # Returns NA
+sum(data_with_na)            # Returns NA
+
+# Use na.rm = TRUE to exclude NA values
+mean(data_with_na, na.rm = TRUE)
+sum(data_with_na, na.rm = TRUE)
+sd(data_with_na, na.rm = TRUE)
+
+# Functions that handle NA by default
+length(data_with_na)         # Counts NA values too
+length(na.omit(data_with_na)) # Length after removing NA
+```
+
+## Vector Recycling
+
+When vectors of different lengths are used together, R "recycles" the shorter vector:
+
+```{r}
+#| label: vector-recycling
+
+# Vectors of different lengths
+long_vector <- c(1, 2, 3, 4, 5, 6)
+short_vector <- c(10, 20)
+
+# The short vector gets recycled
+result <- long_vector + short_vector
+print(result)  # c(11, 22, 13, 24, 15, 26)
+
+# Recycling with single values
+add_five <- long_vector + 5  # 5 is recycled to match length
+print(add_five)
+
+# Warning when lengths don't divide evenly
+uneven_example <- c(1, 2, 3, 4, 5) + c(10, 20, 30)  # Warning!
+```
+
+## Practical Examples
+
+### Example 1: Grade Analysis
+
+```{r}
+#| label: grade-analysis
+
+# Student grades for a class
+student_names <- c("Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace")
+midterm_scores <- c(85, 78, 92, 88, 79, 94, 87)
+final_scores <- c(88, 82, 89, 91, 83, 96, 90)
+
+# Calculate overall grades (60% final, 40% midterm)
+overall_grades <- 0.4 * midterm_scores + 0.6 * final_scores
+
+# Assign letter grades
+letter_grades <- ifelse(overall_grades >= 90, "A",
+                       ifelse(overall_grades >= 80, "B",
+                             ifelse(overall_grades >= 70, "C",
+                                   ifelse(overall_grades >= 60, "D", "F"))))
+
+# Create a summary
+grade_summary <- data.frame(
+  Student = student_names,
+  Midterm = midterm_scores,
+  Final = final_scores,
+  Overall = round(overall_grades, 1),
+  Grade = letter_grades
+)
+
+print(grade_summary)
+
+# Class statistics
+cat("Class average:", round(mean(overall_grades), 1), "\n")
+cat("Students with A:", sum(letter_grades == "A"), "\n")
+cat("Passing rate:", round(mean(overall_grades >= 60) * 100, 1), "%\n")
+```
+
+### Example 2: Temperature Conversion
+
+```{r}
+#| label: temperature-conversion
+
+# Daily temperatures in Fahrenheit
+fahrenheit_temps <- c(68, 72, 75, 71, 69, 74, 78, 76, 73, 70)
+
+# Convert to Celsius
+celsius_temps <- (fahrenheit_temps - 32) * 5/9
+
+# Categorize temperatures
+temp_categories <- ifelse(celsius_temps < 15, "Cold",
+                         ifelse(celsius_temps < 25, "Mild", "Warm"))
+
+# Summary
+temp_summary <- data.frame(
+  Day = 1:10,
+  Fahrenheit = fahrenheit_temps,
+  Celsius = round(celsius_temps, 1),
+  Category = temp_categories
+)
+
+print(temp_summary)
+
+# Find extreme days
+hottest_day <- which.max(celsius_temps)
+coldest_day <- which.min(celsius_temps)
+
+cat("Hottest day:", hottest_day, "with", round(celsius_temps[hottest_day], 1), "°C\n")
+cat("Coldest day:", coldest_day, "with", round(celsius_temps[coldest_day], 1), "°C\n")
+```
+
+## Common Mistakes and Best Practices
+
+### 1. Remember 1-based Indexing
+
+```{r}
+#| label: indexing-reminder
+
+my_vector <- c("a", "b", "c", "d", "e")
+
+# R uses 1-based indexing (not 0-based like many languages)
+my_vector[1]  # First element (not my_vector[0])
+my_vector[5]  # Last element
+```
+
+### 2. Vector Type Consistency
+
+```{r}
+#| label: type-consistency
+
+# Vectors can only hold one type of data
+mixed_attempt <- c(1, "two", 3, "four")
+print(mixed_attempt)  # Everything becomes character!
+typeof(mixed_attempt)
+
+# Use lists for mixed types (covered in next section)
+```
+
+### 3. NA Propagation
+
+```{r}
+#| label: na-propagation
+
+# One NA can affect entire calculations
+values_with_na <- c(1, 2, NA, 4, 5)
+mean(values_with_na)           # Returns NA
+mean(values_with_na, na.rm = TRUE)  # Proper way to handle
+```
+
+## Exercises
+
+### Exercise 1: Vector Creation and Manipulation
+1. Create a vector of the first 20 even numbers
+2. Create a vector with your name repeated 5 times
+3. Create a vector of 15 random numbers between 1 and 100
+
+### Exercise 2: Data Analysis Practice
+Given these test scores: `scores <- c(78, 85, 92, 88, 79, 95, 87, 83, 90, 86)`
+
+1. Calculate the mean, median, and standard deviation
+2. Find how many scores are above average
+3. Identify the positions of scores above 90
+4. Replace any score below 80 with 80
+
+### Exercise 3: Real-world Application
+You have monthly sales data: `sales <- c(12000, 15000, 13500, 16000, 14200, 17500)`
+
+1. Calculate the total yearly sales
+2. Find the month with highest sales
+3. Calculate the percentage increase from the first month to the last month
+4. Identify months where sales exceeded $15,000
+
+## Summary
+
+Vectors are fundamental to R programming:
+
+- **Creation**: Use `c()`, sequences (`1:10`, `seq()`), and repetition (`rep()`)
+- **Indexing**: Access elements by position `[1]`, multiple positions `[c(1,3,5)]`, or conditions `[x > 5]`
+- **Operations**: Vectorized arithmetic and comparisons work element-wise
+- **Functions**: Many built-in functions work naturally with vectors
+- **Modification**: Add, replace, or remove elements as needed
+
+Key principles:
+- Vectors hold elements of the same type
+- R uses 1-based indexing
+- Operations are vectorized by default
+- Missing values (NA) propagate through calculations
+
+Understanding vectors is essential because they form the foundation for more complex data structures like data frames and lists, which we'll explore next!

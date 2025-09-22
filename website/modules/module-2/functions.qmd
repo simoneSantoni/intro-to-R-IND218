@@ -1,0 +1,869 @@
+---
+title: "Functions in R"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Functions
+
+Functions are one of the most powerful features in R. They allow you to:
+
+- **Reuse code**: Write once, use many times
+- **Organize code**: Break complex problems into smaller pieces
+- **Reduce errors**: Centralize logic in one place
+- **Make code readable**: Give meaningful names to operations
+
+In R, functions are "first-class objects" - they can be assigned to variables, passed as arguments, and returned from other functions.
+
+## Using Built-in Functions
+
+R comes with hundreds of built-in functions. You've already used many of them!
+
+### Common Mathematical Functions
+
+```{r}
+#| label: built-in-math
+
+# Basic mathematical functions
+numbers <- c(1, 4, 9, 16, 25)
+
+sqrt(numbers)        # Square root
+abs(c(-5, -2, 3))    # Absolute value
+round(3.14159, 2)    # Round to 2 decimal places
+ceiling(3.2)         # Round up
+floor(3.8)           # Round down
+
+# Trigonometric functions
+angles <- c(0, pi/4, pi/2, pi)
+sin(angles)
+cos(angles)
+```
+
+### Statistical Functions
+
+```{r}
+#| label: built-in-stats
+
+# Sample data
+scores <- c(85, 92, 78, 96, 88, 74, 91, 89)
+
+# Central tendency
+mean(scores)         # Average
+median(scores)       # Middle value
+mode(scores)         # Most frequent (not built-in, but let's see)
+
+# Spread
+var(scores)          # Variance
+sd(scores)           # Standard deviation
+range(scores)        # Min and max
+IQR(scores)          # Interquartile range
+
+# Quantiles
+quantile(scores)
+quantile(scores, probs = c(0.25, 0.5, 0.75))
+```
+
+### String Functions
+
+```{r}
+#| label: built-in-strings
+
+# Text manipulation
+text <- "Data Science"
+
+nchar(text)          # Number of characters
+toupper(text)        # Convert to uppercase
+tolower(text)        # Convert to lowercase
+substr(text, 1, 4)   # Substring from position 1 to 4
+
+# Combining strings
+first_name <- "John"
+last_name <- "Doe"
+paste(first_name, last_name)              # With space
+paste0(first_name, "_", last_name)        # No automatic space
+```
+
+## Creating Your Own Functions
+
+### Basic Function Syntax
+
+The basic syntax for creating a function is:
+
+```r
+function_name <- function(arguments) {
+  # Function body
+  # Operations using the arguments
+  return(result)  # Optional - R returns the last expression
+}
+```
+
+### Simple Function Examples
+
+```{r}
+#| label: simple-functions
+
+# Function to calculate area of a rectangle
+rectangle_area <- function(length, width) {
+  area <- length * width
+  return(area)
+}
+
+# Test the function
+rectangle_area(5, 3)
+rectangle_area(10, 7)
+
+# Function to convert Fahrenheit to Celsius
+fahrenheit_to_celsius <- function(fahrenheit) {
+  celsius <- (fahrenheit - 32) * 5/9
+  return(celsius)
+}
+
+# Test the conversion
+fahrenheit_to_celsius(68)
+fahrenheit_to_celsius(c(32, 68, 100))  # Works with vectors too!
+
+# Function to calculate compound interest
+compound_interest <- function(principal, rate, time) {
+  amount <- principal * (1 + rate)^time
+  return(amount)
+}
+
+# Calculate investment growth
+compound_interest(1000, 0.05, 10)  # $1000 at 5% for 10 years
+```
+
+### Functions with Default Arguments
+
+You can provide default values for function arguments:
+
+```{r}
+#| label: default-arguments
+
+# Function with default values
+greet_person <- function(name, greeting = "Hello", punctuation = "!") {
+  message <- paste0(greeting, " ", name, punctuation)
+  return(message)
+}
+
+# Use with different argument combinations
+greet_person("Alice")                           # Uses defaults
+greet_person("Bob", "Hi")                       # Custom greeting
+greet_person("Charlie", "Hey", ".")             # All custom
+greet_person("Diana", punctuation = "!!!")      # Named argument
+```
+
+### Functions with Multiple Outputs
+
+Functions can return multiple values using lists:
+
+```{r}
+#| label: multiple-outputs
+
+# Function to calculate basic statistics
+describe_data <- function(data) {
+  stats <- list(
+    mean = mean(data, na.rm = TRUE),
+    median = median(data, na.rm = TRUE),
+    sd = sd(data, na.rm = TRUE),
+    min = min(data, na.rm = TRUE),
+    max = max(data, na.rm = TRUE),
+    n = length(data[!is.na(data)])
+  )
+  return(stats)
+}
+
+# Test with sample data
+test_scores <- c(85, 92, 78, 96, 88, NA, 91, 89)
+results <- describe_data(test_scores)
+print(results)
+
+# Access individual results
+results$mean
+results$sd
+```
+
+## Function Arguments and Parameters
+
+### Understanding Arguments
+
+```{r}
+#| label: function-arguments
+
+# Function demonstrating different argument types
+analyze_grades <- function(scores,
+                          curve_points = 0,     # Default argument
+                          remove_lowest = FALSE, # Logical default
+                          letter_grades = TRUE) {  # Another default
+
+  # Apply curve if specified
+  if (curve_points > 0) {
+    scores <- scores + curve_points
+    cat("Applied curve of", curve_points, "points\n")
+  }
+
+  # Remove lowest score if requested
+  if (remove_lowest && length(scores) > 1) {
+    scores <- scores[-which.min(scores)]
+    cat("Removed lowest score\n")
+  }
+
+  # Calculate average
+  avg_score <- mean(scores, na.rm = TRUE)
+
+  # Return numeric or letter grade
+  if (letter_grades) {
+    letter_grade <- ifelse(avg_score >= 90, "A",
+                          ifelse(avg_score >= 80, "B",
+                                ifelse(avg_score >= 70, "C",
+                                      ifelse(avg_score >= 60, "D", "F"))))
+    return(list(average = avg_score, letter = letter_grade))
+  } else {
+    return(avg_score)
+  }
+}
+
+# Test the function
+student_scores <- c(78, 85, 92, 68, 88)
+
+analyze_grades(student_scores)
+analyze_grades(student_scores, curve_points = 5)
+analyze_grades(student_scores, remove_lowest = TRUE)
+analyze_grades(student_scores, letter_grades = FALSE)
+```
+
+### The `...` (Ellipsis) Argument
+
+The `...` allows functions to accept a variable number of arguments:
+
+```{r}
+#| label: ellipsis-argument
+
+# Function that summarizes multiple datasets
+summarize_multiple <- function(..., digits = 2) {
+  datasets <- list(...)
+
+  for (i in seq_along(datasets)) {
+    cat("Dataset", i, ":\n")
+    cat("  Mean:", round(mean(datasets[[i]], na.rm = TRUE), digits), "\n")
+    cat("  SD:", round(sd(datasets[[i]], na.rm = TRUE), digits), "\n")
+    cat("  N:", length(datasets[[i]][!is.na(datasets[[i]])]), "\n\n")
+  }
+}
+
+# Test with multiple datasets
+group_a <- c(85, 90, 78, 92, 88)
+group_b <- c(76, 84, 91, 79, 87)
+group_c <- c(95, 89, 93, 87, 91)
+
+summarize_multiple(group_a, group_b, group_c)
+```
+
+## Function Scope and Environments
+
+### Local vs Global Variables
+
+```{r}
+#| label: function-scope
+
+# Global variable
+global_counter <- 0
+
+# Function that uses local variables
+demo_scope <- function(x) {
+  # Local variable (only exists inside the function)
+  local_counter <- 10
+
+  # We can access global variables (but shouldn't modify them)
+  result <- x + local_counter + global_counter
+
+  cat("Inside function:\n")
+  cat("  x =", x, "\n")
+  cat("  local_counter =", local_counter, "\n")
+  cat("  global_counter =", global_counter, "\n")
+
+  return(result)
+}
+
+# Test the function
+result <- demo_scope(5)
+cat("Result:", result, "\n")
+
+# The local variable doesn't exist outside the function
+# print(local_counter)  # This would cause an error!
+```
+
+### Modifying Global Variables
+
+```{r}
+#| label: global-assignment
+
+# Counter function using global assignment (generally not recommended)
+click_counter <- 0
+
+increment_counter <- function() {
+  # Use <<- to modify global variable
+  click_counter <<- click_counter + 1
+  cat("Counter is now:", click_counter, "\n")
+}
+
+# Better approach: return new value
+increment_counter_better <- function(current_count) {
+  new_count <- current_count + 1
+  return(new_count)
+}
+
+# Demonstrate both approaches
+increment_counter()
+increment_counter()
+
+# Better approach
+my_counter <- 0
+my_counter <- increment_counter_better(my_counter)
+my_counter <- increment_counter_better(my_counter)
+cat("Better counter:", my_counter, "\n")
+```
+
+## Advanced Function Concepts
+
+### Anonymous Functions
+
+Functions don't always need names:
+
+```{r}
+#| label: anonymous-functions
+
+# Apply anonymous function to vector
+numbers <- c(1, 4, 9, 16, 25)
+
+# Using lapply with anonymous function
+squared_roots <- lapply(numbers, function(x) sqrt(x))
+print(unlist(squared_roots))
+
+# Using sapply for simpler output
+doubled_values <- sapply(numbers, function(x) x * 2)
+print(doubled_values)
+
+# Real-world example: cleaning text data
+messy_names <- c("  Alice  ", "BOB", "charlie", "  DIANA  ")
+clean_names <- sapply(messy_names, function(name) {
+  name <- trimws(name)  # Remove whitespace
+  name <- tolower(name) # Convert to lowercase
+  # Capitalize first letter
+  substr(name, 1, 1) <- toupper(substr(name, 1, 1))
+  return(name)
+})
+print(clean_names)
+```
+
+### Functions that Return Functions
+
+```{r}
+#| label: function-factories
+
+# Function factory: creates customized functions
+create_multiplier <- function(factor) {
+  function(x) {
+    x * factor
+  }
+}
+
+# Create specific multiplier functions
+double <- create_multiplier(2)
+triple <- create_multiplier(3)
+percent <- create_multiplier(100)
+
+# Use the created functions
+double(5)
+triple(7)
+percent(0.85)  # Convert proportion to percentage
+
+# More practical example: create converter functions
+create_converter <- function(from_unit, to_unit, factor) {
+  function(value) {
+    result <- value * factor
+    cat(value, from_unit, "=", result, to_unit, "\n")
+    return(result)
+  }
+}
+
+# Create specific converters
+kg_to_pounds <- create_converter("kg", "pounds", 2.20462)
+celsius_to_fahrenheit <- create_converter("°C", "°F", function(c) c * 9/5 + 32)
+
+# Wait, that last one won't work as expected. Let's fix it:
+celsius_to_fahrenheit <- function(celsius) {
+  fahrenheit <- celsius * 9/5 + 32
+  cat(celsius, "°C =", fahrenheit, "°F\n")
+  return(fahrenheit)
+}
+
+kg_to_pounds(70)
+celsius_to_fahrenheit(20)
+```
+
+## Error Handling in Functions
+
+### Using `stop()` and `warning()`
+
+```{r}
+#| label: error-handling
+
+# Function with input validation
+safe_divide <- function(x, y) {
+  # Check for valid inputs
+  if (!is.numeric(x) || !is.numeric(y)) {
+    stop("Both x and y must be numeric")
+  }
+
+  if (y == 0) {
+    stop("Division by zero is not allowed")
+  }
+
+  if (y < 0) {
+    warning("Dividing by negative number")
+  }
+
+  result <- x / y
+  return(result)
+}
+
+# Test the function
+safe_divide(10, 2)
+safe_divide(10, -2)  # Will show warning
+# safe_divide(10, 0)   # Would stop with error
+# safe_divide("10", 2) # Would stop with error
+```
+
+### Using `try()` and `tryCatch()`
+
+```{r}
+#| label: try-catch
+
+# Function that handles errors gracefully
+robust_mean <- function(data, method = "arithmetic") {
+  result <- tryCatch({
+    if (method == "arithmetic") {
+      mean(data, na.rm = TRUE)
+    } else if (method == "geometric") {
+      if (any(data <= 0, na.rm = TRUE)) {
+        stop("Geometric mean requires positive values")
+      }
+      exp(mean(log(data), na.rm = TRUE))
+    } else {
+      stop("Method must be 'arithmetic' or 'geometric'")
+    }
+  }, error = function(e) {
+    cat("Error occurred:", e$message, "\n")
+    return(NA)
+  }, warning = function(w) {
+    cat("Warning:", w$message, "\n")
+    return(NA)
+  })
+
+  return(result)
+}
+
+# Test error handling
+test_data <- c(2, 4, 8, 16)
+negative_data <- c(-1, 2, 4)
+
+robust_mean(test_data, "arithmetic")
+robust_mean(test_data, "geometric")
+robust_mean(negative_data, "geometric")  # Will handle error
+robust_mean(test_data, "invalid")        # Will handle error
+```
+
+## Practical Function Examples
+
+### Example 1: Data Cleaning Function
+
+```{r}
+#| label: data-cleaning-function
+
+# Comprehensive data cleaning function
+clean_dataset <- function(data,
+                         remove_duplicates = TRUE,
+                         handle_missing = "remove",
+                         standardize_names = TRUE) {
+
+  original_rows <- nrow(data)
+  cat("Starting with", original_rows, "rows\n")
+
+  # Standardize column names
+  if (standardize_names) {
+    names(data) <- tolower(gsub("[^A-Za-z0-9_]", "_", names(data)))
+    cat("Standardized column names\n")
+  }
+
+  # Handle missing values
+  if (handle_missing == "remove") {
+    data <- na.omit(data)
+    cat("Removed rows with missing values:", original_rows - nrow(data), "\n")
+  } else if (handle_missing == "fill_mean") {
+    numeric_cols <- sapply(data, is.numeric)
+    for (col in names(data)[numeric_cols]) {
+      data[[col]][is.na(data[[col]])] <- mean(data[[col]], na.rm = TRUE)
+    }
+    cat("Filled missing numeric values with means\n")
+  }
+
+  # Remove duplicates
+  if (remove_duplicates) {
+    before_dedup <- nrow(data)
+    data <- unique(data)
+    duplicates_removed <- before_dedup - nrow(data)
+    if (duplicates_removed > 0) {
+      cat("Removed", duplicates_removed, "duplicate rows\n")
+    }
+  }
+
+  cat("Final dataset:", nrow(data), "rows\n")
+  return(data)
+}
+
+# Test the cleaning function
+messy_data <- data.frame(
+  "Student Name" = c("Alice", "Bob", "Charlie", "Alice", "Diana"),
+  "Test Score" = c(85, NA, 92, 85, 88),
+  "Grade Level" = c(10, 11, 10, 10, 12),
+  stringsAsFactors = FALSE
+)
+
+cat("Original data:\n")
+print(messy_data)
+
+clean_data <- clean_dataset(messy_data)
+cat("\nCleaned data:\n")
+print(clean_data)
+```
+
+### Example 2: Statistical Analysis Function
+
+```{r}
+#| label: statistical-analysis-function
+
+# Comprehensive statistical analysis function
+analyze_groups <- function(data, group_var, measure_var, alpha = 0.05) {
+
+  # Basic validation
+  if (!group_var %in% names(data)) {
+    stop("Group variable not found in data")
+  }
+  if (!measure_var %in% names(data)) {
+    stop("Measure variable not found in data")
+  }
+
+  # Calculate group statistics
+  groups <- unique(data[[group_var]])
+  results <- list()
+
+  cat("=== Group Analysis ===\n")
+  for (group in groups) {
+    group_data <- data[data[[group_var]] == group, measure_var]
+    group_data <- group_data[!is.na(group_data)]
+
+    stats <- list(
+      group = group,
+      n = length(group_data),
+      mean = mean(group_data),
+      sd = sd(group_data),
+      median = median(group_data),
+      min = min(group_data),
+      max = max(group_data)
+    )
+
+    results[[as.character(group)]] <- stats
+
+    cat(sprintf("Group %s: n=%d, mean=%.2f, sd=%.2f\n",
+                group, stats$n, stats$mean, stats$sd))
+  }
+
+  # Overall statistics
+  all_data <- data[[measure_var]][!is.na(data[[measure_var]])]
+  overall_mean <- mean(all_data)
+  overall_sd <- sd(all_data)
+
+  cat(sprintf("\nOverall: n=%d, mean=%.2f, sd=%.2f\n",
+              length(all_data), overall_mean, overall_sd))
+
+  return(results)
+}
+
+# Test the analysis function
+student_data <- data.frame(
+  grade = c(rep("A", 5), rep("B", 4), rep("C", 6)),
+  score = c(92, 95, 89, 94, 91, 85, 87, 83, 86, 78, 82, 75, 79, 77, 80)
+)
+
+analysis_results <- analyze_groups(student_data, "grade", "score")
+```
+
+### Example 3: Report Generation Function
+
+```{r}
+#| label: report-generation-function
+
+# Function to generate formatted reports
+generate_summary_report <- function(data, title = "Data Summary") {
+
+  # Create border for title
+  border <- paste(rep("=", nchar(title) + 4), collapse = "")
+  cat(border, "\n")
+  cat(" ", title, " \n")
+  cat(border, "\n\n")
+
+  # Dataset overview
+  cat("DATASET OVERVIEW\n")
+  cat("----------------\n")
+  cat("Dimensions:", nrow(data), "rows ×", ncol(data), "columns\n")
+  cat("Column names:", paste(names(data), collapse = ", "), "\n\n")
+
+  # Summary for each column
+  for (col in names(data)) {
+    cat("COLUMN:", toupper(col), "\n")
+    cat(strrep("-", nchar(col) + 8), "\n")
+
+    if (is.numeric(data[[col]])) {
+      cat("Type: Numeric\n")
+      cat(sprintf("Range: %.2f to %.2f\n",
+                  min(data[[col]], na.rm = TRUE),
+                  max(data[[col]], na.rm = TRUE)))
+      cat(sprintf("Mean: %.2f\n", mean(data[[col]], na.rm = TRUE)))
+      cat(sprintf("Std Dev: %.2f\n", sd(data[[col]], na.rm = TRUE)))
+    } else if (is.character(data[[col]]) || is.factor(data[[col]])) {
+      cat("Type: Categorical\n")
+      unique_vals <- unique(data[[col]])
+      cat("Unique values:", length(unique_vals), "\n")
+      if (length(unique_vals) <= 10) {
+        cat("Values:", paste(unique_vals, collapse = ", "), "\n")
+      }
+    }
+
+    # Missing values
+    missing_count <- sum(is.na(data[[col]]))
+    if (missing_count > 0) {
+      cat("Missing values:", missing_count,
+          sprintf("(%.1f%%)\n", missing_count / nrow(data) * 100))
+    } else {
+      cat("Missing values: None\n")
+    }
+    cat("\n")
+  }
+
+  cat("Report generated on:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n")
+}
+
+# Test the report function
+sample_data <- data.frame(
+  id = 1:10,
+  name = paste("Person", LETTERS[1:10]),
+  age = c(25, 30, 35, 28, 32, 29, 31, 27, 33, 26),
+  salary = c(45000, 52000, 48000, 55000, 51000, 49000, 53000, 46000, 54000, 47000),
+  department = c("Sales", "IT", "Sales", "HR", "IT", "Sales", "HR", "IT", "Sales", "HR")
+)
+
+generate_summary_report(sample_data, "Employee Analysis Report")
+```
+
+## Best Practices for Writing Functions
+
+### 1. Function Design Principles
+
+```{r}
+#| label: design-principles
+
+# GOOD: Clear, single purpose
+calculate_bmi <- function(weight_kg, height_m) {
+  bmi <- weight_kg / (height_m^2)
+  return(round(bmi, 1))
+}
+
+# AVOID: Doing too many things
+# bad_function <- function(weight, height, name, age, ...) {
+#   # Calculate BMI, generate report, save to file, send email...
+#   # Too many responsibilities!
+# }
+
+# GOOD: Descriptive names and clear documentation
+convert_temperature <- function(temp, from = "celsius", to = "fahrenheit") {
+  # Convert temperature between different scales
+  # Args:
+  #   temp: numeric temperature value
+  #   from: source temperature scale ("celsius", "fahrenheit", "kelvin")
+  #   to: target temperature scale ("celsius", "fahrenheit", "kelvin")
+  # Returns:
+  #   converted temperature value
+
+  if (from == "celsius" && to == "fahrenheit") {
+    return(temp * 9/5 + 32)
+  } else if (from == "fahrenheit" && to == "celsius") {
+    return((temp - 32) * 5/9)
+  } else if (from == "celsius" && to == "kelvin") {
+    return(temp + 273.15)
+  } else if (from == "kelvin" && to == "celsius") {
+    return(temp - 273.15)
+  } else {
+    stop("Conversion not implemented for these scales")
+  }
+}
+
+# Test the function
+convert_temperature(100, "celsius", "fahrenheit")
+convert_temperature(32, "fahrenheit", "celsius")
+```
+
+### 2. Input Validation
+
+```{r}
+#| label: input-validation
+
+# Function with comprehensive input validation
+calculate_loan_payment <- function(principal, rate, years) {
+  # Validate inputs
+  if (!is.numeric(principal) || principal <= 0) {
+    stop("Principal must be a positive number")
+  }
+  if (!is.numeric(rate) || rate < 0 || rate > 1) {
+    stop("Interest rate must be between 0 and 1")
+  }
+  if (!is.numeric(years) || years <= 0) {
+    stop("Number of years must be positive")
+  }
+
+  # Calculate monthly payment
+  monthly_rate <- rate / 12
+  num_payments <- years * 12
+
+  if (rate == 0) {
+    # Handle zero interest rate
+    monthly_payment <- principal / num_payments
+  } else {
+    # Standard loan formula
+    monthly_payment <- principal *
+      (monthly_rate * (1 + monthly_rate)^num_payments) /
+      ((1 + monthly_rate)^num_payments - 1)
+  }
+
+  return(round(monthly_payment, 2))
+}
+
+# Test with valid inputs
+calculate_loan_payment(200000, 0.05, 30)
+calculate_loan_payment(50000, 0, 5)  # Zero interest
+
+# These would produce errors:
+# calculate_loan_payment(-1000, 0.05, 30)    # Negative principal
+# calculate_loan_payment(200000, 1.5, 30)    # Rate > 1
+```
+
+### 3. Documentation and Comments
+
+```{r}
+#| label: documentation
+
+#' Calculate Investment Growth
+#'
+#' This function calculates the future value of an investment given
+#' initial principal, annual interest rate, compounding frequency,
+#' and time period.
+#'
+#' @param principal Initial investment amount (numeric)
+#' @param rate Annual interest rate as decimal (e.g., 0.05 for 5%)
+#' @param compound_freq Number of times interest compounds per year (integer)
+#' @param years Number of years for investment (numeric)
+#'
+#' @return Future value of the investment (numeric)
+#'
+#' @examples
+#' # $1000 at 5% compounded monthly for 10 years
+#' investment_growth(1000, 0.05, 12, 10)
+#'
+#' # $5000 at 3% compounded quarterly for 5 years
+#' investment_growth(5000, 0.03, 4, 5)
+investment_growth <- function(principal, rate, compound_freq = 1, years) {
+
+  # Input validation
+  stopifnot(
+    is.numeric(principal), principal > 0,
+    is.numeric(rate), rate >= 0,
+    is.numeric(compound_freq), compound_freq > 0,
+    is.numeric(years), years > 0
+  )
+
+  # Calculate compound interest
+  # Formula: A = P(1 + r/n)^(nt)
+  future_value <- principal * (1 + rate/compound_freq)^(compound_freq * years)
+
+  return(round(future_value, 2))
+}
+
+# Test the documented function
+investment_growth(1000, 0.05, 12, 10)
+investment_growth(5000, 0.03, 4, 5)
+```
+
+## Exercises
+
+### Exercise 1: Basic Function Creation
+Write functions to:
+1. Calculate the area of a circle given its radius
+2. Convert miles to kilometers (1 mile = 1.60934 km)
+3. Determine if a number is even or odd
+4. Find the largest of three numbers
+
+### Exercise 2: Data Analysis Function
+Create a function called `analyze_sales()` that takes a vector of sales figures and returns:
+- Total sales
+- Average daily sales
+- Best sales day (highest amount)
+- Worst sales day (lowest amount)
+- Number of days above average
+
+### Exercise 3: Advanced Function
+Write a function called `grade_calculator()` that:
+- Takes vectors of homework scores, quiz scores, and exam scores
+- Allows different weights for each category (default: 30% homework, 30% quizzes, 40% exams)
+- Returns both numerical and letter grades
+- Handles missing values appropriately
+- Provides a summary of the calculation
+
+### Exercise 4: Function with Error Handling
+Create a robust function for calculating percentiles that:
+- Validates input data (numeric, not all NA)
+- Handles edge cases (empty vectors, single values)
+- Provides meaningful error messages
+- Has optional parameters for different percentile calculation methods
+
+## Summary
+
+Functions are essential for writing efficient, maintainable R code:
+
+### Key Concepts:
+- **Built-in functions**: R provides extensive functionality out of the box
+- **Custom functions**: Create reusable code with the `function()` keyword
+- **Arguments**: Use default values and validation for robust functions
+- **Scope**: Understand local vs global variables
+- **Return values**: Functions can return single values, vectors, lists, or data frames
+
+### Best Practices:
+- **Single responsibility**: Each function should do one thing well
+- **Clear naming**: Use descriptive function and argument names
+- **Input validation**: Check arguments to prevent errors
+- **Documentation**: Comment your code and describe parameters
+- **Error handling**: Use `stop()`, `warning()`, and `tryCatch()` appropriately
+
+### Advanced Features:
+- **Anonymous functions**: Useful with `apply` family functions
+- **Function factories**: Functions that create other functions
+- **Ellipsis (`...`)**: Handle variable numbers of arguments
+- **Environments**: Understand how R finds and stores variables
+
+Functions make your code modular, testable, and reusable. As you progress in R, you'll find that well-written functions are the foundation of all good R programs!
+
+Next, we'll learn about working with files and organizing your R projects!

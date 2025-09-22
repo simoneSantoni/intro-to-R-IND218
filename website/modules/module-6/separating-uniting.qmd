@@ -1,0 +1,848 @@
+---
+title: "Separating and Uniting: Column Manipulation Mastery"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## The Art of Column Surgery 🔧
+
+Real-world data often comes with information packed into single columns that needs to be split, or scattered across multiple columns that should be combined. The `separate()` and `unite()` functions in tidyr are your surgical tools for precise column manipulation.
+
+## Understanding the Problem
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(lubridate)
+
+# Common messy data scenarios
+cat("TYPICAL MESSY DATA PATTERNS:\n\n")
+
+# Example 1: Multiple values in one column
+contact_data <- tibble(
+  employee_id = 1:5,
+  full_name = c("Sarah Johnson", "Michael Chen", "Emily Rodriguez-Smith",
+                "David O'Connor", "Anna-Marie Dubois"),
+  contact_info = c("sarah.j@company.com | 555-0123",
+                   "m.chen@company.com | 555-0156 | ext:234",
+                   "emily.rs@company.com",
+                   "d.oconnor@company.com | 555-0189 | LinkedIn: davidoc",
+                   "anna.dubois@company.com | 555-0167 | Skype: annadubois")
+)
+
+cat("Problem 1: Multiple contact methods in single column\n")
+print(contact_data)
+
+# Example 2: Date components scattered across columns
+date_components <- tibble(
+  transaction_id = 1:4,
+  year = c(2023, 2023, 2024, 2024),
+  month = c("Jan", "Dec", "Mar", "Jul"),
+  day = c(15, 28, 8, 22),
+  amount = c(1250.50, 899.99, 2100.00, 567.80)
+)
+
+cat("\nProblem 2: Date components in separate columns\n")
+print(date_components)
+
+# Example 3: Product codes with embedded information
+product_data <- tibble(
+  sku = c("ELC-LTOP-15-BLK-256", "HME-CHAI-STD-BRN-001", "OFF-DESK-ADJ-WHT-042"),
+  description = c("Electronics Laptop 15inch Black 256GB",
+                  "Home Chair Standard Brown",
+                  "Office Desk Adjustable White"),
+  price = c(899.99, 249.99, 399.99)
+)
+
+cat("\nProblem 3: Structured codes that need parsing\n")
+print(product_data)
+```
+
+## `separate()`: Splitting One Column Into Many
+
+### Basic Separation with Delimiters
+
+```{r}
+#| label: separate-basics
+
+# Basic separation using delimiters
+contact_separated <- contact_data %>%
+  separate(
+    col = contact_info,
+    into = c("email", "phone", "other"),
+    sep = " \\| ",  # Regex pattern for " | "
+    fill = "right"  # Fill missing values on the right with NA
+  )
+
+cat("Basic separation result:\n")
+print(contact_separated)
+
+# Handle names with various formats
+names_separated <- contact_data %>%
+  separate(
+    col = full_name,
+    into = c("first_name", "last_name"),
+    sep = " ",
+    extra = "merge"  # If more than 2 parts, merge extras into last column
+  )
+
+cat("\nName separation (handling middle names/hyphenated names):\n")
+print(names_separated)
+
+# Better approach for complex names
+names_improved <- contact_data %>%
+  separate(
+    col = full_name,
+    into = c("first_name", "last_name"),
+    sep = " (?=[^ ]*$)",  # Split on last space (regex lookahead)
+    extra = "merge"
+  )
+
+cat("\nImproved name separation (preserves compound first names):\n")
+print(names_improved)
+```
+
+### Advanced Separation Techniques
+
+```{r}
+#| label: separate-advanced
+
+# Complex product code parsing
+product_parsed <- product_data %>%
+  separate(
+    col = sku,
+    into = c("category", "type", "size", "color", "variant"),
+    sep = "-",
+    remove = FALSE  # Keep original column
+  ) %>%
+  mutate(
+    category = case_when(
+      category == "ELC" ~ "Electronics",
+      category == "HME" ~ "Home",
+      category == "OFF" ~ "Office",
+      TRUE ~ category
+    ),
+    type = case_when(
+      type == "LTOP" ~ "Laptop",
+      type == "CHAI" ~ "Chair",
+      type == "DESK" ~ "Desk",
+      TRUE ~ type
+    ),
+    size = case_when(
+      size %in% c("15", "STD", "ADJ") ~ ifelse(size == "15", "15 inch",
+                                               ifelse(size == "STD", "Standard", "Adjustable")),
+      TRUE ~ size
+    )
+  )
+
+cat("Complex product code parsing:\n")
+print(product_parsed)
+
+# Handling mixed delimiters in contact info
+contact_advanced <- contact_data %>%
+  separate(
+    col = contact_info,
+    into = c("email", "rest"),
+    sep = " \\| ",
+    extra = "merge",
+    fill = "right"
+  ) %>%
+  # Further parse the "rest" column
+  mutate(
+    phone = str_extract(rest, "\\d{3}-\\d{4}"),
+    extension = str_extract(rest, "ext:(\\d+)") %>% str_remove("ext:"),
+    social_platform = str_extract(rest, "(LinkedIn|Skype)") ,
+    social_handle = str_extract(rest, "(?:LinkedIn: |Skype: )([^|]+)") %>%
+                   str_remove("^(LinkedIn: |Skype: )")
+  ) %>%
+  select(-rest)
+
+cat("\nAdvanced contact parsing with mixed formats:\n")
+print(contact_advanced)
+```
+
+### Pattern-Based Separation
+
+```{r}
+#| label: separate-patterns
+
+# Email analysis - separate local and domain parts
+email_data <- tibble(
+  user_id = 1:6,
+  email = c("john.doe@company.com", "sarah_123@university.edu",
+            "mike+marketing@startup.io", "admin@gov.agency.uk",
+            "customer.service@big-corp.co.uk", "test.user@sub.domain.org")
+)
+
+email_parsed <- email_data %>%
+  separate(
+    col = email,
+    into = c("local_part", "domain"),
+    sep = "@",
+    remove = FALSE
+  ) %>%
+  # Further separate domain components
+  separate(
+    col = domain,
+    into = c("domain_name", "tld"),
+    sep = "\\.",
+    extra = "merge",  # Handle multi-part TLDs like .co.uk
+    remove = FALSE
+  ) %>%
+  mutate(
+    # Extract username patterns
+    username_base = str_remove(local_part, "[+.].*"),
+    has_plus_addressing = str_detect(local_part, "\\+"),
+    domain_type = case_when(
+      str_detect(tld, "edu") ~ "Educational",
+      str_detect(tld, "gov") ~ "Government",
+      str_detect(tld, "org") ~ "Organization",
+      str_detect(tld, "com|co\\.") ~ "Commercial",
+      TRUE ~ "Other"
+    )
+  )
+
+cat("Email parsing with pattern recognition:\n")
+print(email_parsed)
+
+# Analyze email patterns
+cat("\nEmail pattern analysis:\n")
+email_parsed %>%
+  count(domain_type, has_plus_addressing) %>%
+  arrange(desc(n)) %>%
+  print()
+```
+
+### Handling Messy Real-World Data
+
+```{r}
+#| label: messy-data-separation
+
+# Realistic messy customer data
+messy_customers <- tibble(
+  record_id = 1:8,
+  customer_info = c(
+    "John Smith, 42, Manager, New York, NY, 10001",
+    "Sarah Johnson; 35; Developer; San Francisco; CA; 94102",
+    "Mike Chen | 28 | Designer | Austin TX 78701",
+    "Emily Rodriguez-Davis, 39, Director, Chicago, IL, 60601",
+    "David Kim; 45; Analyst; Seattle WA 98101",
+    "Anna Petrova, 33, Consultant, Boston, MA, 02101",
+    "Carlos Mendez | 41 | Manager | Miami FL 33101",
+    "Jennifer Wu, 37, Engineer, Portland, OR, 97201"
+  )
+)
+
+cat("Messy customer data with mixed delimiters:\n")
+print(messy_customers)
+
+# Clean step by step
+customers_cleaned <- messy_customers %>%
+  # First, standardize delimiters
+  mutate(
+    customer_info = str_replace_all(customer_info, "[;|]", ","),
+    customer_info = str_replace_all(customer_info, ", +", ",")
+  ) %>%
+  # Separate into main components
+  separate(
+    col = customer_info,
+    into = c("name", "age", "title", "location"),
+    sep = ",",
+    extra = "merge"
+  ) %>%
+  # Parse location further
+  separate(
+    col = location,
+    into = c("city", "state", "zip"),
+    sep = ",",
+    extra = "merge",
+    fill = "right"
+  ) %>%
+  # Clean up the data
+  mutate(
+    across(everything(), str_trim),  # Remove extra whitespace
+    age = as.numeric(age),
+    # Handle state abbreviations with/without zip
+    state_zip = ifelse(is.na(zip), state, paste(state, zip)),
+    state = str_extract(state_zip, "^[A-Z]{2}"),
+    zip = str_extract(state_zip, "\\d{5}$")
+  ) %>%
+  select(-state_zip)
+
+cat("\nCleaned customer data:\n")
+print(customers_cleaned)
+
+# Validation and summary
+cat("\nData quality check:\n")
+customers_cleaned %>%
+  summarise(
+    complete_names = sum(!is.na(name)),
+    valid_ages = sum(age >= 18 & age <= 100, na.rm = TRUE),
+    valid_states = sum(str_length(state) == 2, na.rm = TRUE),
+    valid_zips = sum(str_length(zip) == 5, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  print()
+```
+
+## `unite()`: Combining Multiple Columns
+
+### Basic Column Combination
+
+```{r}
+#| label: unite-basics
+
+# Start with separated date components
+cat("Combining date components:\n")
+print(date_components)
+
+# Basic unite operation
+dates_united <- date_components %>%
+  unite(
+    col = "date_string",
+    year, month, day,
+    sep = "-",
+    remove = FALSE  # Keep original columns
+  ) %>%
+  # Convert to proper date format
+  mutate(
+    date_proper = dmy(paste(day, month, year)),
+    # Alternative approach for US format
+    date_string_clean = str_replace_all(date_string, "-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-", function(x) {
+      month_num <- case_when(
+        str_detect(x, "Jan") ~ "-01-",
+        str_detect(x, "Feb") ~ "-02-",
+        str_detect(x, "Mar") ~ "-03-",
+        str_detect(x, "Apr") ~ "-04-",
+        str_detect(x, "May") ~ "-05-",
+        str_detect(x, "Jun") ~ "-06-",
+        str_detect(x, "Jul") ~ "-07-",
+        str_detect(x, "Aug") ~ "-08-",
+        str_detect(x, "Sep") ~ "-09-",
+        str_detect(x, "Oct") ~ "-10-",
+        str_detect(x, "Nov") ~ "-11-",
+        str_detect(x, "Dec") ~ "-12-"
+      )
+      return(month_num)
+    }),
+    date_final = ymd(date_string_clean)
+  )
+
+cat("\nUnited date columns:\n")
+print(dates_united)
+```
+
+### Creating Composite Keys and Identifiers
+
+```{r}
+#| label: composite-keys
+
+# Employee data that needs composite identifiers
+employee_data <- tibble(
+  department = c("IT", "HR", "IT", "Finance", "HR", "IT"),
+  location = c("NYC", "LA", "CHI", "NYC", "CHI", "LA"),
+  employee_num = c(1001, 2001, 1002, 3001, 2002, 1003),
+  first_name = c("John", "Sarah", "Mike", "Emily", "David", "Anna"),
+  last_name = c("Smith", "Johnson", "Chen", "Rodriguez", "Kim", "Petrova")
+)
+
+# Create various composite identifiers
+employee_ids <- employee_data %>%
+  unite(
+    col = "dept_location",
+    department, location,
+    sep = "_",
+    remove = FALSE
+  ) %>%
+  unite(
+    col = "full_name",
+    first_name, last_name,
+    sep = " ",
+    remove = FALSE
+  ) %>%
+  unite(
+    col = "employee_id",
+    department, location, employee_num,
+    sep = "-"
+  ) %>%
+  unite(
+    col = "display_name",
+    last_name, first_name,
+    sep = ", "
+  )
+
+cat("Composite identifiers created:\n")
+print(employee_ids)
+
+# Create user-friendly codes
+user_codes <- employee_data %>%
+  mutate(
+    dept_code = case_when(
+      department == "IT" ~ "IT",
+      department == "HR" ~ "HR",
+      department == "Finance" ~ "FIN"
+    ),
+    location_code = case_when(
+      location == "NYC" ~ "NY",
+      location == "LA" ~ "LA",
+      location == "CHI" ~ "CH"
+    ),
+    name_initials = paste0(str_sub(first_name, 1, 1), str_sub(last_name, 1, 1))
+  ) %>%
+  unite(
+    col = "user_code",
+    dept_code, location_code, name_initials,
+    sep = ""
+  )
+
+cat("\nUser-friendly codes:\n")
+print(user_codes)
+```
+
+### Business Applications
+
+```{r}
+#| label: business-applications
+
+# Product catalog management
+product_components <- tibble(
+  brand = c("TechCorp", "TechCorp", "HomeLife", "HomeLife", "OfficeMax"),
+  category = c("Electronics", "Electronics", "Furniture", "Furniture", "Supplies"),
+  subcategory = c("Laptops", "Tablets", "Chairs", "Desks", "Storage"),
+  model_year = c(2024, 2024, 2023, 2023, 2024),
+  color = c("Silver", "Black", "Brown", "White", "Gray"),
+  size = c("15in", "10in", "Standard", "Large", "Medium")
+)
+
+# Create comprehensive product identifiers
+product_catalog <- product_components %>%
+  # Create hierarchical category
+  unite(
+    col = "category_hierarchy",
+    category, subcategory,
+    sep = " > ",
+    remove = FALSE
+  ) %>%
+  # Create product descriptor
+  unite(
+    col = "product_name",
+    brand, subcategory, size, color,
+    sep = " ",
+    remove = FALSE
+  ) %>%
+  # Create SKU-style code
+  mutate(
+    brand_code = str_sub(brand, 1, 3) %>% str_to_upper(),
+    cat_code = str_sub(category, 1, 3) %>% str_to_upper(),
+    subcat_code = str_sub(subcategory, 1, 3) %>% str_to_upper(),
+    color_code = str_sub(color, 1, 2) %>% str_to_upper()
+  ) %>%
+  unite(
+    col = "sku",
+    brand_code, cat_code, subcat_code, model_year, color_code,
+    sep = "-"
+  ) %>%
+  select(sku, product_name, category_hierarchy, everything())
+
+cat("Product catalog with unified identifiers:\n")
+print(product_catalog)
+
+# Customer segmentation
+customer_segments <- tibble(
+  age_group = c("25-34", "35-44", "25-34", "45-54", "35-44", "25-34"),
+  income_bracket = c("50-75K", "75-100K", "25-50K", "100K+", "50-75K", "75-100K"),
+  location_type = c("Urban", "Suburban", "Urban", "Rural", "Suburban", "Urban"),
+  purchase_frequency = c("Monthly", "Quarterly", "Weekly", "Annually", "Monthly", "Bi-weekly")
+)
+
+# Create segment profiles
+segment_profiles <- customer_segments %>%
+  unite(
+    col = "demographic_profile",
+    age_group, income_bracket,
+    sep = " | $",
+    remove = FALSE
+  ) %>%
+  unite(
+    col = "behavior_profile",
+    location_type, purchase_frequency,
+    sep = " ",
+    remove = FALSE
+  ) %>%
+  unite(
+    col = "segment_id",
+    age_group, income_bracket, location_type,
+    sep = "_"
+  ) %>%
+  # Create readable segment names
+  mutate(
+    segment_name = case_when(
+      str_detect(segment_id, "25-34.*Urban") ~ "Young Urban Professionals",
+      str_detect(segment_id, "35-44.*Suburban") ~ "Suburban Families",
+      str_detect(segment_id, "45-54.*Rural") ~ "Rural Established",
+      TRUE ~ "Other Segment"
+    )
+  )
+
+cat("\nCustomer segment profiles:\n")
+print(segment_profiles)
+```
+
+## Advanced Separation and Union Workflows
+
+### Multi-Step Data Cleaning Pipeline
+
+```{r}
+#| label: advanced-pipeline
+
+# Complex sales data requiring multiple operations
+complex_sales <- tibble(
+  record = 1:6,
+  sales_rep_info = c("Alice Johnson (North) - alice.j@company.com",
+                     "Bob Smith (South) - bob.smith@company.com",
+                     "Carol Davis (East) - c.davis@company.com",
+                     "David Wilson (West) - d.wilson@company.com",
+                     "Emma Brown (North) - emma.b@company.com",
+                     "Frank Miller (South) - f.miller@company.com"),
+  transaction_details = c("Product:Widget A|Qty:100|Price:$25.99|Date:2023-01-15",
+                         "Product:Widget B|Qty:75|Price:$45.50|Date:2023-01-18",
+                         "Product:Widget C|Qty:150|Price:$15.75|Date:2023-01-22",
+                         "Product:Widget A|Qty:200|Price:$25.99|Date:2023-01-25",
+                         "Product:Widget B|Qty:125|Price:$45.50|Date:2023-01-28",
+                         "Product:Widget C|Qty:80|Price:$15.75|Date:2023-02-01")
+)
+
+cat("Complex sales data to clean:\n")
+print(complex_sales)
+
+# Multi-step cleaning pipeline
+sales_cleaned <- complex_sales %>%
+  # Step 1: Separate rep info
+  separate(
+    col = sales_rep_info,
+    into = c("rep_name_region", "email"),
+    sep = " - "
+  ) %>%
+  # Step 2: Extract name and region
+  separate(
+    col = rep_name_region,
+    into = c("rep_name", "region"),
+    sep = " \\("
+  ) %>%
+  mutate(region = str_remove(region, "\\)")) %>%
+
+  # Step 3: Parse transaction details
+  separate(
+    col = transaction_details,
+    into = c("product_raw", "qty_raw", "price_raw", "date_raw"),
+    sep = "\\|"
+  ) %>%
+
+  # Step 4: Clean individual transaction components
+  mutate(
+    product = str_remove(product_raw, "Product:"),
+    quantity = as.numeric(str_remove(qty_raw, "Qty:")),
+    unit_price = as.numeric(str_remove_all(price_raw, "Price:\\$")),
+    transaction_date = ymd(str_remove(date_raw, "Date:")),
+    total_amount = quantity * unit_price
+  ) %>%
+
+  # Step 5: Create final identifiers
+  unite(
+    col = "rep_id",
+    rep_name, region,
+    sep = "_",
+    remove = FALSE
+  ) %>%
+  mutate(
+    rep_id = str_replace_all(rep_id, " ", "_"),
+    month_year = format(transaction_date, "%Y-%m")
+  ) %>%
+
+  # Step 6: Clean up
+  select(record, rep_id, rep_name, region, email, product, quantity,
+         unit_price, total_amount, transaction_date, month_year)
+
+cat("\nCleaned sales data:\n")
+print(sales_cleaned)
+
+# Analysis ready data
+cat("\nSales summary by rep and month:\n")
+sales_cleaned %>%
+  group_by(rep_name, region, month_year) %>%
+  summarise(
+    transactions = n(),
+    total_quantity = sum(quantity),
+    total_revenue = sum(total_amount),
+    avg_transaction = round(mean(total_amount), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_revenue)) %>%
+  print()
+```
+
+### Dynamic Column Operations
+
+```{r}
+#| label: dynamic-operations
+
+# Survey data with varying response structures
+survey_responses <- tibble(
+  respondent_id = 1:5,
+  demographics = c("Age:25|Gender:F|Education:Bachelor",
+                   "Age:34|Gender:M|Education:Master|Income:75000",
+                   "Age:42|Gender:F|Education:PhD|Income:95000|Years_Experience:15",
+                   "Age:28|Gender:M|Education:Bachelor|Income:55000",
+                   "Age:51|Gender:F|Education:Master|Income:85000|Years_Experience:20"),
+  responses = c("Q1:5|Q2:4|Q3:3",
+                "Q1:4|Q2:5|Q3:4|Q4:3",
+                "Q1:3|Q2:3|Q3:5|Q4:4|Q5:5",
+                "Q1:5|Q2:4|Q3:4",
+                "Q1:4|Q2:3|Q3:3|Q4:5|Q5:4")
+)
+
+cat("Variable structure survey data:\n")
+print(survey_responses)
+
+# Function to parse key-value pairs
+parse_key_value <- function(data, col_name) {
+  data %>%
+    separate_rows(!!sym(col_name), sep = "\\|") %>%
+    separate(!!sym(col_name), into = c("key", "value"), sep = ":") %>%
+    pivot_wider(names_from = key, values_from = value)
+}
+
+# Parse demographics
+demographics_parsed <- survey_responses %>%
+  select(respondent_id, demographics) %>%
+  parse_key_value("demographics") %>%
+  mutate(
+    Age = as.numeric(Age),
+    Income = as.numeric(Income),
+    Years_Experience = as.numeric(Years_Experience)
+  )
+
+cat("\nParsed demographics:\n")
+print(demographics_parsed)
+
+# Parse responses
+responses_parsed <- survey_responses %>%
+  select(respondent_id, responses) %>%
+  parse_key_value("responses") %>%
+  mutate(across(starts_with("Q"), as.numeric))
+
+cat("\nParsed survey responses:\n")
+print(responses_parsed)
+
+# Combine for analysis
+complete_survey <- demographics_parsed %>%
+  left_join(responses_parsed, by = "respondent_id") %>%
+  mutate(
+    avg_response = round(rowMeans(select(., starts_with("Q")), na.rm = TRUE), 2),
+    response_count = rowSums(!is.na(select(., starts_with("Q"))))
+  )
+
+cat("\nComplete survey analysis dataset:\n")
+print(complete_survey)
+```
+
+## Performance Optimization and Best Practices
+
+```{r}
+#| label: performance-tips
+
+cat("🚀 PERFORMANCE AND BEST PRACTICES:\n\n")
+
+cat("1. PREPARATION STRATEGIES:\n")
+cat("   - Clean delimiters before separation\n")
+cat("   - Standardize formats across rows\n")
+cat("   - Handle missing values explicitly\n")
+cat("   - Validate data types after operations\n\n")
+
+cat("2. MEMORY EFFICIENCY:\n")
+cat("   - Use remove = TRUE to drop source columns when not needed\n")
+cat("   - Process large datasets in chunks\n")
+cat("   - Consider data.table for very large datasets\n\n")
+
+cat("3. ERROR HANDLING:\n")
+# Demonstrate robust separation
+robust_separation <- function(data, col, into_cols, sep_pattern) {
+  tryCatch({
+    data %>%
+      separate(
+        col = !!sym(col),
+        into = into_cols,
+        sep = sep_pattern,
+        fill = "right",
+        extra = "merge"
+      )
+  }, error = function(e) {
+    warning(paste("Separation failed:", e$message))
+    return(data)
+  })
+}
+
+cat("   - Use tryCatch() for error handling\n")
+cat("   - Set fill and extra parameters appropriately\n")
+cat("   - Validate results after each step\n\n")
+
+cat("4. TESTING APPROACH:\n")
+test_data <- tibble(
+  id = 1:3,
+  messy_col = c("A|B|C", "X|Y", "P|Q|R|S|T")
+)
+
+# Test with small sample first
+test_result <- robust_separation(test_data, "messy_col", c("col1", "col2", "col3"), "\\|")
+cat("   - Always test with small samples first\n")
+cat("   - Check edge cases (missing values, extra delimiters)\n")
+cat("   - Verify column counts and types\n")
+
+print(test_result)
+
+cat("\n5. REGEX BEST PRACTICES:\n")
+cat("   - Escape special characters: \\\\| for literal pipe\n")
+cat("   - Use anchors: ^ for start, $ for end\n")
+cat("   - Test patterns: str_detect() before separate()\n")
+cat("   - Consider str_split() for complex patterns\n")
+```
+
+## Integration with Other tidyr Functions
+
+```{r}
+#| label: integration-example
+
+# Complete data transformation workflow
+messy_financial <- tibble(
+  company_quarter = c("TechCorp_Q1_2023", "TechCorp_Q2_2023", "RetailCo_Q1_2023", "RetailCo_Q2_2023"),
+  metrics = c("Revenue:5200|Costs:3800|Employees:450",
+              "Revenue:5800|Costs:4100|Employees:470",
+              "Revenue:8900|Costs:7100|Employees:1200",
+              "Revenue:9200|Costs:7300|Employees:1250"),
+  growth_data = c("YoY_Revenue:12.5%|QoQ_Costs:8.1%",
+                  "YoY_Revenue:15.2%|QoQ_Costs:7.9%",
+                  "YoY_Revenue:8.7%|QoQ_Costs:2.8%",
+                  "YoY_Revenue:9.1%|QoQ_Costs:2.8%")
+)
+
+# Complete transformation pipeline
+financial_clean <- messy_financial %>%
+  # Step 1: Separate company info
+  separate(company_quarter, into = c("company", "quarter", "year"), sep = "_") %>%
+
+  # Step 2: Parse metrics using separate_rows and pivot
+  separate_rows(metrics, sep = "\\|") %>%
+  separate(metrics, into = c("metric", "value"), sep = ":") %>%
+  mutate(value = as.numeric(value)) %>%
+  pivot_wider(names_from = metric, values_from = value) %>%
+
+  # Step 3: Parse growth data
+  separate_rows(growth_data, sep = "\\|") %>%
+  separate(growth_data, into = c("growth_type", "growth_rate"), sep = ":") %>%
+  mutate(growth_rate = as.numeric(str_remove(growth_rate, "%"))) %>%
+  pivot_wider(names_from = growth_type, values_from = growth_rate) %>%
+
+  # Step 4: Create derived metrics
+  mutate(
+    profit = Revenue - Costs,
+    profit_margin = round(profit / Revenue * 100, 1),
+    revenue_per_employee = round(Revenue / Employees, 0)
+  ) %>%
+
+  # Step 5: Create period identifier
+  unite(period, quarter, year, sep = " ") %>%
+  arrange(company, period)
+
+cat("Complete financial transformation:\n")
+print(financial_clean)
+
+cat("\nFinancial performance summary:\n")
+financial_clean %>%
+  group_by(company) %>%
+  summarise(
+    avg_profit_margin = round(mean(profit_margin), 1),
+    revenue_growth = round(mean(YoY_Revenue, na.rm = TRUE), 1),
+    cost_efficiency = round(mean(QoQ_Costs, na.rm = TRUE), 1),
+    .groups = "drop"
+  ) %>%
+  print()
+```
+
+## Common Use Cases and Solutions
+
+```{r}
+#| label: common-use-cases
+
+cat("📋 COMMON USE CASES AND SOLUTIONS:\n\n")
+
+cat("1. ADDRESS PARSING:\n")
+address_data <- tibble(
+  id = 1:3,
+  full_address = c("123 Main St, Apt 4B, New York, NY 10001",
+                   "456 Oak Avenue, San Francisco, CA 94102",
+                   "789 Pine Road, Unit 12, Chicago, IL 60601")
+)
+
+addresses_parsed <- address_data %>%
+  separate(full_address, into = c("street", "city_state_zip"), sep = ", (?=[^,]*,[^,]*$)") %>%
+  separate(city_state_zip, into = c("city", "state_zip"), sep = ", ") %>%
+  separate(state_zip, into = c("state", "zip"), sep = " ")
+
+print(addresses_parsed)
+
+cat("\n2. NAME STANDARDIZATION:\n")
+name_variations <- tibble(
+  id = 1:4,
+  name_input = c("Dr. John Smith Jr.", "Ms. Sarah Johnson-Brown",
+                 "Michael Chen", "Prof. Emily Rodriguez PhD")
+)
+
+names_standardized <- name_variations %>%
+  mutate(
+    # Remove titles and suffixes for core name
+    clean_name = str_remove_all(name_input, "\\b(Dr\\.|Ms\\.|Prof\\.|Jr\\.|PhD)\\b"),
+    clean_name = str_trim(clean_name)
+  ) %>%
+  separate(clean_name, into = c("first", "last"), sep = " ", extra = "merge")
+
+print(names_standardized)
+
+cat("\n3. IDENTIFIER CREATION:\n")
+cat("   unite(col = 'new_id', col1, col2, sep = '_')\n")
+cat("   - Use consistent separators\n")
+cat("   - Include entity type prefixes\n")
+cat("   - Consider sort order in combinations\n")
+
+cat("\n4. DATA DENORMALIZATION:\n")
+cat("   - Combine related fields for reporting\n")
+cat("   - Create display-friendly formats\n")
+cat("   - Unite for export to external systems\n")
+```
+
+## Summary
+
+Mastering `separate()` and `unite()` enables you to:
+
+- **🔧 Parse complex data structures**: Break down compound fields into analyzable components
+- **🎯 Create meaningful identifiers**: Combine data elements into useful composite keys
+- **🧹 Clean messy real-world data**: Handle inconsistent formats and delimiters
+- **📊 Prepare data for analysis**: Transform between storage and analysis formats
+- **🔗 Integrate workflows**: Combine with other tidyr functions for complete data pipelines
+
+Key principles to remember:
+
+- **Test patterns first**: Use `str_detect()` and small samples to validate separation logic
+- **Handle edge cases**: Plan for missing values, extra delimiters, and format variations
+- **Validate results**: Check data types and completeness after operations
+- **Think about reversibility**: Document transformations for potential recreation
+- **Optimize for performance**: Remove unnecessary columns and process in logical chunks
+
+These column manipulation skills are essential for transforming real-world messy data into analysis-ready datasets! 🎯

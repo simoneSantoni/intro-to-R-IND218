@@ -1,0 +1,785 @@
+---
+title: "Tidy Data Principles"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Tidy Data
+
+Tidy data is a consistent way to organize data that makes analysis easier and more intuitive. The concept, formalized by Hadley Wickham, provides a standard way to structure datasets that works seamlessly with the tidyverse ecosystem.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+
+cat("The three fundamental rules of tidy data:\n")
+cat("1. Each variable forms a column\n")
+cat("2. Each observation forms a row\n")
+cat("3. Each type of observational unit forms a table\n")
+```
+
+## The Three Rules of Tidy Data
+
+### Rule 1: Each Variable Forms a Column
+
+A variable is something you can measure, count, or describe. Each variable should have its own column.
+
+```{r}
+#| label: rule1-examples
+
+# TIDY: Each variable (name, age, height) has its own column
+tidy_people <- tibble(
+  name = c("Alice", "Bob", "Charlie"),
+  age = c(25, 30, 35),
+  height = c(165, 180, 175)
+)
+
+cat("TIDY - Each variable in its own column:\n")
+print(tidy_people)
+
+# MESSY: Multiple variables squeezed into one column
+messy_people <- tibble(
+  person = c("Alice", "Bob", "Charlie"),
+  age_height = c("25_165", "30_180", "35_175")
+)
+
+cat("\nMESSY - Multiple variables in one column:\n")
+print(messy_people)
+
+# MESSY: Variable names as data
+messy_measurements <- tibble(
+  person = c("Alice", "Alice", "Bob", "Bob"),
+  measurement = c("age", "height", "age", "height"),
+  value = c(25, 165, 30, 180)
+)
+
+cat("\nMESSY - Variable names stored as data:\n")
+print(messy_measurements)
+```
+
+### Rule 2: Each Observation Forms a Row
+
+An observation is all the values measured on the same unit (person, company, country) at the same time.
+
+```{r}
+#| label: rule2-examples
+
+# TIDY: Each person (observation) gets one row
+tidy_sales <- tibble(
+  sales_rep = c("Alice", "Bob", "Charlie"),
+  region = c("North", "South", "East"),
+  Q1_sales = c(10000, 12000, 11000),
+  Q2_sales = c(11000, 13000, 12000)
+)
+
+cat("TIDY - Each sales rep (observation) in one row:\n")
+print(tidy_sales)
+
+# MESSY: Observations split across multiple rows
+messy_sales_split <- tibble(
+  rep_quarter = c("Alice_Q1", "Alice_Q2", "Bob_Q1", "Bob_Q2"),
+  region = c("North", "North", "South", "South"),
+  sales = c(10000, 11000, 12000, 13000)
+)
+
+cat("\nMESSY - Observations split across rows:\n")
+print(messy_sales_split)
+
+# MESSY: Multiple observations in one row
+messy_sales_combined <- tibble(
+  quarter = c("Q1", "Q2"),
+  alice_north = c(10000, 11000),
+  bob_south = c(12000, 13000),
+  charlie_east = c(11000, 12000)
+)
+
+cat("\nMESSY - Multiple observations in one row:\n")
+print(messy_sales_combined)
+```
+
+### Rule 3: Each Type of Observational Unit Forms a Table
+
+Different types of data should be stored in separate tables. For example, customer data and order data are different types of observational units.
+
+```{r}
+#| label: rule3-examples
+
+# TIDY: Separate tables for different observational units
+customers <- tibble(
+  customer_id = c("C001", "C002", "C003"),
+  customer_name = c("Alice Corp", "Bob Ltd", "Charlie Inc"),
+  industry = c("Tech", "Finance", "Healthcare")
+)
+
+orders <- tibble(
+  order_id = c("O001", "O002", "O003", "O004"),
+  customer_id = c("C001", "C002", "C001", "C003"),
+  order_date = ymd(c("2024-01-15", "2024-01-16", "2024-01-17", "2024-01-18")),
+  amount = c(1000, 1500, 800, 2000)
+)
+
+cat("TIDY - Customers table:\n")
+print(customers)
+cat("\nTIDY - Orders table:\n")
+print(orders)
+
+# MESSY: Everything mashed together
+messy_combined <- tibble(
+  order_id = c("O001", "O002", "O003", "O004"),
+  customer_id = c("C001", "C002", "C001", "C003"),
+  customer_name = c("Alice Corp", "Bob Ltd", "Alice Corp", "Charlie Inc"),
+  industry = c("Tech", "Finance", "Tech", "Healthcare"),
+  order_date = ymd(c("2024-01-15", "2024-01-16", "2024-01-17", "2024-01-18")),
+  amount = c(1000, 1500, 800, 2000)
+)
+
+cat("\nMESSY - Everything in one table (redundant customer info):\n")
+print(messy_combined)
+```
+
+## Common Messy Data Patterns
+
+### Pattern 1: Column Headers are Values
+
+This is one of the most common problems in real-world data.
+
+```{r}
+#| label: pattern1-headers-as-values
+
+# Common in spreadsheets: Years as column headers
+messy_population <- tibble(
+  country = c("USA", "Canada", "Mexico"),
+  `2020` = c(331, 38, 129),
+  `2021` = c(332, 38, 130),
+  `2022` = c(333, 39, 131),
+  `2023` = c(334, 39, 132)
+)
+
+cat("MESSY - Years as column headers:\n")
+print(messy_population)
+
+# How to identify this pattern:
+cat("\nHow to identify this pattern:\n")
+cat("- Column names represent values of a variable (years, quarters, treatments)\n")
+cat("- You see repeated patterns in column names\n")
+cat("- Data is 'wider' than it should be\n")
+
+# What the tidy version should look like:
+tidy_population <- messy_population %>%
+  pivot_longer(
+    cols = -country,
+    names_to = "year",
+    values_to = "population_millions"
+  ) %>%
+  mutate(year = as.numeric(year))
+
+cat("\nTIDY version:\n")
+print(tidy_population)
+```
+
+### Pattern 2: Multiple Variables in Column Names
+
+Column names often encode multiple pieces of information.
+
+```{r}
+#| label: pattern2-multiple-variables
+
+# Treatment and measurement type encoded in column names
+messy_experiment <- tibble(
+  subject_id = 1:3,
+  treatment_A_weight = c(70, 75, 68),
+  treatment_A_height = c(170, 180, 165),
+  treatment_B_weight = c(71, 76, 69),
+  treatment_B_height = c(171, 181, 166)
+)
+
+cat("MESSY - Treatment and measurement in column names:\n")
+print(messy_experiment)
+
+cat("\nHow to identify this pattern:\n")
+cat("- Column names contain underscores or separators\n")
+cat("- Multiple pieces of info encoded in names\n")
+cat("- Similar patterns repeated across columns\n")
+
+# Tidy approach: separate the information
+tidy_experiment <- messy_experiment %>%
+  pivot_longer(
+    cols = -subject_id,
+    names_to = "measurement_info",
+    values_to = "value"
+  ) %>%
+  separate(measurement_info,
+           into = c("treatment_label", "treatment", "measurement"),
+           sep = "_") %>%
+  select(-treatment_label) %>%  # Remove redundant column
+  pivot_wider(names_from = measurement, values_from = value)
+
+cat("\nTIDY version:\n")
+print(tidy_experiment)
+```
+
+### Pattern 3: Variables Stored in Rows and Columns
+
+Sometimes data is stored in a matrix-like format where both rows and columns contain variable information.
+
+```{r}
+#| label: pattern3-matrix-format
+
+# Sales data with products as rows and quarters as columns
+messy_sales_matrix <- tibble(
+  product = c("Widget A", "Widget B", "Widget C"),
+  Q1_North = c(100, 150, 120),
+  Q1_South = c(90, 140, 110),
+  Q2_North = c(110, 160, 130),
+  Q2_South = c(95, 145, 115)
+)
+
+cat("MESSY - Products in rows, quarters and regions in columns:\n")
+print(messy_sales_matrix)
+
+# Tidy version needs multiple steps
+tidy_sales_matrix <- messy_sales_matrix %>%
+  pivot_longer(
+    cols = -product,
+    names_to = "quarter_region",
+    values_to = "sales"
+  ) %>%
+  separate(quarter_region, into = c("quarter", "region"), sep = "_")
+
+cat("\nTIDY version:\n")
+print(tidy_sales_matrix)
+```
+
+### Pattern 4: Multiple Observational Units in One Table
+
+Different types of information mixed together.
+
+```{r}
+#| label: pattern4-mixed-units
+
+# Student and course information mixed
+messy_grades <- tibble(
+  record_id = 1:4,
+  student_name = c("Alice", "Alice", "Bob", "Bob"),
+  student_age = c(20, 20, 22, 22),
+  student_major = c("Math", "Math", "Physics", "Physics"),
+  course_name = c("Calculus", "Statistics", "Calculus", "Physics"),
+  course_credits = c(3, 3, 3, 4),
+  grade = c("A", "B", "A-", "B+")
+)
+
+cat("MESSY - Student and course info mixed:\n")
+print(messy_grades)
+
+# Should be separate tables
+students <- messy_grades %>%
+  distinct(student_name, student_age, student_major)
+
+courses <- messy_grades %>%
+  distinct(course_name, course_credits)
+
+enrollments <- messy_grades %>%
+  select(student_name, course_name, grade)
+
+cat("\nTIDY - Students table:\n")
+print(students)
+cat("\nTIDY - Courses table:\n")
+print(courses)
+cat("\nTIDY - Enrollments table:\n")
+print(enrollments)
+```
+
+## Diagnosing Data Structure Problems
+
+### Quick Diagnostic Questions
+
+```{r}
+#| label: diagnostic-questions
+
+diagnostic_checklist <- function(data) {
+  cat("TIDY DATA DIAGNOSTIC CHECKLIST\n")
+  cat("==============================\n\n")
+
+  cat("1. COLUMNS (Variables):\n")
+  cat("   □ Does each column represent exactly one variable?\n")
+  cat("   □ Are column names variable names (not values)?\n")
+  cat("   □ Do you see patterns like '2020', '2021' in column names?\n")
+  cat("   □ Do column names contain multiple pieces of info?\n\n")
+
+  cat("2. ROWS (Observations):\n")
+  cat("   □ Does each row represent exactly one observation?\n")
+  cat("   □ Are observations split across multiple rows?\n")
+  cat("   □ Are multiple observations squeezed into one row?\n\n")
+
+  cat("3. CELLS (Values):\n")
+  cat("   □ Does each cell contain exactly one value?\n")
+  cat("   □ Are multiple values separated by commas/semicolons?\n")
+  cat("   □ Are values and variable names mixed in cells?\n\n")
+
+  cat("4. TABLES (Observational Units):\n")
+  cat("   □ Does this table mix different types of entities?\n")
+  cat("   □ Is information duplicated across rows?\n")
+  cat("   □ Should this be split into multiple tables?\n\n")
+
+  # Basic analysis of the provided data
+  cat("QUICK ANALYSIS OF YOUR DATA:\n")
+  cat("============================\n")
+  cat("Dimensions:", nrow(data), "rows ×", ncol(data), "columns\n")
+  cat("Column names:", paste(names(data), collapse = ", "), "\n")
+
+  # Check for common patterns
+  col_names <- names(data)
+  if (any(str_detect(col_names, "\\d{4}"))) {
+    cat("⚠️  WARNING: Found years in column names - might need pivot_longer()\n")
+  }
+  if (any(str_detect(col_names, "_"))) {
+    cat("⚠️  WARNING: Found underscores in column names - might need separate()\n")
+  }
+  if (length(unique(apply(data, 1, paste, collapse = ""))) < nrow(data)) {
+    cat("⚠️  WARNING: Found duplicate rows - check for repeated observations\n")
+  }
+}
+
+# Example usage
+sample_messy <- tibble(
+  id = 1:3,
+  name = c("Alice", "Bob", "Charlie"),
+  `2023_sales` = c(1000, 1200, 1100),
+  `2024_sales` = c(1100, 1300, 1200)
+)
+
+diagnostic_checklist(sample_messy)
+```
+
+### Visual Pattern Recognition
+
+```{r}
+#| label: visual-patterns
+
+# Function to visualize data structure issues
+show_data_problems <- function() {
+  cat("COMMON MESSY DATA PATTERNS - VISUAL GUIDE\n")
+  cat("=========================================\n\n")
+
+  # Pattern 1: Too wide
+  cat("PATTERN 1: TOO WIDE (headers are values)\n")
+  cat("┌─────────┬─────┬─────┬─────┬─────┐\n")
+  cat("│ country │2020 │2021 │2022 │2023 │\n")
+  cat("├─────────┼─────┼─────┼─────┼─────┤\n")
+  cat("│ USA     │ 331 │ 332 │ 333 │ 334 │\n")
+  cat("│ Canada  │  38 │  38 │  39 │  39 │\n")
+  cat("└─────────┴─────┴─────┴─────┴─────┘\n")
+  cat("SHOULD BE: pivot_longer() to make it tall\n\n")
+
+  # Pattern 2: Multiple variables in names
+  cat("PATTERN 2: MULTIPLE VARIABLES IN COLUMN NAMES\n")
+  cat("┌─────┬──────────┬──────────┬──────────┐\n")
+  cat("│ id  │treat_A_pre│treat_A_post│treat_B_pre│\n")
+  cat("├─────┼──────────┼──────────┼──────────┤\n")
+  cat("│  1  │    70    │    75    │    72    │\n")
+  cat("└─────┴──────────┴──────────┴──────────┘\n")
+  cat("SHOULD BE: pivot_longer() then separate()\n\n")
+
+  # Pattern 3: Multiple values in cells
+  cat("PATTERN 3: MULTIPLE VALUES IN CELLS\n")
+  cat("┌─────────┬─────────────┬─────────────┐\n")
+  cat("│ person  │   contact   │   skills    │\n")
+  cat("├─────────┼─────────────┼─────────────┤\n")
+  cat("│ Alice   │email;phone  │ R,Python    │\n")
+  cat("│ Bob     │email;phone  │Excel,SQL    │\n")
+  cat("└─────────┴─────────────┴─────────────┘\n")
+  cat("SHOULD BE: separate() into multiple columns\n\n")
+
+  # Pattern 4: Variables as rows
+  cat("PATTERN 4: VARIABLES STORED AS ROWS\n")
+  cat("┌─────────┬─────────┬───────┐\n")
+  cat("│ person  │variable │ value │\n")
+  cat("├─────────┼─────────┼───────┤\n")
+  cat("│ Alice   │ height  │  165  │\n")
+  cat("│ Alice   │ weight  │   60  │\n")
+  cat("│ Bob     │ height  │  180  │\n")
+  cat("│ Bob     │ weight  │   75  │\n")
+  cat("└─────────┴─────────┴───────┘\n")
+  cat("SHOULD BE: pivot_wider() to make columns\n\n")
+}
+
+show_data_problems()
+```
+
+## Planning Your Tidying Strategy
+
+### Step-by-Step Planning Process
+
+```{r}
+#| label: planning-strategy
+
+# Function to help plan tidying strategy
+plan_tidying <- function(data, target_description = NULL) {
+  cat("TIDYING STRATEGY PLANNER\n")
+  cat("========================\n\n")
+
+  cat("STEP 1: UNDERSTAND YOUR CURRENT DATA\n")
+  cat("Current dimensions:", nrow(data), "rows ×", ncol(data), "columns\n")
+  cat("Current columns:", paste(names(data), collapse = ", "), "\n\n")
+
+  cat("STEP 2: ENVISION YOUR TARGET STRUCTURE\n")
+  if (!is.null(target_description)) {
+    cat("Target:", target_description, "\n")
+  } else {
+    cat("Ask yourself:\n")
+    cat("- What should each row represent?\n")
+    cat("- What variables do I need as columns?\n")
+    cat("- What is the observational unit?\n")
+  }
+  cat("\n")
+
+  cat("STEP 3: IDENTIFY REQUIRED TRANSFORMATIONS\n")
+
+  # Check for common patterns
+  col_names <- names(data)
+
+  if (any(str_detect(col_names, "\\d{4}"))) {
+    cat("📋 NEEDS: pivot_longer() - Found years/dates in column names\n")
+  }
+
+  if (any(str_detect(col_names, "_.*_"))) {
+    cat("📋 NEEDS: separate() - Found multiple variables in column names\n")
+  }
+
+  # Check for values that look like they contain multiple items
+  char_cols <- data %>% select(where(is.character))
+  if (ncol(char_cols) > 0) {
+    multi_value_check <- char_cols %>%
+      summarise(across(everything(), ~ any(str_detect(.x, "[,;|]"), na.rm = TRUE)))
+
+    if (any(multi_value_check)) {
+      cat("📋 NEEDS: separate() - Found multiple values in cells\n")
+    }
+  }
+
+  cat("\n")
+
+  cat("STEP 4: PLAN THE SEQUENCE\n")
+  cat("1. Start with the most fundamental transformation\n")
+  cat("2. Work from general to specific\n")
+  cat("3. Clean up column names and types at the end\n\n")
+
+  cat("STEP 5: VERIFY EACH STEP\n")
+  cat("- Check dimensions after each transformation\n")
+  cat("- Verify that you haven't lost or duplicated data\n")
+  cat("- Test with a small sample first\n")
+}
+
+# Example usage
+messy_survey <- tibble(
+  respondent = 1:3,
+  Q1_pre = c(3, 4, 2),
+  Q1_post = c(4, 5, 4),
+  Q2_pre = c(2, 3, 2),
+  Q2_post = c(3, 4, 3),
+  demographics = c("25_Male", "34_Female", "28_Male")
+)
+
+plan_tidying(messy_survey, "One row per respondent-question-time combination")
+```
+
+## Real-World Tidying Examples
+
+### Example 1: Financial Data
+
+```{r}
+#| label: financial-example
+
+# Typical financial data from spreadsheets
+financial_messy <- tibble(
+  company = c("Apple", "Google", "Microsoft"),
+  `2021_Revenue` = c(365.8, 257.6, 168.1),
+  `2021_Profit` = c(94.7, 76.0, 61.3),
+  `2022_Revenue` = c(394.3, 282.8, 198.3),
+  `2022_Profit` = c(99.8, 82.5, 72.7),
+  `2023_Revenue` = c(383.3, 307.4, 211.9),
+  `2023_Profit` = c(97.0, 73.8, 72.4)
+)
+
+cat("MESSY: Financial data with years and metrics in column names\n")
+print(financial_messy)
+
+# Step 1: Identify the structure
+cat("\nANALYSIS:\n")
+cat("- Years (2021, 2022, 2023) are in column names → need pivot_longer()\n")
+cat("- Metrics (Revenue, Profit) are in column names → need separate()\n")
+cat("- Each company-year should be one observation\n")
+
+# Step 2: Tidy transformation
+financial_tidy <- financial_messy %>%
+  # First, pivot longer to get year_metric combinations
+  pivot_longer(
+    cols = -company,
+    names_to = "year_metric",
+    values_to = "value"
+  ) %>%
+  # Then separate the year and metric
+  separate(year_metric, into = c("year", "metric"), sep = "_") %>%
+  # Convert year to numeric
+  mutate(year = as.numeric(year)) %>%
+  # Pivot wider to get metrics as columns
+  pivot_wider(names_from = metric, values_from = value) %>%
+  # Calculate derived metrics
+  mutate(
+    profit_margin = round(Profit / Revenue * 100, 1),
+    profit_growth = round((Profit / lag(Profit) - 1) * 100, 1)
+  ) %>%
+  arrange(company, year)
+
+cat("\nTIDY: Clean financial data ready for analysis\n")
+print(financial_tidy)
+
+# Now analysis is straightforward
+cat("\nAnalysis example - Average profit margin by company:\n")
+financial_tidy %>%
+  group_by(company) %>%
+  summarise(avg_profit_margin = round(mean(profit_margin), 1), .groups = "drop") %>%
+  arrange(desc(avg_profit_margin)) %>%
+  print()
+```
+
+### Example 2: Survey Data
+
+```{r}
+#| label: survey-example
+
+# Complex survey data with multiple issues
+survey_messy <- tibble(
+  id = 1:4,
+  name_age = c("Alice_25", "Bob_30", "Charlie_35", "Diana_28"),
+  pre_satisfaction = c(3, 4, 2, 5),
+  post_satisfaction = c(4, 5, 4, 5),
+  pre_recommendation = c(2, 3, 2, 4),
+  post_recommendation = c(4, 4, 3, 5),
+  contact_info = c("alice@email.com;555-1234", "bob@company.org;555-5678",
+                   "charlie@domain.com", "diana@startup.io;555-9999")
+)
+
+cat("MESSY: Survey data with multiple structural issues\n")
+print(survey_messy)
+
+# Multi-step tidying process
+survey_tidy <- survey_messy %>%
+  # Step 1: Separate name and age
+  separate(name_age, into = c("name", "age"), sep = "_") %>%
+  mutate(age = as.numeric(age)) %>%
+
+  # Step 2: Pivot longer to get measurement types in rows
+  pivot_longer(
+    cols = matches("(satisfaction|recommendation)"),
+    names_to = "measurement_info",
+    values_to = "score"
+  ) %>%
+
+  # Step 3: Separate measurement info
+  separate(measurement_info, into = c("time", "metric"), sep = "_") %>%
+
+  # Step 4: Handle contact info (separate into multiple rows for multiple contacts)
+  separate_rows(contact_info, sep = ";") %>%
+
+  # Step 5: Clean up and organize
+  mutate(
+    contact_type = case_when(
+      str_detect(contact_info, "@") ~ "email",
+      str_detect(contact_info, "^\\d{3}-\\d{4}$") ~ "phone",
+      TRUE ~ "other"
+    )
+  ) %>%
+  arrange(id, time, metric)
+
+cat("\nTIDY: Survey data in analysis-ready format\n")
+print(head(survey_tidy, 12))
+
+# Now we can easily analyze pre/post changes
+cat("\nAnalysis example - Average improvement by metric:\n")
+survey_improvement <- survey_tidy %>%
+  filter(contact_type == "email") %>%  # One record per person
+  select(id, name, time, metric, score) %>%
+  pivot_wider(names_from = time, values_from = score) %>%
+  mutate(improvement = post - pre) %>%
+  group_by(metric) %>%
+  summarise(avg_improvement = round(mean(improvement, na.rm = TRUE), 2), .groups = "drop")
+
+print(survey_improvement)
+```
+
+## Best Practices for Tidy Data
+
+### Documentation and Naming
+
+```{r}
+#| label: best-practices
+
+# Good practices for maintaining tidy data
+cat("BEST PRACTICES FOR TIDY DATA\n")
+cat("============================\n\n")
+
+cat("1. CONSISTENT NAMING CONVENTIONS:\n")
+cat("   ✓ Use snake_case for column names\n")
+cat("   ✓ Use descriptive, unambiguous names\n")
+cat("   ✓ Avoid spaces, special characters\n")
+cat("   ✓ Be consistent with abbreviations\n\n")
+
+# Example of good naming
+good_names_example <- tibble(
+  customer_id = c("C001", "C002"),
+  order_date = ymd(c("2024-01-15", "2024-01-16")),
+  product_category = c("Electronics", "Clothing"),
+  unit_price_usd = c(299.99, 49.99),
+  quantity_ordered = c(1, 2),
+  discount_percent = c(0.1, 0.0)
+)
+
+cat("GOOD NAMING EXAMPLE:\n")
+print(good_names_example)
+
+cat("\n2. DATA TYPES:\n")
+cat("   ✓ Use appropriate data types (dates as Date, numbers as numeric)\n")
+cat("   ✓ Use factors for categorical data with known levels\n")
+cat("   ✓ Use logical (TRUE/FALSE) for binary variables\n")
+cat("   ✓ Document any special coding (NA, missing values)\n\n")
+
+cat("3. DOCUMENTATION:\n")
+cat("   ✓ Document your tidying process\n")
+cat("   ✓ Keep original data unchanged\n")
+cat("   ✓ Comment complex transformations\n")
+cat("   ✓ Include data dictionaries\n\n")
+
+cat("4. VALIDATION:\n")
+cat("   ✓ Check row counts before/after transformations\n")
+cat("   ✓ Verify no data was lost or duplicated\n")
+cat("   ✓ Test with edge cases and missing data\n")
+cat("   ✓ Compare aggregated totals before/after\n")
+```
+
+### Common Pitfalls and How to Avoid Them
+
+```{r}
+#| label: common-pitfalls
+
+cat("COMMON PITFALLS IN DATA TIDYING\n")
+cat("===============================\n\n")
+
+# Pitfall 1: Losing data during transformation
+cat("PITFALL 1: LOSING DATA DURING TRANSFORMATION\n")
+example_data <- tibble(
+  id = 1:3,
+  value1 = c(10, 20, 30),
+  value2 = c(15, 25, 35)
+)
+
+# Bad: Forgetting to check row counts
+before_rows <- nrow(example_data)
+transformed <- example_data %>% pivot_longer(cols = -id, names_to = "variable", values_to = "value")
+after_rows <- nrow(transformed)
+
+cat("Original rows:", before_rows, "\n")
+cat("After transformation:", after_rows, "\n")
+cat("✓ GOOD: Always verify row counts make sense\n\n")
+
+# Pitfall 2: Mixing data types
+cat("PITFALL 2: MIXING DATA TYPES\n")
+mixed_types <- tibble(
+  metric = c("revenue", "count", "rate"),
+  value = c("1000", "50", "0.05")  # All stored as character!
+)
+
+cat("✗ BAD: All values stored as character\n")
+print(mixed_types)
+
+# Better approach
+proper_types <- tibble(
+  metric = c("revenue", "count", "rate"),
+  value = c(1000, 50, 0.05),
+  unit = c("USD", "items", "proportion")
+)
+
+cat("✓ GOOD: Proper data types with units documented\n")
+print(proper_types)
+
+cat("\nPITFALL 3: OVER-TIDYING\n")
+cat("✗ BAD: Making data so long it's hard to understand\n")
+cat("✓ GOOD: Keep related variables together when it makes sense\n")
+cat("✓ GOOD: Consider your analysis needs when choosing structure\n\n")
+
+cat("PITFALL 4: NOT HANDLING MISSING VALUES\n")
+cat("✗ BAD: Ignoring how NAs will behave in transformations\n")
+cat("✓ GOOD: Explicitly handle missing values with coalesce(), replace_na()\n")
+cat("✓ GOOD: Document what missing values mean\n")
+```
+
+## Exercises
+
+### Exercise 1: Diagnostic Practice
+Given these messy datasets, identify what makes them untidy:
+1. A table with years as column headers
+2. A survey with pre_post measurements combined
+3. A contact list with multiple phone numbers in one cell
+4. A gradebook mixing student and course information
+
+### Exercise 2: Planning Transformations
+For each messy dataset, write out:
+1. What the tidy version should look like
+2. Which tidyr functions you'll need
+3. The order of operations
+4. How to verify the transformation worked
+
+### Exercise 3: Multi-Step Tidying
+Practice with complex datasets that require:
+1. Multiple pivot operations
+2. Separation and recombination
+3. Handling missing values
+4. Type conversions
+
+### Exercise 4: Real-World Scenarios
+Work with realistic messy data:
+1. Financial statements from spreadsheets
+2. Survey data with encoded responses
+3. Log files with mixed formats
+4. Scientific data with experimental conditions in names
+
+## Summary
+
+Understanding tidy data principles is fundamental to effective data analysis:
+
+### The Three Rules:
+1. **Each variable forms a column**
+2. **Each observation forms a row**
+3. **Each type of observational unit forms a table**
+
+### Common Problems:
+- **Headers as values**: Years, treatments, conditions in column names
+- **Multiple variables in names**: Combined information that should be separated
+- **Multiple values in cells**: Lists or combined data in single cells
+- **Mixed observational units**: Different types of entities in one table
+
+### Diagnostic Process:
+1. **Examine the structure**: Look at dimensions and column names
+2. **Identify patterns**: Spot repeated elements and encoding
+3. **Plan transformations**: Map current state to desired tidy state
+4. **Execute step-by-step**: Transform incrementally and verify
+5. **Validate results**: Check row counts and data integrity
+
+### Best Practices:
+- **Plan before you pivot**: Understand your target structure
+- **Document your process**: Comment complex transformations
+- **Validate each step**: Check that data is preserved
+- **Use consistent naming**: Follow naming conventions
+- **Handle missing data explicitly**: Don't let NAs surprise you
+
+Mastering tidy data principles provides the foundation for all other data analysis work. When your data is tidy, analysis becomes straightforward and intuitive!
+
+Next: **[Pivoting Data](pivoting-data.qmd)**

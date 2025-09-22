@@ -1,0 +1,162 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "**/*.qmd"
+
+website:
+  title: "IND215 - Introduction to R"
+  description: "MSc Module on R Programming for Analytics - Learn R fundamentals and the tidyverse for data wrangling and statistical computing"
+  site-url: https://simonesantoni.github.io/intro-to-R-IND215
+  repo-url: https://github.com/simoneSantoni/intro-to-R-IND215
+
+  page-navigation: true
+
+  page-footer:
+    left: |
+      &copy; 2025 Simone Santoni
+    center: |
+      [IND215 - Introduction to R](https://github.com/simoneSantoni/intro-to-R-IND215)
+    right: |
+      Made with [Quarto](https://quarto.org/)
+
+  sidebar:
+    style: docked
+    search: true
+    logo: imgs/r-module-icon-light.svg
+    #title: "IND216"
+    tools:
+      - icon: github
+        href: https://github.com/simoneSantoni/intro-to-R-IND215
+        text: "Repository"
+      - icon: pencil-square
+        href: https://github.com/simoneSantoni/intro-to-R-IND215/edit/master/{{< meta quarto:source >}}
+        text: "Edit this page"
+      - icon: bug
+        href: https://github.com/simoneSantoni/intro-to-R-IND215/issues/new
+        text: "Report an issue"
+    contents:
+      - section: "Course Information"
+        contents:
+          - text: "Overview"
+            href: course/info.qmd
+          - text: "Syllabus"
+            href: course/syllabus.qmd
+          - text: "Schedule"
+            href: course/schedule.qmd
+          - text: "Support"
+            href: course/support.qmd
+          - text: "Teaching team"
+            href: course/team.qmd
+
+      - section: "Module 1: Getting Started with R"
+        contents:
+          - text: "Installing R and RStudio"
+            href: modules/module-1/installing-r.qmd
+          - text: "R as a Calculator"
+            href: modules/module-1/r-as-calculator.qmd
+          - text: "RStudio Interface"
+            href: modules/module-1/rstudio-interface.qmd
+          - text: "R Scripts and Projects"
+            href: modules/module-1/r-scripts-projects.qmd
+
+      - section: "Module 2: R Fundamentals"
+        contents:
+          - text: "Overview"
+            href: modules/module-2/index.qmd
+          - text: "Data Types and Objects"
+            href: modules/module-2/data-types.qmd
+          - text: "Vectors"
+            href: modules/module-2/vectors.qmd
+          - text: "Lists and Data Frames"
+            href: modules/module-2/data-structures.qmd
+          - text: "Control Structures"
+            href: modules/module-2/control-structures.qmd
+          - text: "Functions"
+            href: modules/module-2/functions.qmd
+          - text: "Working with Files"
+            href: modules/module-2/working-with-files.qmd
+
+      - section: "Module 3: Introduction to Tidyverse"
+        contents:
+          - text: "Module Overview"
+            href: modules/module-3/index.qmd
+          - text: "The Pipe Operator"
+            href: modules/module-3/pipe-operator.qmd
+          - text: "Working with Tibbles"
+            href: modules/module-3/tibbles.qmd
+          - text: "Data Import with readr"
+            href: modules/module-3/readr-import.qmd
+          - text: "Data Manipulation with dplyr"
+            href: modules/module-3/dplyr-basics.qmd
+          - text: "Data Tidying with tidyr"
+            href: modules/module-3/tidyr-principles.qmd
+
+      - section: "Module 4: Data Types in Tidyverse"
+        contents:
+          - text: "Module Overview"
+            href: modules/module-4/index.qmd
+          - text: "Strings with stringr"
+            href: modules/module-4/strings-stringr.qmd
+          - text: "Factors with forcats"
+            href: modules/module-4/factors-forcats.qmd
+          - text: "Dates with lubridate"
+            href: modules/module-4/dates-lubridate.qmd
+
+      - section: "Module 5: Data Wrangling with dplyr"
+        contents:
+          - text: "Module Overview"
+            href: modules/module-5/index.qmd
+          - text: "Filtering and Selecting"
+            href: modules/module-5/filtering-selecting.qmd
+          - text: "Mutating and Arranging"
+            href: modules/module-5/mutating-arranging.qmd
+          - text: "Grouping and Summarizing"
+            href: modules/module-5/grouping-summarizing.qmd
+          - text: "Joining Data"
+            href: modules/module-5/joining-data.qmd
+          - text: "Advanced Techniques"
+            href: modules/module-5/advanced-techniques.qmd
+
+      - section: "Module 6: Organizing Tabular Data with tidyr"
+        contents:
+          - text: "Module Overview"
+            href: modules/module-6/index.qmd
+          - text: "Tidy Data Principles"
+            href: modules/module-6/tidy-principles.qmd
+          - text: "Pivoting Data"
+            href: modules/module-6/pivoting-data.qmd
+          - text: "Separating and Uniting"
+            href: modules/module-6/separating-uniting.qmd
+          - text: "Nested Data and Rectangling"
+            href: modules/module-6/nested-rectangling.qmd
+
+format:
+  html:
+    theme:
+      light: [cosmo, theme.scss]
+      dark: [cosmo, theme-dark.scss]
+    mainfont: "Atkinson Hyperlegible"
+    code-copy: true
+    code-overflow: wrap
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    number-sections: false
+    number-depth: 3
+    callout-appearance: simple
+    callout-icon: false
+    citations-hover: true
+    footnotes-hover: true
+
+execute:
+  freeze: auto
+  echo: true
+  warning: false
+  message: false
+
+jupyter:
+  kernelspec:
+    name: "ir"
+    language: "R"
+    display_name: "R (ind215)"

@@ -1,0 +1,206 @@
+---
+title: "Module 3: Introduction to the Tidyverse"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: true
+---
+
+## Welcome to the Tidyverse! 🌟
+
+The tidyverse is a collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. The tidyverse makes data manipulation, exploration, and visualization faster and more intuitive.
+
+## What is the Tidyverse?
+
+The tidyverse is an opinionated collection of R packages that work in harmony because they share common data representations and API design. The packages are designed to work together naturally, making data analysis workflows more efficient and readable.
+
+### Core Tidyverse Packages
+
+The tidyverse includes several core packages that you'll use in almost every analysis:
+
+- **ggplot2**: Create elegant data visualizations using the grammar of graphics
+- **dplyr**: A grammar of data manipulation, providing a consistent set of verbs
+- **tidyr**: Tidy messy data and reshape data structures
+- **readr**: Fast and friendly reading of rectangular data
+- **purrr**: Functional programming tools for working with functions and vectors
+- **tibble**: Modern re-imagining of the data frame
+- **stringr**: Cohesive set of functions for working with strings
+- **forcats**: Tools for working with categorical variables (factors)
+
+## Installing and Loading the Tidyverse
+
+```{r}
+#| label: install-tidyverse
+#| eval: false
+
+# Install the tidyverse (only need to do this once)
+install.packages("tidyverse")
+
+# Load the tidyverse
+library(tidyverse)
+```
+
+When you load the tidyverse, you'll see which packages are attached and any conflicts with other packages:
+
+```{r}
+#| label: load-tidyverse
+#| message: true
+
+library(tidyverse)
+```
+
+## The Tidyverse Philosophy
+
+### 1. Tidy Data Principles
+
+The tidyverse is built around the concept of tidy data, which has three key characteristics:
+
+1. Each variable forms a column
+2. Each observation forms a row
+3. Each type of observational unit forms a table
+
+### 2. Consistent Grammar
+
+The tidyverse provides a consistent grammar for data manipulation. Functions are named using verbs that describe what they do:
+
+- `select()`: choose columns
+- `filter()`: choose rows
+- `mutate()`: create new columns
+- `summarize()`: reduce multiple values to a single summary
+- `arrange()`: reorder rows
+
+### 3. The Pipe Operator
+
+The pipe operator (`%>%` or `|>`) is central to tidyverse workflows, allowing you to chain operations together in a readable, left-to-right fashion.
+
+## Module Overview
+
+In this module, we'll explore the fundamental packages and concepts of the tidyverse:
+
+### Topics Covered
+
+1. **The Pipe Operator**: Learn to chain operations for cleaner, more readable code
+2. **Tibbles**: Modern data frames with improved printing and subsetting
+3. **Data Import with readr**: Efficiently read rectangular data from files
+4. **Data Transformation with dplyr**: Master the five key verbs for data manipulation
+5. **Data Tidying with tidyr**: Reshape and organize messy data
+
+### Learning Objectives
+
+By the end of this module, you will be able to:
+
+- ✅ Understand the tidyverse philosophy and ecosystem
+- ✅ Use the pipe operator to create readable data pipelines
+- ✅ Import data from various file formats using readr
+- ✅ Perform basic data manipulations with dplyr
+- ✅ Reshape data between wide and long formats with tidyr
+- ✅ Work with tibbles as an enhanced alternative to data frames
+
+## Quick Example: The Power of the Tidyverse
+
+Let's see a quick example that demonstrates the elegance of tidyverse code:
+
+```{r}
+#| label: tidyverse-example
+
+# Create some sample data
+sales_data <- tibble(
+  date = seq.Date(from = as.Date("2024-01-01"),
+                  to = as.Date("2024-01-10"),
+                  by = "day"),
+  product = rep(c("A", "B"), 5),
+  units = sample(10:50, 10),
+  price = rep(c(9.99, 14.99), 5)
+)
+
+# Analyze the data using tidyverse functions
+sales_summary <- sales_data %>%
+  mutate(revenue = units * price) %>%
+  group_by(product) %>%
+  summarize(
+    total_units = sum(units),
+    total_revenue = sum(revenue),
+    avg_daily_revenue = mean(revenue),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_revenue))
+
+print(sales_summary)
+```
+
+This example shows how tidyverse functions work together to:
+1. Create new variables with `mutate()`
+2. Group data by categories with `group_by()`
+3. Calculate summaries with `summarize()`
+4. Sort results with `arrange()`
+5. Chain it all together with the pipe `%>%`
+
+## Base R vs. Tidyverse
+
+While base R is powerful and important to understand, the tidyverse often provides more intuitive solutions:
+
+```{r}
+#| label: base-vs-tidyverse
+
+# Base R approach
+base_result <- aggregate(
+  sales_data$units,
+  by = list(product = sales_data$product),
+  FUN = sum
+)
+names(base_result)[2] <- "total_units"
+
+# Tidyverse approach
+tidy_result <- sales_data %>%
+  group_by(product) %>%
+  summarize(total_units = sum(units))
+
+# Both give the same result, but tidyverse is more readable
+print(base_result)
+print(tidy_result)
+```
+
+## Getting Help
+
+The tidyverse has excellent documentation and resources:
+
+- **Official website**: [tidyverse.org](https://www.tidyverse.org)
+- **R for Data Science book**: Free online book by Hadley Wickham
+- **RStudio Cheat Sheets**: Visual guides for each package
+- **Package documentation**: Use `?function_name` or `help(package = "package_name")`
+
+## What's Next?
+
+In the following sections, we'll dive deep into each component:
+
+- [The Pipe Operator](pipe-operator.qmd): Master the art of chaining operations
+- [Working with Tibbles](tibbles.qmd): Modern data frames for the 21st century
+- [Importing Data with readr](readr-import.qmd): Get your data into R efficiently
+- [Data Manipulation with dplyr](dplyr-basics.qmd): Transform your data with elegance
+- [Tidying Data with tidyr](tidyr-principles.qmd): Reshape data for analysis
+
+## Practice Exercises
+
+### Exercise 1: Install and Explore
+1. Install the tidyverse if you haven't already
+2. Load the tidyverse and examine which packages are attached
+3. Check for any conflicts with `tidyverse_conflicts()`
+
+### Exercise 2: First Pipeline
+Create a simple pipeline that:
+1. Creates a tibble with student grades
+2. Calculates the average grade per subject
+3. Arranges the results from highest to lowest average
+
+### Exercise 3: Compare Approaches
+Take a simple data manipulation task and implement it in both base R and tidyverse. Which do you find more readable?
+
+## Summary
+
+The tidyverse represents a modern, coherent approach to data analysis in R. Its consistent design principles, readable syntax, and powerful tools make it an essential part of any R programmer's toolkit. As we progress through this module, you'll gain hands-on experience with each of the core packages and learn to leverage their combined power for efficient data analysis.
+
+Remember: the tidyverse is not just about individual functions, but about a philosophy of data analysis that emphasizes clarity, consistency, and reproducibility. Welcome to a more elegant way of working with data! 🎉

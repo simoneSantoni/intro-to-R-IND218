@@ -1,0 +1,450 @@
+---
+title: "R as a Calculator"
+---
+
+## Introduction
+
+One of the best ways to start learning R is to use it as a sophisticated calculator. R excels at mathematical operations and provides many built-in functions that go far beyond what a standard calculator can do. In this lesson, we'll explore R's mathematical capabilities and start building your confidence with the R console.
+
+## Getting Started
+
+Open RStudio and look for the **Console** pane (usually in the bottom-left). You'll see a prompt that looks like this:
+
+```bash
+R version 4.5.1 (2025-06-13) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+```
+
+This prompt is where you can type R commands and see immediate results.
+
+## Basic Arithmetic Operations
+
+Let's start with fundamental arithmetic operations:
+
+### Addition and Subtraction
+
+```{r}
+# Addition
+5 + 3
+
+# Subtraction
+10 - 4
+
+# You can chain operations
+15 + 7 - 3
+```
+
+### Multiplication and Division
+
+```{r}
+# Multiplication
+6 * 7
+
+# Division
+20 / 4
+
+# Combined operations
+3 * 4 + 2
+```
+
+### Exponentiation
+
+```{r}
+# Using ^ operator
+2^3
+
+# Using ** operator (alternative)
+2**3
+
+# Square root (special case)
+sqrt(16)
+
+# nth root using exponentiation
+8^(1/3)  # cube root of 8
+```
+
+### Modular Arithmetic
+
+```{r}
+# Modulo (remainder after division)
+17 %% 5
+
+# Integer division (quotient without remainder)
+17 %/% 5
+```
+
+## Order of Operations
+
+R follows standard mathematical order of operations (PEMDAS):
+
+```{r}
+# Without parentheses
+2 + 3 * 4
+
+# With parentheses to change order
+(2 + 3) * 4
+
+# Complex expression
+2^3 + 4 * (5 - 2) / 6
+```
+
+## Mathematical Functions
+
+R includes many built-in mathematical functions:
+
+### Basic Functions
+
+```{r}
+# Absolute value
+abs(-5)
+
+# Rounding functions
+round(3.14159, 2)    # Round to 2 decimal places
+ceiling(3.2)         # Round up
+floor(3.9)           # Round down
+
+# Sign function
+sign(-42)            # Returns -1, 0, or 1
+```
+
+### Logarithmic and Exponential Functions
+
+```{r}
+# Natural logarithm
+log(10)
+
+# Logarithm base 10
+log10(100)
+
+# Logarithm with custom base
+log(8, base = 2)
+
+# Exponential function
+exp(1)               # e^1
+
+# Power of 10
+10^2
+```
+
+### Trigonometric Functions
+
+```{r}
+# Basic trigonometric functions (in radians)
+sin(pi/2)
+cos(0)
+tan(pi/4)
+
+# Inverse functions
+asin(1)
+acos(1)
+atan(1)
+
+# Convert degrees to radians
+degrees_to_radians <- function(degrees) degrees * pi / 180
+sin(degrees_to_radians(90))
+```
+
+## Special Numbers and Constants
+
+R has several built-in constants:
+
+```{r}
+# Pi
+pi
+
+# Euler's number
+exp(1)
+
+# Infinity
+Inf
+1/0                  # Also gives Inf
+
+# Not a Number
+NaN
+0/0                  # Results in NaN
+
+# Not Available (missing value)
+NA
+```
+
+## Working with Vectors
+
+One of R's superpowers is vectorized operations:
+
+### Creating Vectors
+
+```{r}
+# Using c() function to combine values
+numbers <- c(1, 2, 3, 4, 5)
+numbers
+
+# Creating sequences
+1:10                 # Numbers 1 through 10
+seq(0, 20, by = 2)   # Even numbers from 0 to 20
+```
+
+### Vector Arithmetic
+
+```{r}
+# Operations on entire vectors
+x <- c(1, 2, 3, 4)
+y <- c(5, 6, 7, 8)
+
+# Element-wise operations
+x + y
+x * y
+x^2
+
+# Operations with single numbers (recycling)
+x + 10
+x * 2
+```
+
+### Useful Vector Functions
+
+```{r}
+# Create some data
+scores <- c(85, 92, 78, 96, 88, 75, 89)
+
+# Summary statistics
+sum(scores)          # Total
+mean(scores)         # Average
+median(scores)       # Middle value
+max(scores)          # Maximum
+min(scores)          # Minimum
+range(scores)        # Min and max
+length(scores)       # Number of elements
+
+# More advanced statistics
+var(scores)          # Variance
+sd(scores)           # Standard deviation
+```
+
+## Logical Operations
+
+R can also perform logical operations:
+
+### Comparison Operators
+
+```{r}
+# Equal to
+5 == 5
+
+# Not equal to
+5 != 3
+
+# Greater than / Less than
+10 > 5
+3 < 7
+
+# Greater than or equal to / Less than or equal to
+5 >= 5
+4 <= 3
+```
+
+### Logical Operators
+
+```{r}
+# AND operator
+TRUE & TRUE
+(5 > 3) & (2 < 4)
+
+# OR operator
+TRUE | FALSE
+(5 > 10) | (2 < 4)
+
+# NOT operator
+!TRUE
+!(5 > 10)
+```
+
+## Practical Examples
+
+Let's work through some practical calculation examples:
+
+### Example 1: Compound Interest
+
+```{r}
+# Calculate compound interest
+# Formula: A = P(1 + r/n)^(nt)
+principal <- 1000    # Initial amount
+rate <- 0.05         # 5% annual interest rate
+n <- 12              # Compounded monthly
+t <- 5               # 5 years
+
+final_amount <- principal * (1 + rate/n)^(n*t)
+final_amount
+
+# Interest earned
+interest_earned <- final_amount - principal
+interest_earned
+```
+
+### Example 2: Body Mass Index (BMI)
+
+```{r}
+# BMI calculation: weight (kg) / height (m)^2
+weight_kg <- 70
+height_m <- 1.75
+
+bmi <- weight_kg / height_m^2
+round(bmi, 1)
+
+# BMI for multiple people
+weights <- c(65, 70, 80, 55)
+heights <- c(1.70, 1.75, 1.80, 1.60)
+bmis <- weights / heights^2
+round(bmis, 1)
+```
+
+### Example 3: Temperature Conversion
+
+```{r}
+# Celsius to Fahrenheit: F = (C * 9/5) + 32
+celsius_temps <- c(0, 20, 30, 37, 100)
+fahrenheit_temps <- (celsius_temps * 9/5) + 32
+fahrenheit_temps
+
+# Fahrenheit to Celsius: C = (F - 32) * 5/9
+fahrenheit_example <- c(32, 68, 86, 98.6, 212)
+celsius_converted <- (fahrenheit_example - 32) * 5/9
+celsius_converted
+```
+
+## Comments in R
+
+Notice the use of `#` for comments in the examples above. Comments are crucial for explaining your code:
+
+```{r}
+# This is a comment - R ignores this line
+2 + 2    # You can also add comments at the end of lines
+
+# Comments can span multiple lines
+# Use them to explain what your calculations do
+# Future you (and others) will thank you!
+```
+
+## Tips for Using R as a Calculator
+
+### Use the Up Arrow
+
+- Press the **up arrow** key in the console to recall previous commands
+- This saves time when you want to modify a calculation slightly
+
+### Scientific Notation
+
+```{r}
+# R uses scientific notation for very large or small numbers
+1000000
+0.0001
+
+# You can control the display
+options(scipen = 999)  # Avoid scientific notation
+1000000
+
+options(scipen = 0)    # Reset to default
+```
+
+### Assignment vs. Printing
+
+```{r}
+# This just calculates and displays the result
+5 + 3
+
+# This calculates and stores the result in a variable
+result <- 5 + 3
+
+# To see the stored value, type the variable name
+result
+
+# Or use parentheses to assign and display
+(result2 <- 10 * 2)
+```
+
+## Common Mistakes to Avoid
+
+### Case Sensitivity
+
+```{r}
+#| eval: false
+# R is case-sensitive
+PI        # This will give an error
+pi        # This works
+```
+
+### Missing Parentheses
+
+```{r}
+#| eval: false
+# Incorrect
+mean c(1, 2, 3)    # Missing parentheses - ERROR
+
+# Correct
+mean(c(1, 2, 3))
+```
+
+### Division by Zero
+
+```{r}
+# Be careful with division
+5 / 0    # Returns Inf
+0 / 0    # Returns NaN
+```
+
+## Practice Exercises
+
+Try these calculations on your own:
+
+1. Calculate the area of a circle with radius 7 (use π)
+2. Find the hypotenuse of a right triangle with sides 3 and 4
+3. Calculate the average of these test scores: 88, 92, 76, 95, 89, 82
+4. Convert 25°C to Fahrenheit
+5. Calculate 15% tip on a $47.50 restaurant bill
+
+::: {.callout-note}
+## Solutions
+
+1. `pi * 7^2` = 153.94
+2. `sqrt(3^2 + 4^2)` = 5
+3. `mean(c(88, 92, 76, 95, 89, 82))` = 87
+4. `(25 * 9/5) + 32` = 77°F
+5. `47.50 * 0.15` = $7.125
+:::
+
+## Summary
+
+In this lesson, you've learned to use R as a powerful calculator that can:
+
+- Perform basic and advanced mathematical operations
+- Work with vectors for batch calculations
+- Use built-in mathematical functions
+- Handle logical operations
+- Apply mathematical concepts to real-world problems
+
+## Next Steps
+
+Now that you're comfortable with R's calculation capabilities, let's explore:
+
+- [RStudio Interface](rstudio-interface.qmd) - Understanding your development environment
+- [R Scripts and Projects](r-scripts-projects.qmd) - Organizing your R work
+
+::: {.callout-tip}
+## Pro Tip
+
+The more you practice using R for calculations, the more natural it becomes. Try replacing your regular calculator with R for daily calculations – you'll be surprised how quickly you improve!
+:::

@@ -1,0 +1,600 @@
+---
+title: "R Scripts and Projects"
+---
+
+## Introduction
+
+As you progress from simple calculations to complex analyses, organizing your R work becomes crucial. R scripts and RStudio Projects are the foundation of reproducible, organized data analysis. In this lesson, you'll learn how to structure your R code professionally and manage your analytical projects effectively.
+
+Think of R scripts as recipes and Projects as well-organized kitchens – both are essential for creating consistent, reproducible results.
+
+## Understanding R Scripts
+
+### What is an R Script?
+
+An R script is a plain text file with a `.R` extension that contains R commands. Unlike typing commands directly in the console, scripts allow you to:
+
+- **Save your work** for future use
+- **Document your analysis** with comments
+- **Share your methods** with others
+- **Reproduce results** exactly
+- **Debug and modify** code systematically
+
+### Creating Your First Script
+
+1. **File > New File > R Script** (or `Ctrl+Shift+N`)
+2. Save immediately: **File > Save** (or `Ctrl+S`)
+3. Give it a meaningful name: `my_first_analysis.R`
+
+### Script Structure Best Practices
+
+Here's a well-structured R script template:
+
+```{r}
+#| eval: false
+# ============================================================================
+# Project: Introduction to R Analysis
+# Script: my_first_analysis.R
+# Author: Your Name
+# Date: 2024-09-21
+# Last Modified: 2024-09-21
+#
+# Purpose: Demonstrate best practices for R script organization
+#
+# Data: Built-in R datasets
+# Output: Summary statistics and basic plots
+# ============================================================================
+
+# SETUP ======================================================================
+
+# Clear workspace (optional, be careful!)
+# rm(list = ls())
+
+# Load required libraries
+library(tidyverse)  # Data manipulation and visualization
+library(here)       # File path management
+
+# Set working directory (if not using projects)
+# setwd("~/Documents/R-Analysis")
+
+# Source additional scripts if needed
+# source("helper_functions.R")
+
+# CONSTANTS AND CONFIGURATION ================================================
+
+# Define constants
+SIGNIFICANCE_LEVEL <- 0.05
+DEFAULT_PLOT_WIDTH <- 8
+DEFAULT_PLOT_HEIGHT <- 6
+
+# Set plot theme
+theme_set(theme_minimal())
+
+# DATA IMPORT ================================================================
+
+# Load built-in dataset for this example
+data("mtcars")
+
+# In real projects, you might load data like this:
+# my_data <- read_csv(here("data", "raw", "dataset.csv"))
+
+# DATA EXPLORATION ===========================================================
+
+# Quick overview
+glimpse(mtcars)
+summary(mtcars)
+
+# Check for missing values
+sum(is.na(mtcars))
+
+# DATA ANALYSIS ==============================================================
+
+# Calculate summary statistics
+mpg_stats <- mtcars %>%
+  summarise(
+    mean_mpg = mean(mpg),
+    median_mpg = median(mpg),
+    sd_mpg = sd(mpg),
+    min_mpg = min(mpg),
+    max_mpg = max(mpg)
+  )
+
+print(mpg_stats)
+
+# Create visualizations
+mpg_histogram <- ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(bins = 10, fill = "steelblue", alpha = 0.7) +
+  labs(
+    title = "Distribution of Miles Per Gallon",
+    x = "Miles Per Gallon",
+    y = "Frequency"
+  )
+
+print(mpg_histogram)
+
+# RESULTS EXPORT =============================================================
+
+# Save plot
+ggsave(
+  filename = here("output", "mpg_distribution.png"),
+  plot = mpg_histogram,
+  width = DEFAULT_PLOT_WIDTH,
+  height = DEFAULT_PLOT_HEIGHT,
+  dpi = 300
+)
+
+# Save results
+write_csv(mpg_stats, here("output", "mpg_summary_stats.csv"))
+
+# SESSION INFO ===============================================================
+
+# Document session for reproducibility
+sessionInfo()
+
+# End of script
+```
+
+### Key Script Elements
+
+#### 1. Header Comments
+Always start with a comprehensive header:
+- Project name and purpose
+- Author and date information
+- Brief description of what the script does
+- Data sources and outputs
+
+#### 2. Setup Section
+- Load required libraries
+- Set global options
+- Define constants
+- Source helper functions
+
+#### 3. Organized Sections
+Use clear section headers:
+```{r}
+#| eval: false
+# SECTION NAME ================================================================
+# or
+# Section Name ----
+```
+
+#### 4. Meaningful Comments
+```{r}
+#| eval: false
+# Good comments explain WHY, not just WHAT
+mpg_threshold <- 20  # Fuel efficiency benchmark for classification
+
+# Bad comment (obvious)
+mpg_threshold <- 20  # Set mpg_threshold to 20
+```
+
+## Working with Scripts
+
+### Running Script Code
+
+**Option 1: Line by Line**
+- Place cursor on line
+- Press `Ctrl+Enter` (Windows/Linux) or `Cmd+Enter` (Mac)
+
+**Option 2: Selected Code**
+- Highlight code block
+- Press `Ctrl+Enter`
+
+**Option 3: Entire Script**
+- Press `Ctrl+Shift+Enter` or click "Source"
+
+**Option 4: From Console**
+```{r}
+#| eval: false
+source("my_script.R")
+```
+
+### Script Navigation
+
+**Code Sections**
+Create collapsible sections with `----` or `====`:
+```{r}
+#| eval: false
+# Data Import ----
+# (code here)
+
+# Data Cleaning ====
+# (code here)
+```
+
+**Go to Function/Variable**
+- `Ctrl+.` opens "Go to File/Function" dialog
+- Type name to jump quickly
+
+**Outline View**
+- Click the outline button in Source pane
+- See all functions and sections
+
+## Introduction to RStudio Projects
+
+### Why Use Projects?
+
+RStudio Projects solve common organizational problems:
+
+**Without Projects:**
+```{r}
+#| eval: false
+# Absolute paths (bad!)
+setwd("/Users/john/Documents/my_analysis")
+data <- read.csv("/Users/john/Documents/my_analysis/data/file.csv")
+
+# Problems:
+# - Not portable between computers
+# - Difficult to share
+# - Hard to organize multiple analyses
+```
+
+**With Projects:**
+```{r}
+#| eval: false
+# Relative paths (good!)
+data <- read.csv("data/file.csv")
+# or even better:
+data <- read_csv(here("data", "file.csv"))
+```
+
+### Project Benefits
+
+1. **Automatic working directory** - no more `setwd()`
+2. **Organized file structure** - everything in one place
+3. **Portable** - works on any computer
+4. **Version control ready** - easy Git integration
+5. **Workspace isolation** - separate environments for different projects
+
+### Creating a New Project
+
+**Method 1: From RStudio**
+1. **File > New Project**
+2. Choose project type:
+   - **New Directory**: Start fresh
+   - **Existing Directory**: Use existing folder
+   - **Version Control**: Clone from Git
+
+**Method 2: New Directory Walkthrough**
+1. Select "New Directory"
+2. Choose "New Project"
+3. Directory name: `my-r-analysis`
+4. Choose parent directory
+5. Optional: Initialize Git repository
+6. Click "Create Project"
+
+### Recommended Project Structure
+
+```
+my-r-analysis/
+├── my-r-analysis.Rproj    # Project file
+├── README.md              # Project description
+├── data/                  # Data folder
+│   ├── raw/              # Original, unmodified data
+│   └── processed/        # Cleaned, processed data
+├── scripts/              # R scripts
+│   ├── 01_data_import.R
+│   ├── 02_data_cleaning.R
+│   └── 03_analysis.R
+├── output/               # Results folder
+│   ├── figures/          # Plots and visualizations
+│   └── tables/           # Summary tables
+├── docs/                 # Documentation
+└── renv/                 # Package management (optional)
+```
+
+### Setting Up Project Structure
+
+Create this structure using R:
+
+```{r}
+#| eval: false
+# Create project folders
+dir.create("data")
+dir.create("data/raw")
+dir.create("data/processed")
+dir.create("scripts")
+dir.create("output")
+dir.create("output/figures")
+dir.create("output/tables")
+dir.create("docs")
+
+# Create README file
+writeLines(
+  c("# My R Analysis Project",
+    "",
+    "## Description",
+    "Brief description of your project",
+    "",
+    "## Structure",
+    "- `data/`: Data files",
+    "- `scripts/`: R scripts",
+    "- `output/`: Results and figures",
+    "- `docs/`: Documentation"),
+  "README.md"
+)
+```
+
+## File Management Best Practices
+
+### Naming Conventions
+
+**Files and Folders:**
+- Use lowercase with hyphens: `data-cleaning.R`
+- Or use underscores: `data_cleaning.R`
+- Be descriptive: `monthly_sales_analysis.R`
+- Use prefixes for ordering: `01_import.R`, `02_clean.R`
+
+**Variables and Functions:**
+```{r}
+#| eval: false
+# Good naming
+customer_ages <- c(25, 30, 45, 22)
+calculate_total_revenue <- function(price, quantity) { ... }
+
+# Avoid
+x <- c(25, 30, 45, 22)
+fun1 <- function(a, b) { ... }
+```
+
+### Working with Paths
+
+**Use the `here` Package:**
+```{r}
+#| eval: false
+# Install if needed
+install.packages("here")
+library(here)
+
+# Benefits of here()
+data_path <- here("data", "raw", "sales.csv")
+# Works on Windows: data/raw/sales.csv
+# Works on Mac/Linux: data/raw/sales.csv
+
+# Read data
+sales_data <- read_csv(here("data", "raw", "sales.csv"))
+
+# Save output
+write_csv(results, here("output", "tables", "summary.csv"))
+```
+
+### Data Import Best Practices
+
+```{r}
+#| eval: false
+# Good data import workflow
+import_sales_data <- function() {
+  # Define file path
+  file_path <- here("data", "raw", "sales_2024.csv")
+
+  # Check if file exists
+  if (!file.exists(file_path)) {
+    stop("Sales data file not found: ", file_path)
+  }
+
+  # Import with explicit column types
+  sales_data <- read_csv(
+    file_path,
+    col_types = cols(
+      date = col_date(format = "%Y-%m-%d"),
+      customer_id = col_character(),
+      amount = col_double(),
+      product = col_character()
+    )
+  )
+
+  # Basic validation
+  if (nrow(sales_data) == 0) {
+    warning("Sales data is empty")
+  }
+
+  return(sales_data)
+}
+
+# Use the function
+sales_data <- import_sales_data()
+```
+
+## Reproducible Analysis Workflow
+
+### Script Dependencies
+
+**Master Script Approach:**
+```{r}
+#| eval: false
+# main_analysis.R
+# ============================================================================
+# Master Script: Sales Analysis Pipeline
+# ============================================================================
+
+# Setup
+source(here("scripts", "00_setup.R"))
+
+# Data pipeline
+source(here("scripts", "01_data_import.R"))
+source(here("scripts", "02_data_cleaning.R"))
+source(here("scripts", "03_data_analysis.R"))
+source(here("scripts", "04_generate_report.R"))
+
+# Session info
+sessionInfo()
+```
+
+### Package Management
+
+**Using `renv` for Reproducibility:**
+```{r}
+#| eval: false
+# Install renv
+install.packages("renv")
+
+# Initialize project environment
+renv::init()
+
+# Install packages
+install.packages(c("tidyverse", "here", "lubridate"))
+
+# Take snapshot of current packages
+renv::snapshot()
+
+# Restore environment (on another computer)
+renv::restore()
+```
+
+## Common Project Pitfalls
+
+### Pitfall 1: Hardcoded Paths
+```{r}
+#| eval: false
+# Bad
+setwd("C:/Users/John/Documents/analysis")
+data <- read.csv("C:/Users/John/Documents/analysis/data.csv")
+
+# Good
+data <- read_csv(here("data", "data.csv"))
+```
+
+### Pitfall 2: Not Using Version Control
+- Initialize Git repository when creating project
+- Use meaningful commit messages
+- Push to GitHub/GitLab for backup
+
+### Pitfall 3: Mixing Data and Scripts
+```{r}
+#| eval: false
+# Bad structure
+project/
+├── analysis.R
+├── data.csv
+├── plot.R
+├── results.csv
+
+# Good structure
+project/
+├── scripts/
+│   ├── analysis.R
+│   └── plot.R
+├── data/
+│   └── data.csv
+└── output/
+    └── results.csv
+```
+
+### Pitfall 4: No Documentation
+Always include:
+- README.md with project description
+- Comments in scripts explaining complex logic
+- Data dictionaries for datasets
+
+## Practical Exercise
+
+Let's create a complete project:
+
+1. **Create New Project**
+   - Name: "iris-analysis"
+   - Choose appropriate location
+
+2. **Set Up Structure**
+   ```{r}
+   #| eval: false
+   # Run this in your new project
+   dir.create("data")
+   dir.create("scripts")
+   dir.create("output")
+   ```
+
+3. **Create Analysis Script**
+   ```{r}
+   #| eval: false
+   # scripts/iris_analysis.R
+
+   # ========================================================================
+   # Iris Dataset Analysis
+   # Author: Your Name
+   # Date: Today's Date
+   # ========================================================================
+
+   # Setup
+   library(tidyverse)
+   library(here)
+
+   # Load data (built-in dataset)
+   data("iris")
+
+   # Quick exploration
+   glimpse(iris)
+   summary(iris)
+
+   # Analysis
+   species_summary <- iris %>%
+     group_by(Species) %>%
+     summarise(
+       mean_sepal_length = mean(Sepal.Length),
+       mean_petal_length = mean(Petal.Length),
+       count = n()
+     )
+
+   print(species_summary)
+
+   # Visualization
+   scatter_plot <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+     geom_point(size = 3) +
+     labs(
+       title = "Iris: Sepal Length vs Petal Length",
+       x = "Sepal Length (cm)",
+       y = "Petal Length (cm)"
+     ) +
+     theme_minimal()
+
+   print(scatter_plot)
+
+   # Save results
+   write_csv(species_summary, here("output", "species_summary.csv"))
+   ggsave(here("output", "iris_scatter.png"), scatter_plot, width = 8, height = 6)
+   ```
+
+4. **Run and Test**
+   - Run script section by section
+   - Check that files are created in output folder
+   - Verify paths work correctly
+
+## Summary
+
+You now understand how to organize R work professionally:
+
+### R Scripts
+- **Structure** scripts with clear headers and sections
+- **Comment** code to explain your reasoning
+- **Use** meaningful variable and file names
+- **Organize** code logically from setup to results
+
+### RStudio Projects
+- **Create** projects for each analysis
+- **Use** consistent folder structures
+- **Leverage** relative paths with `here()`
+- **Document** your work with README files
+
+### Best Practices
+- **Plan** your analysis structure before coding
+- **Test** scripts section by section
+- **Save** intermediate results
+- **Document** your session info for reproducibility
+
+## Next Steps
+
+With Module 1 complete, you're ready to dive deeper into R:
+
+- **Module 2**: [R Language Fundamentals](../module-2/index.qmd) - Objects, data types, and control structures
+- **Module 3**: [Introduction to Tidyverse](../module-3/tidyverse-intro.qmd) - Modern R data manipulation
+
+::: {.callout-tip}
+## Pro Tips for Success
+
+1. **Start every analysis** with a new project
+2. **Use the same folder structure** across projects
+3. **Write scripts as if someone else** will read them
+4. **Save your work frequently** and use version control
+5. **Test code in small chunks** before running entire scripts
+:::
+
+Congratulations! You've completed Module 1 and have a solid foundation for R programming. The habits you develop now will serve you well throughout your data science journey.

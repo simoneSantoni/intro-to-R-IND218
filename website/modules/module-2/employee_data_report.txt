@@ -1,0 +1,42 @@
+AUTOMATED DATA REPORT
+========================================
+
+Generated: 2025-09-22 01:02:39
+R Version: R version 4.3.2 (2023-10-31)
+
+DATA OVERVIEW
+--------------------
+Rows: 4
+Columns: 4
+Column Names: name, age, salary, department
+
+COLUMN ANALYSIS
+--------------------
+Column: name
+  Type: character
+  Missing: 0
+  Unique Values: 4
+  Top Values: Alice, Bob, Charlie, Diana
+
+Column: age
+  Type: numeric
+  Missing: 0
+  Min: 25
+  Max: 35
+  Mean: 29.5
+  Std Dev: 4.203
+
+Column: salary
+  Type: numeric
+  Missing: 0
+  Min: 50000
+  Max: 60000
+  Mean: 54250
+  Std Dev: 4349.329
+
+Column: department
+  Type: character
+  Missing: 0
+  Unique Values: 4
+  Top Values: HR, IT, Marketing, Sales
+

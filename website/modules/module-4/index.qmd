@@ -1,0 +1,236 @@
+---
+title: "Module 4: Data Types in Tidyverse"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: true
+---
+
+## Welcome to Data Types in Tidyverse! 🔤📅
+
+Now that you understand the basics of tidyverse data manipulation, it's time to dive deep into working with specific data types. Real-world data comes in many forms - text, categories, dates, and times - and the tidyverse provides specialized packages to handle each type effectively.
+
+## What You'll Learn
+
+In this module, we'll explore how to work with three fundamental data types using tidyverse packages:
+
+### 1. Strings with stringr
+- Pattern matching and text manipulation
+- Regular expressions for complex text processing
+- Cleaning and standardizing text data
+- Extracting information from unstructured text
+
+### 2. Factors with forcats
+- Creating and managing categorical data
+- Reordering factor levels for better visualization
+- Collapsing and recoding categories
+- Handling missing levels and unexpected values
+
+### 3. Dates and Times with lubridate
+- Parsing dates from various formats
+- Extracting date components (year, month, day)
+- Date arithmetic and time intervals
+- Working with time zones and periods
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+- ✅ Manipulate and clean text data using stringr functions
+- ✅ Use regular expressions for pattern matching
+- ✅ Create and manage factor variables with forcats
+- ✅ Reorder and recode categorical data effectively
+- ✅ Parse, manipulate, and format dates with lubridate
+- ✅ Perform date arithmetic and handle time zones
+- ✅ Apply these skills to real-world data cleaning tasks
+
+## Why These Data Types Matter
+
+Understanding how to work with different data types is crucial because:
+
+1. **Real-world messiness**: Data rarely comes in perfect numeric form
+2. **Text processing**: Much information is stored as text that needs cleaning
+3. **Categorical insights**: Factors help organize and analyze groupings
+4. **Time series analysis**: Dates enable temporal analysis and trends
+5. **Data quality**: Proper type handling prevents analysis errors
+
+## The Tidyverse Approach
+
+The tidyverse provides specialized packages for each data type:
+
+```{r}
+#| label: tidyverse-packages
+#| message: false
+
+# Load the core tidyverse (includes readr, dplyr, ggplot2, etc.)
+library(tidyverse)
+
+# Specialized packages for data types
+library(stringr)   # String manipulation
+library(forcats)   # Factor handling
+library(lubridate) # Date and time manipulation
+
+# Check versions
+cat("Tidyverse approach to data types:\n")
+cat("- stringr version:", as.character(packageVersion("stringr")), "\n")
+cat("- forcats version:", as.character(packageVersion("forcats")), "\n")
+cat("- lubridate version:", as.character(packageVersion("lubridate")), "\n")
+```
+
+## Module Overview
+
+### The Philosophy: Type-Specific Tools
+
+Each tidyverse package follows consistent design principles:
+
+```{r}
+#| label: design-principles
+
+# Example of consistent function naming
+sample_text <- c("Hello World", "data science", "R Programming")
+sample_factors <- factor(c("High", "Medium", "Low", "High"))
+sample_dates <- c("2024-01-15", "2024-03-20", "2024-12-01")
+
+# stringr functions start with str_
+str_to_upper(sample_text)
+str_length(sample_text)
+
+# forcats functions start with fct_
+fct_count(sample_factors)
+fct_relevel(sample_factors, "Low", "Medium", "High")
+
+# lubridate has intuitive parsing functions
+ymd(sample_dates)
+mdy("03/15/2024")
+```
+
+This consistency makes the tidyverse easier to learn and remember!
+
+## Real-World Data Challenges
+
+Let's look at a typical messy dataset that demonstrates why we need specialized data type tools:
+
+```{r}
+#| label: messy-data-example
+
+# Simulate messy real-world data
+messy_survey <- tibble(
+  id = 1:6,
+  name = c("John DOE", "jane smith", "Bob-Johnson", "Mary O'Connor", "李小明", "José García"),
+  satisfaction = c("Very Satisfied", "satisfied", "NEUTRAL", "Dissatisfied", "very satisfied", "Satisfied"),
+  date_submitted = c("2024-01-15", "01/16/2024", "2024-1-17", "16-Jan-2024", "2024/01/18", "Jan 19, 2024"),
+  comments = c("Great service!", "good stuff", "It's okay...", "Could be better!", "非常好！", "¡Excelente!"),
+  score = c("4.5", "4", "3", "2", "5", "4")
+)
+
+print(messy_survey)
+
+cat("\nChallenges in this data:\n")
+cat("- Names: inconsistent capitalization and formats\n")
+cat("- Satisfaction: inconsistent factor levels\n")
+cat("- Dates: multiple formats that need parsing\n")
+cat("- Comments: mixed languages and punctuation\n")
+cat("- Scores: stored as text instead of numbers\n")
+```
+
+By the end of this module, you'll know how to clean and standardize all of these issues!
+
+## Module Structure
+
+This module is organized into three main sections:
+
+1. **[Working with Strings (stringr)](strings-stringr.qmd)**: Master text manipulation and pattern matching
+2. **[Managing Factors (forcats)](factors-forcats.qmd)**: Handle categorical data effectively
+3. **[Dates and Times (lubridate)](dates-lubridate.qmd)**: Parse and manipulate temporal data
+
+Each section includes:
+- Core functions and concepts
+- Regular expressions and advanced techniques
+- Real-world examples and case studies
+- Best practices and common pitfalls
+- Hands-on exercises
+
+## Prerequisites
+
+Before starting this module, make sure you have:
+
+- Completed Module 2 (R Fundamentals) and Module 3 (Tidyverse Introduction)
+- Understanding of tibbles, pipes, and basic dplyr operations
+- R and tidyverse packages installed and loaded
+
+## Quick Motivation Example
+
+Here's a preview of what you'll be able to do:
+
+```{r}
+#| label: motivation-preview
+
+# Transform the messy survey data
+cleaned_survey <- messy_survey %>%
+  # Clean names with stringr
+  mutate(
+    name_clean = str_to_title(str_replace_all(name, "[^A-Za-z\\s]", " ")),
+    name_clean = str_squish(name_clean)
+  ) %>%
+  # Standardize satisfaction with forcats
+  mutate(
+    satisfaction_clean = str_to_lower(satisfaction),
+    satisfaction_clean = case_when(
+      str_detect(satisfaction_clean, "very satisfied") ~ "Very Satisfied",
+      str_detect(satisfaction_clean, "satisfied") ~ "Satisfied",
+      str_detect(satisfaction_clean, "neutral") ~ "Neutral",
+      str_detect(satisfaction_clean, "dissatisfied") ~ "Dissatisfied",
+      TRUE ~ satisfaction_clean
+    ),
+    satisfaction_factor = factor(satisfaction_clean,
+                                levels = c("Very Satisfied", "Satisfied", "Neutral", "Dissatisfied"))
+  ) %>%
+  # Parse dates with lubridate
+  mutate(
+    date_clean = case_when(
+      str_detect(date_submitted, "^\\d{4}-\\d{1,2}-\\d{1,2}$") ~ ymd(date_submitted),
+      str_detect(date_submitted, "^\\d{1,2}/\\d{1,2}/\\d{4}$") ~ mdy(date_submitted),
+      str_detect(date_submitted, "^\\d{4}/\\d{1,2}/\\d{1,2}$") ~ ymd(date_submitted),
+      str_detect(date_submitted, "\\d{1,2}-[A-Za-z]{3}-\\d{4}") ~ dmy(date_submitted),
+      str_detect(date_submitted, "[A-Za-z]{3}\\s+\\d{1,2},\\s+\\d{4}") ~ mdy(date_submitted),
+      TRUE ~ as.Date(NA)
+    )
+  ) %>%
+  # Clean scores
+  mutate(score_numeric = as.numeric(score)) %>%
+  # Select clean columns
+  select(id, name_clean, satisfaction_factor, date_clean, score_numeric, comments)
+
+print(cleaned_survey)
+
+# Quick analysis with clean data
+cat("\nWith clean data, analysis becomes straightforward:\n")
+cleaned_survey %>%
+  group_by(satisfaction_factor) %>%
+  summarise(
+    count = n(),
+    avg_score = round(mean(score_numeric, na.rm = TRUE), 2),
+    date_range = paste(min(date_clean, na.rm = TRUE), "to", max(date_clean, na.rm = TRUE))
+  ) %>%
+  print()
+```
+
+Amazing! In just a few lines of code, we've cleaned names, standardized categories, parsed dates, and converted scores to numbers. This is the power of tidyverse data type packages!
+
+## Getting Started
+
+Ready to master data types in the tidyverse? Let's begin with string manipulation using the powerful stringr package: **[Working with Strings (stringr)](strings-stringr.qmd)**
+
+## Summary
+
+Working with different data types is a fundamental skill in data analysis. The tidyverse provides three excellent packages that make text, categorical, and date data much easier to work with:
+
+- **stringr**: Consistent, powerful string manipulation
+- **forcats**: Intuitive factor handling and reordering
+- **lubridate**: Natural date and time parsing
+
+These tools will transform how you clean and prepare real-world data for analysis. Let's dive in! 🚀

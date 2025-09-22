@@ -1,0 +1,733 @@
+---
+title: "Data Tidying Principles with tidyr"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to tidyr
+
+tidyr helps you create **tidy data**, where:
+
+1. Every column is a variable
+2. Every row is an observation
+3. Every cell is a single value
+
+Most real-world data violates these principles. tidyr provides tools to reshape data into tidy format, making it easier to work with dplyr and ggplot2.
+
+```{r}
+#| label: setup
+library(tidyverse)
+
+# Set seed for reproducibility
+set.seed(123)
+```
+
+## What is Tidy Data?
+
+### The Tidy Data Principles
+
+Let's see the difference between messy and tidy data:
+
+```{r}
+#| label: tidy-principles
+
+# Messy data: Multiple variables in column names
+messy_data <- tibble(
+  country = c("USA", "UK", "Japan"),
+  `2020_population` = c(331, 67, 126),
+  `2020_gdp` = c(21433, 2708, 5065),
+  `2021_population` = c(332, 68, 125),
+  `2021_gdp` = c(22996, 3131, 4941)
+)
+
+print(messy_data)
+
+# Tidy version: Each variable in its own column
+tidy_data <- tibble(
+  country = rep(c("USA", "UK", "Japan"), each = 2),
+  year = rep(c(2020, 2021), 3),
+  population = c(331, 332, 67, 68, 126, 125),
+  gdp = c(21433, 22996, 2708, 3131, 5065, 4941)
+)
+
+print(tidy_data)
+```
+
+## Pivoting: Reshaping Data
+
+### pivot_longer(): From Wide to Long
+
+`pivot_longer()` makes datasets longer by increasing rows and decreasing columns:
+
+```{r}
+#| label: pivot-longer-basic
+
+# Wide format data
+wide_sales <- tibble(
+  product = c("Widget A", "Widget B", "Widget C"),
+  jan = c(100, 150, 120),
+  feb = c(110, 140, 130),
+  mar = c(120, 160, 140),
+  apr = c(130, 155, 135)
+)
+
+print(wide_sales)
+
+# Convert to long format
+long_sales <- wide_sales %>%
+  pivot_longer(
+    cols = jan:apr,           # Columns to pivot
+    names_to = "month",        # Name for new column from column names
+    values_to = "sales"        # Name for new column from values
+  )
+
+print(long_sales)
+```
+
+### Advanced pivot_longer()
+
+```{r}
+#| label: pivot-longer-advanced
+
+# Data with multiple variables in column names
+complex_wide <- tibble(
+  id = 1:3,
+  name = c("Alice", "Bob", "Charlie"),
+  math_2022 = c(85, 78, 92),
+  math_2023 = c(88, 82, 90),
+  science_2022 = c(90, 85, 88),
+  science_2023 = c(92, 87, 91)
+)
+
+print(complex_wide)
+
+# Pivot with name separation
+complex_long <- complex_wide %>%
+  pivot_longer(
+    cols = -c(id, name),                    # Everything except id and name
+    names_to = c("subject", "year"),        # Split column names into two variables
+    names_sep = "_",                        # Separator in column names
+    values_to = "score"
+  ) %>%
+  mutate(year = as.integer(year))           # Convert year to integer
+
+print(complex_long)
+```
+
+### pivot_wider(): From Long to Wide
+
+`pivot_wider()` makes datasets wider by increasing columns and decreasing rows:
+
+```{r}
+#| label: pivot-wider-basic
+
+# Start with long format
+long_data <- tibble(
+  date = rep(c("2024-01-01", "2024-01-02"), each = 3),
+  metric = rep(c("views", "clicks", "conversions"), 2),
+  value = c(1000, 50, 5, 1200, 65, 8)
+)
+
+print(long_data)
+
+# Convert to wide format
+wide_data <- long_data %>%
+  pivot_wider(
+    names_from = metric,       # Column to get new column names from
+    values_from = value        # Column to get values from
+  )
+
+print(wide_data)
+```
+
+### Advanced pivot_wider()
+
+```{r}
+#| label: pivot-wider-advanced
+
+# Data with multiple value columns
+multi_long <- tibble(
+  year = rep(c(2022, 2023), each = 6),
+  quarter = rep(c("Q1", "Q2"), 6),
+  region = rep(c("North", "South", "East"), 4),
+  sales = round(runif(12, 100, 500)),
+  costs = round(runif(12, 50, 200))
+)
+
+print(multi_long)
+
+# Pivot with multiple value columns
+multi_wide <- multi_long %>%
+  pivot_wider(
+    names_from = c(quarter, region),    # Multiple columns for names
+    names_sep = "_",                    # Separator for new column names
+    values_from = c(sales, costs)       # Multiple value columns
+  )
+
+print(multi_wide)
+```
+
+## Separating and Uniting Columns
+
+### separate(): Split One Column into Multiple
+
+```{r}
+#| label: separate
+
+# Data with combined information
+combined_data <- tibble(
+  employee = c("John_Smith", "Jane_Doe", "Bob_Johnson"),
+  dept_role = c("Sales_Manager", "IT_Developer", "HR_Director"),
+  date_time = c("2024-01-15_09:30", "2024-01-15_10:00", "2024-01-15_14:30")
+)
+
+print(combined_data)
+
+# Separate into multiple columns
+separated_data <- combined_data %>%
+  separate(employee, into = c("first", "last"), sep = "_") %>%
+  separate(dept_role, into = c("department", "role"), sep = "_") %>%
+  separate(date_time, into = c("date", "time"), sep = "_")
+
+print(separated_data)
+```
+
+### separate_rows(): Split and Expand Rows
+
+```{r}
+#| label: separate-rows
+
+# Data with multiple values in cells
+multi_value_data <- tibble(
+  product = c("Widget A", "Widget B", "Widget C"),
+  colors = c("red,blue", "green,yellow,orange", "black,white"),
+  sizes = c("S,M,L", "M,L", "S,M,L,XL")
+)
+
+print(multi_value_data)
+
+# Separate into multiple rows
+expanded_data <- multi_value_data %>%
+  separate_rows(colors, sep = ",") %>%
+  separate_rows(sizes, sep = ",")
+
+print(expanded_data)
+```
+
+### unite(): Combine Multiple Columns
+
+```{r}
+#| label: unite
+
+# Data with separate columns
+separate_data <- tibble(
+  year = c(2024, 2024, 2024),
+  month = c(1, 2, 3),
+  day = c(15, 20, 25),
+  city = c("New York", "Los Angeles", "Chicago"),
+  state = c("NY", "CA", "IL")
+)
+
+print(separate_data)
+
+# Unite columns
+united_data <- separate_data %>%
+  unite(date, year, month, day, sep = "-") %>%
+  unite(location, city, state, sep = ", ")
+
+print(united_data)
+```
+
+## Handling Missing Values
+
+### complete(): Fill in Missing Combinations
+
+```{r}
+#| label: complete
+
+# Data with missing combinations
+incomplete_data <- tibble(
+  year = c(2022, 2022, 2023),
+  quarter = c("Q1", "Q3", "Q2"),
+  sales = c(100, 150, 120)
+)
+
+print(incomplete_data)
+
+# Complete all combinations
+complete_data <- incomplete_data %>%
+  complete(year, quarter, fill = list(sales = 0))
+
+print(complete_data)
+
+# Complete with sequences
+sales_data <- tibble(
+  date = as.Date(c("2024-01-01", "2024-01-03", "2024-01-07")),
+  sales = c(100, 150, 200)
+)
+
+complete_sales <- sales_data %>%
+  complete(
+    date = seq.Date(min(date), max(date), by = "day"),
+    fill = list(sales = 0)
+  )
+
+print(complete_sales)
+```
+
+### drop_na(): Remove Rows with Missing Values
+
+```{r}
+#| label: drop-na
+
+# Data with missing values
+data_with_na <- tibble(
+  id = 1:6,
+  x = c(1, 2, NA, 4, NA, 6),
+  y = c(NA, 2, 3, 4, 5, 6),
+  z = c(1, 2, 3, NA, 5, 6)
+)
+
+print(data_with_na)
+
+# Drop rows with any NA
+data_with_na %>% drop_na()
+
+# Drop rows with NA in specific columns
+data_with_na %>% drop_na(x)
+
+# Drop rows with NA in multiple specific columns
+data_with_na %>% drop_na(x, y)
+```
+
+### fill(): Fill Missing Values
+
+```{r}
+#| label: fill
+
+# Time series with gaps
+time_series <- tibble(
+  date = seq.Date(from = as.Date("2024-01-01"),
+                  to = as.Date("2024-01-10"),
+                  by = "day"),
+  value = c(10, NA, NA, 15, NA, 20, NA, NA, 25, 30)
+)
+
+print(time_series)
+
+# Fill down (carry forward)
+time_series %>%
+  fill(value, .direction = "down")
+
+# Fill up (carry backward)
+time_series %>%
+  fill(value, .direction = "up")
+
+# Fill both directions
+time_series %>%
+  fill(value, .direction = "downup")
+```
+
+### replace_na(): Replace NA with Specific Values
+
+```{r}
+#| label: replace-na
+
+# Data with NAs
+na_data <- tibble(
+  product = c("A", "B", "C", "D"),
+  price = c(10, NA, 15, 20),
+  discount = c(0.1, 0.2, NA, NA),
+  category = c("Food", NA, "Electronics", NA)
+)
+
+print(na_data)
+
+# Replace NAs with specific values
+na_data %>%
+  replace_na(list(
+    price = 0,
+    discount = 0,
+    category = "Other"
+  ))
+```
+
+## Nesting and Unnesting
+
+### nest(): Create List-Columns
+
+```{r}
+#| label: nest
+
+# Grouped data
+student_scores <- tibble(
+  student = rep(c("Alice", "Bob", "Charlie"), each = 4),
+  subject = rep(c("Math", "Science", "English", "History"), 3),
+  score = c(85, 90, 88, 92,   # Alice
+           78, 85, 82, 88,    # Bob
+           92, 88, 90, 95)    # Charlie
+)
+
+print(student_scores)
+
+# Nest by student
+nested_scores <- student_scores %>%
+  nest(data = c(subject, score))
+
+print(nested_scores)
+
+# Access nested data
+nested_scores$data[[1]]
+```
+
+### unnest(): Expand List-Columns
+
+```{r}
+#| label: unnest
+
+# Start with nested data
+nested_data <- tibble(
+  group = c("A", "B"),
+  data = list(
+    tibble(x = 1:3, y = 4:6),
+    tibble(x = 7:9, y = 10:12)
+  )
+)
+
+print(nested_data)
+
+# Unnest the data
+unnested_data <- nested_data %>%
+  unnest(data)
+
+print(unnested_data)
+```
+
+## Real-World Examples
+
+### Example 1: Survey Data Cleaning
+
+```{r}
+#| label: survey-example
+
+# Messy survey data
+survey_raw <- tibble(
+  respondent_id = 1:5,
+  q1_2023 = c(5, 4, 3, 5, 4),
+  q2_2023 = c(4, 4, 3, 4, 5),
+  q1_2024 = c(5, 5, 4, 5, 4),
+  q2_2024 = c(5, 4, 4, 5, 5),
+  demographics = c("25-34,Male,Urban",
+                  "35-44,Female,Rural",
+                  "18-24,Male,Urban",
+                  "45-54,Female,Suburban",
+                  "25-34,Male,Rural")
+)
+
+# Clean and tidy the data
+survey_clean <- survey_raw %>%
+  # Separate demographics
+  separate(demographics, into = c("age_group", "gender", "location"),
+          sep = ",") %>%
+  # Pivot questions longer
+  pivot_longer(
+    cols = starts_with("q"),
+    names_to = c("question", "year"),
+    names_sep = "_",
+    values_to = "rating"
+  ) %>%
+  # Convert year to integer
+  mutate(year = as.integer(year))
+
+print(survey_clean)
+
+# Analyze by demographics
+survey_summary <- survey_clean %>%
+  group_by(year, gender, question) %>%
+  summarize(
+    avg_rating = mean(rating),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = question,
+    values_from = avg_rating
+  )
+
+print(survey_summary)
+```
+
+### Example 2: Financial Data Transformation
+
+```{r}
+#| label: financial-example
+
+# Quarterly financial data in wide format
+financial_wide <- tibble(
+  company = c("TechCorp", "RetailCo", "FinanceInc"),
+  revenue_q1_2023 = c(100, 80, 120),
+  revenue_q2_2023 = c(110, 85, 125),
+  revenue_q3_2023 = c(120, 90, 130),
+  revenue_q4_2023 = c(130, 95, 140),
+  costs_q1_2023 = c(60, 50, 70),
+  costs_q2_2023 = c(65, 52, 72),
+  costs_q3_2023 = c(68, 54, 75),
+  costs_q4_2023 = c(70, 56, 78)
+)
+
+# Transform to tidy format
+financial_tidy <- financial_wide %>%
+  pivot_longer(
+    cols = -company,
+    names_to = c("metric", "quarter", "year"),
+    names_sep = "_",
+    values_to = "value"
+  ) %>%
+  mutate(
+    year = as.integer(year),
+    quarter = str_to_upper(quarter)
+  ) %>%
+  pivot_wider(
+    names_from = metric,
+    values_from = value
+  ) %>%
+  mutate(
+    profit = revenue - costs,
+    margin = profit / revenue * 100
+  )
+
+print(financial_tidy)
+
+# Quarterly summary
+quarterly_summary <- financial_tidy %>%
+  group_by(quarter) %>%
+  summarize(
+    avg_revenue = mean(revenue),
+    avg_costs = mean(costs),
+    avg_margin = mean(margin),
+    .groups = "drop"
+  ) %>%
+  arrange(quarter)
+
+print(quarterly_summary)
+```
+
+### Example 3: Time Series Data Preparation
+
+```{r}
+#| label: timeseries-example
+
+# Irregular time series data
+irregular_ts <- tibble(
+  date = as.Date(c("2024-01-01", "2024-01-03", "2024-01-04",
+                  "2024-01-08", "2024-01-10")),
+  sensor_a = c(10, 12, NA, 15, 18),
+  sensor_b = c(20, NA, 23, 24, 25),
+  sensor_c = c(30, 32, 33, NA, 36)
+)
+
+# Complete and clean the time series
+regular_ts <- irregular_ts %>%
+  # Complete all dates
+  complete(
+    date = seq.Date(min(date), max(date), by = "day")
+  ) %>%
+  # Fill missing values
+  fill(everything(), .direction = "downup") %>%
+  # Pivot to long format for analysis
+  pivot_longer(
+    cols = starts_with("sensor"),
+    names_to = "sensor",
+    values_to = "reading"
+  ) %>%
+  # Add derived features
+  mutate(
+    day_of_week = weekdays(date),
+    is_weekend = day_of_week %in% c("Saturday", "Sunday")
+  )
+
+print(regular_ts)
+
+# Daily summary across sensors
+daily_summary <- regular_ts %>%
+  group_by(date, is_weekend) %>%
+  summarize(
+    mean_reading = mean(reading, na.rm = TRUE),
+    sd_reading = sd(reading, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+print(daily_summary)
+```
+
+## Best Practices
+
+### 1. Start with Tidy Data in Mind
+
+```{r}
+#| label: best-practice-tidy
+#| eval: false
+
+# Design your data collection to be tidy from the start
+# Good: Each observation is a row
+good_design <- tibble(
+  date = rep(dates, each = n_products),
+  product = rep(products, n_dates),
+  metric = value
+)
+
+# Avoid: Wide format with dates/products as columns
+avoid_design <- tibble(
+  product = products,
+  `2024-01-01` = values1,
+  `2024-01-02` = values2
+)
+```
+
+### 2. Use Meaningful Column Names
+
+```{r}
+#| label: best-practice-names
+
+# Good: Clear, descriptive names
+good_names <- tibble(
+  measurement_date = Sys.Date(),
+  temperature_celsius = 25,
+  humidity_percent = 60
+)
+
+# Better: Consistent naming convention
+better_names <- tibble(
+  date_measured = Sys.Date(),
+  temp_c = 25,
+  humid_pct = 60
+)
+```
+
+### 3. Document Your Transformations
+
+```{r}
+#| label: best-practice-document
+
+# Create sample data for documentation example
+raw_data <- tibble(
+  product_code = c("A-2023", "B-2023", "C-2024"),
+  jan = c(100, NA, 150),
+  feb = c(110, 120, NA),
+  mar = c(120, 130, 170)
+)
+
+# Document each step
+documented_pipeline <- raw_data %>%
+  # Step 1: Convert wide sales data to long format
+  pivot_longer(
+    cols = jan:mar,
+    names_to = "month",
+    values_to = "sales"
+  ) %>%
+  # Step 2: Separate year from product code
+  separate(
+    product_code,
+    into = c("category", "year"),
+    sep = "-"
+  ) %>%
+  # Step 3: Fill missing sales with 0
+  replace_na(list(sales = 0))
+
+print(documented_pipeline)
+```
+
+## Common Patterns
+
+### Pattern 1: Wide to Long to Summary
+
+```{r}
+#| label: pattern-wls
+
+# Common analysis pattern
+wide_data <- tibble(
+  group = c("A", "B"),
+  day1 = c(10, 20),
+  day2 = c(15, 22),
+  day3 = c(12, 25)
+)
+
+summary <- wide_data %>%
+  pivot_longer(cols = starts_with("day"),
+              names_to = "day",
+              values_to = "value") %>%
+  group_by(group) %>%
+  summarize(
+    mean = mean(value),
+    sd = sd(value),
+    .groups = "drop"
+  )
+
+print(summary)
+```
+
+### Pattern 2: Separate, Clean, Unite
+
+```{r}
+#| label: pattern-scu
+
+# Clean messy identifiers
+messy_ids <- tibble(
+  raw_id = c("USA_2024_Q1", "CAN_2024_Q2", "MEX_2024_Q1"),
+  value = c(100, 150, 120)
+)
+
+clean_ids <- messy_ids %>%
+  separate(raw_id, into = c("country", "year", "quarter"), sep = "_") %>%
+  mutate(
+    year = as.integer(year),
+    quarter = factor(quarter, levels = c("Q1", "Q2", "Q3", "Q4"))
+  ) %>%
+  unite(period, year, quarter, sep = "-", remove = FALSE)
+
+print(clean_ids)
+```
+
+## Exercises
+
+### Exercise 1: Basic Pivoting
+Create a dataset of monthly temperatures for 3 cities across 4 months. Start in wide format, then:
+1. Pivot to long format
+2. Calculate average temperature per city
+3. Pivot back to wide with cities as columns
+
+### Exercise 2: Data Cleaning Pipeline
+Given messy survey data with:
+- Combined name fields ("FirstName LastName")
+- Multiple responses in single cells ("option1;option2;option3")
+- Missing value combinations
+
+Clean the data to create a tidy dataset ready for analysis.
+
+### Exercise 3: Complex Reshaping
+Create a sales dataset with:
+- Multiple products
+- Multiple regions
+- Quarterly data for 2 years
+
+Practice pivoting between different representations for different types of analysis.
+
+## Summary
+
+tidyr provides essential tools for data tidying:
+
+- **`pivot_longer()`/`pivot_wider()`**: Reshape between wide and long formats
+- **`separate()`/`unite()`**: Split and combine columns
+- **`complete()`**: Fill in missing combinations
+- **`drop_na()`/`fill()`/`replace_na()`**: Handle missing values
+- **`nest()`/`unnest()`**: Create and expand list-columns
+
+These functions, combined with dplyr, form the foundation of data manipulation in the tidyverse. Tidy data makes subsequent analysis much easier and more intuitive.
+
+The key insight: spend time getting your data tidy, and the rest of your analysis will be much simpler!

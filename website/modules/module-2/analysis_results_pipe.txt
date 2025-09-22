@@ -1,0 +1,5 @@
+metric|value|period
+Total Sales|125000|Q1 2024
+Average Sale|2500|Q1 2024
+Max Sale|15000|Q1 2024
+Min Sale|250|Q1 2024

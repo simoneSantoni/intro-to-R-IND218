@@ -1,0 +1,597 @@
+---
+title: "Data Types and Objects in R"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to R Data Types
+
+In R, everything is an object, and every object has a **data type**. Understanding data types is fundamental to working effectively with R because it determines what operations you can perform and how R stores and processes your data.
+
+R has four fundamental data types:
+
+- **integer**: Whole numbers
+- **double**: Real numbers (with decimal points)
+- **character**: Text/strings
+- **logical**: TRUE/FALSE values
+
+Let's explore each of these in detail.
+
+## Numeric Data Types
+
+### Integers and Doubles
+
+R distinguishes between two types of numbers:
+
+#### Doubles (Real Numbers)
+
+By default, R treats all numbers as **double** (also called "numeric"):
+
+```{r}
+#| label: doubles-basic
+
+# These are all doubles by default
+x <- 1.2
+y <- 3.0
+z <- 5
+
+# Check their types
+typeof(x)
+typeof(y)
+typeof(z)  # Even though 5 looks like an integer, it's a double!
+```
+
+#### Integers
+
+To create an integer, you must explicitly specify it by adding `L` after the number:
+
+```{r}
+#| label: integers-basic
+
+# Creating integers
+a <- 2L
+b <- -123456789L
+c <- 0L
+
+# Check their types
+typeof(a)
+typeof(b)
+typeof(c)
+```
+
+#### Why the Distinction Matters
+
+The difference between integers and doubles affects:
+
+1. **Memory usage**: Integers use less memory
+2. **Precision**: Doubles can represent fractional values
+3. **Operations**: Some functions behave differently with different types
+
+```{r}
+#| label: type-implications
+
+# Mathematical operations
+double_result <- 3.5 + 1.2
+typeof(double_result)
+
+integer_result <- 3L + 4L
+typeof(integer_result)  # Still integer!
+
+mixed_result <- 3L + 1.3  # Integer + double = double
+typeof(mixed_result)
+```
+
+### Working with Large Numbers
+
+R can handle very large numbers, but there are limits:
+
+```{r}
+#| label: large-numbers
+
+# Scientific notation
+large_number <- 1.5e8
+print(large_number)
+
+# Very large numbers become Inf (infinity)
+too_large <- 1e1000
+print(too_large)
+
+# Very small numbers become 0
+too_small <- 1e-1000
+print(too_small)
+```
+
+### Checking and Converting Numeric Types
+
+```{r}
+#| label: numeric-functions
+
+# Check if something is numeric
+is.numeric(3.14)
+is.numeric("hello")
+
+# Check specific types
+is.integer(5L)
+is.double(5.0)
+
+# Convert between types
+as.integer(3.7)    # Truncates, doesn't round!
+as.double(5L)      # Convert integer to double
+```
+
+## Character Data (Strings)
+
+Character data represents text and is created using quotation marks:
+
+### Creating Strings
+
+```{r}
+#| label: strings-basic
+
+# Using double quotes
+text1 <- "Hello, world!"
+
+# Using single quotes
+text2 <- 'This is also a string'
+
+# Mixing quotes (useful when string contains quotes)
+text3 <- "She said 'Hello!'"
+text4 <- 'He replied "Hi there!"'
+
+print(text1)
+print(text3)
+```
+
+### String Properties
+
+```{r}
+#| label: string-properties
+
+my_string <- "Data Science is awesome!"
+
+# Check type
+typeof(my_string)
+
+# Check if it's character
+is.character(my_string)
+
+# Get string length
+nchar(my_string)
+```
+
+### Working with Strings
+
+```{r}
+#| label: string-operations
+
+# String concatenation
+first_name <- "Jane"
+last_name <- "Doe"
+full_name <- paste(first_name, last_name)
+print(full_name)
+
+# Alternative concatenation
+full_name2 <- paste0(first_name, " ", last_name)  # No space separator
+print(full_name2)
+
+# Substrings
+substr(full_name, 1, 4)  # Characters 1 through 4
+```
+
+### Converting Between Numbers and Strings
+
+```{r}
+#| label: string-conversions
+
+# Numbers to strings
+age <- 25
+age_text <- as.character(age)
+print(age_text)
+typeof(age_text)
+
+# Strings to numbers (if they represent numbers)
+number_text <- "42"
+number_value <- as.numeric(number_text)
+print(number_value)
+typeof(number_value)
+
+# What happens with non-numeric strings?
+invalid_number <- as.numeric("hello")
+print(invalid_number)  # Returns NA (Not Available)
+```
+
+## Logical Data (Boolean)
+
+Logical data represents TRUE/FALSE values and is fundamental for conditional operations:
+
+### Creating Logical Values
+
+```{r}
+#| label: logical-basic
+
+# Direct assignment
+is_student <- TRUE
+has_job <- FALSE
+
+# From comparisons
+x <- 10
+y <- 5
+
+is_greater <- x > y
+is_equal <- x == y
+is_not_equal <- x != y
+
+print(is_greater)
+print(is_equal)
+print(is_not_equal)
+```
+
+### Comparison Operators
+
+R provides six comparison operators:
+
+```{r}
+#| label: comparison-operators
+
+a <- 6
+b <- 3
+
+# All comparison operators
+a < b   # Less than
+a > b   # Greater than
+a <= b  # Less than or equal to
+a >= b  # Greater than or equal to
+a == b  # Equal to
+a != b  # Not equal to
+```
+
+### Logical Operations
+
+Combine logical values using logical operators:
+
+```{r}
+#| label: logical-operations
+
+x <- TRUE
+y <- FALSE
+
+# AND operation
+x & y   # FALSE (both must be TRUE)
+
+# OR operation
+x | y   # TRUE (at least one must be TRUE)
+
+# NOT operation
+!x      # FALSE (flips the value)
+!y      # TRUE
+
+# Complex logical expressions
+age <- 25
+has_license <- TRUE
+can_drive <- (age >= 16) & has_license
+print(can_drive)
+```
+
+### Logical Values in Arithmetic
+
+```{r}
+#| label: logical-arithmetic
+
+# TRUE = 1, FALSE = 0 in arithmetic operations
+TRUE + TRUE    # 2
+FALSE + TRUE   # 1
+TRUE * 5       # 5
+
+# Counting TRUE values
+scores <- c(85, 92, 78, 96, 88)
+passing_grades <- scores >= 80
+sum(passing_grades)  # Count how many passed
+mean(passing_grades) # Proportion who passed
+```
+
+## Special Values
+
+R has several special values you should know about:
+
+### NA (Not Available)
+
+Represents missing data:
+
+```{r}
+#| label: na-values
+
+# Creating NA values
+missing_value <- NA
+ages <- c(25, 30, NA, 35, 28)
+
+# Check for NA
+is.na(missing_value)
+is.na(ages)
+
+# Operations with NA
+mean(ages)                    # Returns NA
+mean(ages, na.rm = TRUE)      # Remove NA values first
+```
+
+### NULL
+
+Represents "nothing" or absence of a value:
+
+```{r}
+#| label: null-values
+
+# NULL represents absence
+empty_var <- NULL
+length(empty_var)  # 0
+
+# NULL vs NA
+is.null(NULL)
+is.null(NA)
+is.na(NULL)
+is.na(NA)
+```
+
+### Inf and -Inf
+
+Represent positive and negative infinity:
+
+```{r}
+#| label: infinity
+
+# Division by zero
+positive_inf <- 1/0
+negative_inf <- -1/0
+
+print(positive_inf)
+print(negative_inf)
+
+# Check for infinity
+is.infinite(positive_inf)
+is.finite(positive_inf)
+```
+
+## Type Checking and Conversion
+
+### Checking Data Types
+
+```{r}
+#| label: type-checking
+
+# Create different types
+int_val <- 42L
+dbl_val <- 3.14
+chr_val <- "hello"
+log_val <- TRUE
+
+# typeof() shows the exact type
+typeof(int_val)
+typeof(dbl_val)
+typeof(chr_val)
+typeof(log_val)
+
+# class() shows the object class
+class(int_val)
+class(dbl_val)
+
+# Specific type checks
+is.numeric(int_val)    # TRUE (integers are numeric)
+is.integer(int_val)    # TRUE
+is.double(int_val)     # FALSE
+is.character(chr_val)  # TRUE
+is.logical(log_val)    # TRUE
+```
+
+### Type Conversion (Coercion)
+
+R can convert between types:
+
+```{r}
+#| label: type-conversion
+
+# Explicit conversion
+x <- 3.7
+as.integer(x)      # Truncates to 3
+as.character(x)    # "3.7"
+as.logical(x)      # TRUE (non-zero numbers are TRUE)
+
+# Converting strings to numbers
+text_numbers <- c("1", "2.5", "3")
+numeric_values <- as.numeric(text_numbers)
+print(numeric_values)
+
+# What happens with invalid conversions?
+as.numeric(c("1", "hello", "3"))  # Returns c(1, NA, 3)
+```
+
+### Automatic Type Conversion
+
+R automatically converts types when needed:
+
+```{r}
+#| label: automatic-conversion
+
+# Mixing types in operations
+result1 <- 5L + 3.2      # integer + double = double
+typeof(result1)
+
+result2 <- TRUE + 5      # logical + numeric = numeric
+print(result2)           # TRUE becomes 1
+
+# result3 <- "Number: " + 5  # This will cause an error!
+# Instead, use paste():
+result3 <- paste("Number:", 5)
+print(result3)
+```
+
+## Practical Examples
+
+### Example 1: Survey Data Analysis
+
+```{r}
+#| label: survey-example
+
+# Survey responses
+respondent_id <- 1:5
+age <- c(25, 30, 28, 35, 29)
+income <- c(45000, 52000, 48000, 65000, 51000)
+satisfied <- c(TRUE, TRUE, FALSE, TRUE, TRUE)
+feedback <- c("Great!", "Good service", "Could be better", "Excellent", "Very happy")
+
+# Analysis
+avg_age <- mean(age)
+avg_income <- mean(income)
+satisfaction_rate <- mean(satisfied)
+num_responses <- length(respondent_id)
+
+# Create summary
+summary_text <- paste("Survey Results:",
+                     "\nAverage age:", round(avg_age, 1),
+                     "\nAverage income: $", format(avg_income, big.mark = ","),
+                     "\nSatisfaction rate:", round(satisfaction_rate * 100, 1), "%",
+                     "\nTotal responses:", num_responses)
+
+cat(summary_text)
+```
+
+### Example 2: Data Quality Checks
+
+```{r}
+#| label: data-quality
+
+# Simulated data with quality issues
+temperatures <- c(72, 75, NA, 80, 999, -50, 77)
+
+# Quality checks
+valid_range <- temperatures >= 0 & temperatures <= 120
+has_missing <- is.na(temperatures)
+suspicious_values <- temperatures > 100 | temperatures < 0
+
+# Results
+cat("Valid temperatures:", sum(valid_range, na.rm = TRUE), "\n")
+cat("Missing values:", sum(has_missing), "\n")
+cat("Suspicious values:", sum(suspicious_values, na.rm = TRUE), "\n")
+
+# Clean the data
+clean_temperatures <- temperatures[valid_range & !has_missing]
+print(clean_temperatures)
+```
+
+## Common Pitfalls and Best Practices
+
+### 1. Integer vs Double Confusion
+
+```{r}
+#| label: integer-confusion
+
+# This might surprise you!
+x <- 5
+y <- 5L
+
+identical(x, y)  # FALSE! Different types
+x == y          # TRUE (values are equal)
+
+# Best practice: be explicit about integer types when needed
+```
+
+### 2. Character to Numeric Conversion
+
+```{r}
+#| label: character-numeric-confusion
+
+# Common mistake
+numbers_as_text <- c("1", "2", "3")
+# numbers_as_text + 1  # This would error!
+
+# Correct approach
+numbers <- as.numeric(numbers_as_text)
+numbers + 1  # Now this works
+```
+
+### 3. Logical Arithmetic
+
+```{r}
+#| label: logical-arithmetic-tips
+
+# Useful for counting
+test_scores <- c(85, 92, 78, 96, 75, 88)
+passing_scores <- test_scores >= 80
+
+# Count passing scores
+num_passing <- sum(passing_scores)
+
+# Percentage passing
+pct_passing <- mean(passing_scores) * 100
+
+cat("Students passing:", num_passing, "\n")
+cat("Percentage passing:", round(pct_passing, 1), "%\n")
+```
+
+## Exercises
+
+### Exercise 1: Type Exploration
+Create variables of each data type and explore their properties:
+
+```{r}
+#| label: exercise-1-demo
+#| eval: false
+
+# Create one variable of each type
+my_integer <- ___
+my_double <- ___
+my_character <- ___
+my_logical <- ___
+
+# Check their types using typeof()
+# Convert between types using as.* functions
+# Try some arithmetic operations
+```
+
+### Exercise 2: Real-World Data Types
+Given this data about employees, determine the appropriate data type for each variable:
+
+- Employee ID numbers
+- Employee names
+- Salaries
+- Whether they work remotely
+- Years of experience
+- Department codes
+
+### Exercise 3: Type Coercion Challenge
+What will be the result and type of each expression?
+
+```{r}
+#| label: exercise-3-demo
+#| eval: false
+
+TRUE + 2
+"5" + 3
+as.logical(0)
+as.logical(-1)
+as.integer(3.9)
+paste(TRUE, 5)
+```
+
+## Summary
+
+Understanding R's data types is crucial for effective programming:
+
+- **Numeric types**: integers (with `L`) and doubles (default for numbers)
+- **Character type**: text strings in quotes
+- **Logical type**: TRUE/FALSE values
+- **Special values**: NA (missing), NULL (absent), Inf (infinity)
+
+Key points to remember:
+
+1. **Everything in R has a type**
+2. **R can convert between types** (sometimes automatically)
+3. **Check types when debugging** using `typeof()` and `class()`
+4. **Be explicit about integers** using the `L` suffix
+5. **Logical values are powerful** for filtering and counting
+
+Next, we'll explore how to combine these basic types into vectors, R's fundamental data structure!

@@ -1,0 +1,643 @@
+---
+title: "Data Import with readr"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to readr
+
+The readr package provides a fast and friendly way to read rectangular data (like csv, tsv, and fixed width files) into R. It's part of the core tidyverse and automatically returns tibbles instead of data frames.
+
+```{r}
+#| label: setup
+library(tidyverse)
+```
+
+## Why Use readr?
+
+### Advantages Over Base R
+
+1. **Speed**: ~10x faster than base R functions
+2. **Tibbles**: Returns tibbles by default
+3. **Consistency**: Consistent naming and behavior
+4. **Progress bars**: Shows progress for large files
+5. **Better defaults**: More sensible type guessing
+6. **Encoding support**: Better handling of character encodings
+
+```{r}
+#| label: comparison-example
+#| eval: false
+
+# Base R
+df_base <- read.csv("data.csv")         # Returns data.frame
+                                        # Strings become factors (pre R 4.0)
+                                        # Slower for large files
+
+# readr
+df_readr <- read_csv("data.csv")        # Returns tibble
+                                        # Strings stay as characters
+                                        # Much faster
+                                        # Shows column specifications
+```
+
+## Reading CSV Files
+
+### Basic CSV Import
+
+Let's create a sample CSV file to work with:
+
+```{r}
+#| label: create-sample-csv
+
+# Create a sample CSV file
+sample_data <- tibble(
+  id = 1:5,
+  name = c("Alice", "Bob", "Charlie", "Diana", "Eve"),
+  age = c(25, 30, 35, 28, 32),
+  salary = c(50000, 60000, 75000, 55000, 65000),
+  hire_date = c("2020-01-15", "2019-06-01", "2018-03-20",
+                "2021-02-10", "2019-11-30")
+)
+
+# Write to CSV
+write_csv(sample_data, "employees.csv")
+
+# Read it back
+employees <- read_csv("employees.csv")
+employees
+```
+
+### Understanding Column Specifications
+
+readr automatically detects column types:
+
+```{r}
+#| label: column-specs
+
+# readr shows what it detected
+employees <- read_csv("employees.csv", show_col_types = TRUE)
+
+# Get the specification
+spec(employees)
+
+# You can also explicitly set column types
+employees_typed <- read_csv(
+  "employees.csv",
+  col_types = cols(
+    id = col_integer(),
+    name = col_character(),
+    age = col_integer(),
+    salary = col_double(),
+    hire_date = col_date(format = "%Y-%m-%d")
+  )
+)
+
+employees_typed
+```
+
+## Column Type Specifications
+
+### Available Column Types
+
+```{r}
+#| label: column-types-demo
+
+# Create a file with various data types
+diverse_data <- tibble(
+  integers = c(1, 2, 3),
+  doubles = c(1.5, 2.7, 3.9),
+  logicals = c(TRUE, FALSE, TRUE),
+  characters = c("apple", "banana", "cherry"),
+  dates = as.Date(c("2024-01-01", "2024-02-01", "2024-03-01")),
+  times = hms::hms(hours = c(9, 14, 18), minutes = c(30, 15, 45)),
+  datetimes = as.POSIXct(c("2024-01-01 09:30:00",
+                           "2024-02-01 14:15:00",
+                           "2024-03-01 18:45:00"))
+)
+
+write_csv(diverse_data, "diverse_data.csv")
+
+# Read with automatic detection
+auto_read <- read_csv("diverse_data.csv")
+glimpse(auto_read)
+```
+
+### Compact Column Specification
+
+Use a compact string specification:
+
+```{r}
+#| label: compact-spec
+
+# Use single letters for common types
+# i = integer, d = double, c = character, l = logical
+# D = date, T = datetime, t = time
+
+data_compact <- read_csv(
+  "diverse_data.csv",
+  col_types = "iddcDtT"  # One letter per column
+)
+
+glimpse(data_compact)
+```
+
+## Handling Common Data Issues
+
+### Missing Values
+
+```{r}
+#| label: missing-values
+
+# Create data with missing values
+missing_data <- "id,value,category
+1,10,A
+2,NA,B
+3,20,NA
+4,,C
+5,30,D"
+
+# Default: NA and empty strings are treated as missing
+df_default <- read_csv(missing_data)
+df_default
+
+# Specify custom NA values
+df_custom <- read_csv(
+  missing_data,
+  na = c("", "NA", "N/A", "missing")
+)
+df_custom
+```
+
+### Parsing Problems
+
+```{r}
+#| label: parsing-problems
+
+# Data with parsing issues
+problematic_data <- "number,text
+1,apple
+two,banana
+3,cherry
+4.5,date"
+
+# Read and check for problems
+df_problems <- read_csv(problematic_data)
+
+# See what went wrong
+problems(df_problems)
+
+# Fix by specifying correct types
+df_fixed <- read_csv(
+  problematic_data,
+  col_types = cols(
+    number = col_character(),  # Read as character to preserve all data
+    text = col_character()
+  )
+)
+df_fixed
+```
+
+### Skip Rows and Comments
+
+```{r}
+#| label: skip-rows
+
+# Data with header information
+messy_file <- "# Company Sales Report
+# Generated: 2024-01-01
+# Department: Analytics
+
+id,product,sales
+1,Widget A,1000
+2,Widget B,1500
+# Mid-year update
+3,Widget C,2000"
+
+# Skip lines and ignore comments
+clean_data <- read_csv(
+  messy_file,
+  skip = 3,        # Skip first 3 lines
+  comment = "#"    # Ignore lines starting with #
+)
+clean_data
+```
+
+## Reading Other File Formats
+
+### TSV Files (Tab-Separated Values)
+
+```{r}
+#| label: read-tsv
+
+# Create a TSV file
+tsv_data <- tibble(
+  gene = c("BRCA1", "TP53", "EGFR"),
+  chromosome = c(17, 17, 7),
+  gene_function = c("DNA repair", "Tumor suppressor", "Growth factor receptor")
+)
+
+write_tsv(tsv_data, "genes.tsv")
+
+# Read TSV
+genes <- read_tsv("genes.tsv")
+genes
+```
+
+### Delimited Files
+
+```{r}
+#| label: read-delim
+
+# Create a pipe-delimited file
+pipe_data <- "name|age|city
+Alice|25|New York
+Bob|30|Los Angeles
+Charlie|35|Chicago"
+
+write_file(pipe_data, "pipe_data.txt")
+
+# Read with custom delimiter
+df_pipe <- read_delim("pipe_data.txt", delim = "|")
+df_pipe
+
+# Semicolon-delimited (common in European data)
+semi_data <- "product;price;quantity
+Apple;1,50;100
+Banana;0,75;150
+Orange;2,00;80"
+
+write_file(semi_data, "semi_data.csv")
+
+# Read with semicolon delimiter and European decimal mark
+df_semi <- read_delim(
+  "semi_data.csv",
+  delim = ";",
+  locale = locale(decimal_mark = ",")
+)
+df_semi
+```
+
+### Fixed Width Files
+
+```{r}
+#| label: fixed-width
+
+# Create a fixed width file
+fwf_data <- "001John    Smith   25  Engineer
+002Jane    Doe     30  Manager
+003Bob     Johnson 28  Analyst"
+
+write_file(fwf_data, "fixed_width.txt")
+
+# Read fixed width file with column positions
+df_fwf <- read_fwf(
+  "fixed_width.txt",
+  col_positions = fwf_widths(
+    widths = c(3, 8, 8, 4, 10),
+    col_names = c("id", "first", "last", "age", "job")
+  )
+)
+df_fwf
+```
+
+## Working with Large Files
+
+### Reading in Chunks
+
+```{r}
+#| label: chunked-reading
+
+# Create a larger file
+large_data <- tibble(
+  id = 1:10000,
+  value = rnorm(10000),
+  category = sample(LETTERS[1:5], 10000, replace = TRUE)
+)
+
+write_csv(large_data, "large_file.csv")
+
+# Read in chunks for processing
+process_chunk <- function(chunk, pos) {
+  # Process each chunk
+  summarize(chunk,
+            chunk = pos,
+            n = n(),
+            mean_value = mean(value))
+}
+
+# Process file in chunks of 2000 rows
+chunk_results <- read_csv_chunked(
+  "large_file.csv",
+  chunk_size = 2000,
+  callback = DataFrameCallback$new(process_chunk)
+)
+
+chunk_results
+```
+
+### Lazy Reading
+
+```{r}
+#| label: lazy-reading
+#| eval: false
+
+# For very large files, use lazy reading
+# This doesn't load the entire file into memory
+
+library(vroom)  # Alternative package for very large files
+
+# Lazy read - data is only read when needed
+lazy_df <- vroom("very_large_file.csv")
+
+# Operations are performed lazily
+result <- lazy_df %>%
+  filter(category == "A") %>%
+  group_by(year) %>%
+  summarize(total = sum(value))
+```
+
+## Advanced Import Options
+
+### Locale Settings
+
+```{r}
+#| label: locale-settings
+
+# European format data
+euro_data <- "date;amount;percentage
+01/02/2024;1.234,56;45,5%
+15/03/2024;2.345,67;32,1%
+30/04/2024;3.456,78;28,9%"
+
+write_file(euro_data, "euro_data.csv")
+
+# Read with European locale
+euro_df <- read_delim(
+  "euro_data.csv",
+  delim = ";",
+  locale = locale(
+    date_format = "%d/%m/%Y",
+    decimal_mark = ",",
+    grouping_mark = "."
+  )
+)
+euro_df
+```
+
+### Column Selection
+
+```{r}
+#| label: column-selection
+
+# Create data with many columns
+wide_data <- tibble(
+  id = 1:5,
+  name = c("A", "B", "C", "D", "E"),
+  col1 = rnorm(5),
+  col2 = rnorm(5),
+  col3 = rnorm(5),
+  col4 = rnorm(5),
+  col5 = rnorm(5)
+)
+
+write_csv(wide_data, "wide_data.csv")
+
+# Read only specific columns
+selected <- read_csv(
+  "wide_data.csv",
+  col_select = c(id, name, col1, col3)
+)
+selected
+
+# Use tidyselect helpers
+selected2 <- read_csv(
+  "wide_data.csv",
+  col_select = c(id, name, starts_with("col"))
+)
+head(selected2, 2)
+```
+
+## Writing Data
+
+### Writing CSV Files
+
+```{r}
+#| label: write-csv
+
+# Create sample data
+output_data <- tibble(
+  id = 1:5,
+  value = rnorm(5),
+  date = Sys.Date() + 0:4,
+  timestamp = Sys.time() + 0:4 * 3600
+)
+
+# Write CSV (no row names, readable format)
+write_csv(output_data, "output.csv")
+
+# Write with European format
+write_csv2(output_data, "output_euro.csv")  # Uses semicolon delimiter
+
+# Write TSV
+write_tsv(output_data, "output.tsv")
+
+# Write with custom NA representation
+data_with_na <- tibble(
+  x = c(1, NA, 3),
+  y = c("a", "b", NA)
+)
+
+write_csv(data_with_na, "with_na.csv", na = "missing")
+```
+
+### Appending to Files
+
+```{r}
+#| label: append-files
+
+# Initial data
+initial <- tibble(id = 1:3, value = c(10, 20, 30))
+write_csv(initial, "append_test.csv")
+
+# New data to append
+new_data <- tibble(id = 4:6, value = c(40, 50, 60))
+
+# Append to existing file
+write_csv(new_data, "append_test.csv", append = TRUE)
+
+# Read the combined file
+read_csv("append_test.csv")
+```
+
+## Best Practices
+
+### 1. Always Inspect Your Data
+
+```{r}
+#| label: inspect-data
+
+# After reading, always check:
+data <- read_csv("employees.csv")
+
+# Structure
+glimpse(data)
+
+# First few rows
+head(data)
+
+# Summary statistics
+summary(data)
+
+# Check for parsing problems
+problems(data)
+```
+
+### 2. Be Explicit About Types
+
+```{r}
+#| label: explicit-types
+#| eval: false
+
+# Good: Explicit column types
+data <- read_csv(
+  "file.csv",
+  col_types = cols(
+    id = col_integer(),
+    amount = col_double(),
+    date = col_date(format = "%Y-%m-%d"),
+    category = col_factor(levels = c("A", "B", "C"))
+  )
+)
+
+# This prevents surprises and makes code more robust
+```
+
+### 3. Handle Encodings Properly
+
+```{r}
+#| label: encoding
+#| eval: false
+
+# For files with special characters
+data <- read_csv(
+  "international_data.csv",
+  locale = locale(encoding = "UTF-8")
+)
+
+# Common encodings: UTF-8, Latin1, Windows-1252
+```
+
+## Common Patterns
+
+### Pattern 1: Import and Clean
+
+```{r}
+#| label: import-clean-pattern
+
+# Common workflow: import, clean, transform
+clean_data <- read_csv("employees.csv") %>%
+  # Remove any rows with missing values
+  drop_na() %>%
+  # Parse dates properly
+  mutate(
+    hire_date = as.Date(hire_date),
+    years_employed = as.numeric(Sys.Date() - hire_date) / 365.25
+  ) %>%
+  # Filter and arrange
+  filter(age >= 25) %>%
+  arrange(desc(salary))
+
+clean_data
+```
+
+### Pattern 2: Multiple File Import
+
+```{r}
+#| label: multiple-files
+
+# Create multiple files
+for(i in 1:3) {
+  tibble(
+    file_id = i,
+    value = rnorm(5),
+    category = sample(c("A", "B"), 5, replace = TRUE)
+  ) %>%
+    write_csv(paste0("data_", i, ".csv"))
+}
+
+# Read all files at once
+all_files <- list.files(pattern = "data_\\d+\\.csv", full.names = TRUE)
+
+combined_data <- all_files %>%
+  map_dfr(read_csv, show_col_types = FALSE) %>%
+  arrange(file_id)
+
+combined_data
+```
+
+## Exercises
+
+### Exercise 1: Basic Import
+1. Create a CSV file with student grades
+2. Read it with appropriate column types
+3. Check for any parsing problems
+
+### Exercise 2: Messy Data
+Create a CSV file with:
+- Comment lines starting with #
+- Empty rows
+- Mixed date formats
+- Custom NA values
+Then read it correctly using readr options.
+
+### Exercise 3: Large File Simulation
+1. Generate a CSV with 100,000 rows
+2. Read only specific columns
+3. Process it in chunks to calculate group summaries
+
+### Exercise 4: International Data
+Create a CSV file with European formatting (semicolon delimiter, comma decimal) and read it properly.
+
+## Cleanup
+
+```{r}
+#| label: cleanup
+#| echo: false
+
+# Remove created files
+files_to_remove <- c(
+  "employees.csv", "diverse_data.csv", "genes.tsv",
+  "pipe_data.txt", "semi_data.csv", "fixed_width.txt",
+  "large_file.csv", "euro_data.csv", "wide_data.csv",
+  "output.csv", "output_euro.csv", "output.tsv",
+  "with_na.csv", "append_test.csv",
+  paste0("data_", 1:3, ".csv")
+)
+
+for(file in files_to_remove) {
+  if(file.exists(file)) {
+    file.remove(file)
+  }
+}
+```
+
+## Summary
+
+The readr package provides a modern, fast, and user-friendly approach to data import:
+
+- **Consistent API**: All read functions work similarly
+- **Automatic type detection**: Smart guessing with explicit overrides
+- **Better defaults**: Returns tibbles, preserves strings
+- **Helpful feedback**: Shows column specs and parsing problems
+- **Performance**: Much faster than base R for large files
+- **Flexibility**: Handles various formats and encodings
+
+Mastering readr is essential for efficient data import in the tidyverse ecosystem. Combined with dplyr and tidyr, it forms the foundation of most data analysis workflows.
+
+Next, we'll explore [data transformation with dplyr](dplyr-basics.qmd)!

@@ -1,0 +1,695 @@
+---
+title: "Control Structures in R"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Control Structures
+
+Control structures allow you to control the flow of execution in your R programs. They enable you to:
+
+- Make decisions based on conditions (if/else statements)
+- Repeat operations multiple times (loops)
+- Handle different cases efficiently (switch statements)
+
+While R's vectorized operations often eliminate the need for explicit loops, understanding control structures is essential for more complex programming tasks.
+
+## Conditional Statements
+
+### The `if` Statement
+
+The most basic control structure tests a condition and executes code if the condition is true:
+
+```{r}
+#| label: basic-if
+
+# Basic if statement
+score <- 85
+
+if (score >= 80) {
+  print("You passed!")
+}
+
+# The condition must evaluate to a single TRUE or FALSE
+x <- 10
+if (x > 5) {
+  cat("x is greater than 5\n")
+}
+```
+
+### The `if-else` Statement
+
+Use `else` to specify what happens when the condition is false:
+
+```{r}
+#| label: if-else
+
+# Simple if-else
+temperature <- 75
+
+if (temperature > 80) {
+  print("It's hot outside!")
+} else {
+  print("It's not too hot.")
+}
+
+# Another example
+age <- 17
+
+if (age >= 18) {
+  status <- "adult"
+} else {
+  status <- "minor"
+}
+
+cat("Status:", status, "\n")
+```
+
+### Multiple Conditions with `else if`
+
+Chain multiple conditions together:
+
+```{r}
+#| label: else-if
+
+# Grade assignment
+score <- 87
+
+if (score >= 90) {
+  grade <- "A"
+} else if (score >= 80) {
+  grade <- "B"
+} else if (score >= 70) {
+  grade <- "C"
+} else if (score >= 60) {
+  grade <- "D"
+} else {
+  grade <- "F"
+}
+
+cat("Your grade is:", grade, "\n")
+```
+
+### Nested `if` Statements
+
+You can nest if statements inside other if statements:
+
+```{r}
+#| label: nested-if
+
+# Weather decision making
+temperature <- 75
+is_raining <- FALSE
+
+if (temperature > 70) {
+  if (is_raining) {
+    print("Warm but rainy - bring an umbrella!")
+  } else {
+    print("Perfect weather for a walk!")
+  }
+} else {
+  if (is_raining) {
+    print("Cold and rainy - stay inside!")
+  } else {
+    print("Cold but dry - wear a jacket!")
+  }
+}
+```
+
+### Vectorized Conditional: `ifelse()`
+
+For vectorized operations, use `ifelse()`:
+
+```{r}
+#| label: ifelse-function
+
+# Apply condition to entire vector
+scores <- c(85, 92, 78, 96, 73, 88)
+
+# Traditional if would only work with single values
+# This creates a vector of results
+results <- ifelse(scores >= 80, "Pass", "Fail")
+print(results)
+
+# More complex example
+temperatures <- c(68, 75, 82, 79, 71)
+weather_description <- ifelse(temperatures > 80, "Hot",
+                             ifelse(temperatures > 70, "Warm", "Cool"))
+print(weather_description)
+
+# Numeric results
+bonus <- ifelse(scores >= 90, scores * 0.1, 0)
+print(bonus)
+```
+
+## Logical Operators in Conditions
+
+### Basic Logical Operators
+
+```{r}
+#| label: logical-operators
+
+age <- 25
+income <- 45000
+has_degree <- TRUE
+
+# AND operator (&)
+if (age >= 18 & income > 30000) {
+  print("Eligible for loan")
+}
+
+# OR operator (|)
+if (age < 18 | age > 65) {
+  print("Special rate applies")
+}
+
+# NOT operator (!)
+if (!has_degree) {
+  print("Degree required")
+} else {
+  print("Education requirement met")
+}
+
+# Complex conditions
+if ((age >= 21 & age <= 65) & (income > 40000 | has_degree)) {
+  print("Premium membership available")
+}
+```
+
+### Comparison Operators
+
+```{r}
+#| label: comparison-operators
+
+x <- 10
+y <- 20
+
+# All comparison operators
+print(x == y)    # Equal to
+print(x != y)    # Not equal to
+print(x < y)     # Less than
+print(x <= y)    # Less than or equal to
+print(x > y)     # Greater than
+print(x >= y)    # Greater than or equal to
+
+# Using with strings
+name1 <- "Alice"
+name2 <- "Bob"
+print(name1 == name2)
+print(name1 < name2)  # Alphabetical comparison
+```
+
+## Loops
+
+### The `for` Loop
+
+`for` loops iterate over a sequence of values:
+
+```{r}
+#| label: for-loop-basic
+
+# Basic for loop
+for (i in 1:5) {
+  print(paste("Iteration:", i))
+}
+
+# Loop over vector elements
+fruits <- c("apple", "banana", "cherry")
+for (fruit in fruits) {
+  print(paste("I like", fruit))
+}
+
+# Loop with calculations
+squares <- numeric(5)  # Pre-allocate vector
+for (i in 1:5) {
+  squares[i] <- i^2
+}
+print(squares)
+```
+
+### Practical `for` Loop Examples
+
+```{r}
+#| label: for-loop-practical
+
+# Calculate cumulative sum
+numbers <- c(5, 10, 15, 20, 25)
+cumulative <- numeric(length(numbers))
+cumulative[1] <- numbers[1]
+
+for (i in 2:length(numbers)) {
+  cumulative[i] <- cumulative[i-1] + numbers[i]
+}
+print(cumulative)
+
+# Compare with built-in function
+print(cumsum(numbers))  # R's built-in cumulative sum
+
+# Process data frame rows
+students <- data.frame(
+  name = c("Alice", "Bob", "Charlie"),
+  midterm = c(85, 78, 92),
+  final = c(88, 82, 89)
+)
+
+for (i in 1:nrow(students)) {
+  overall <- 0.4 * students$midterm[i] + 0.6 * students$final[i]
+  cat(students$name[i], "overall grade:", round(overall, 1), "\n")
+}
+```
+
+### The `while` Loop
+
+`while` loops continue until a condition becomes false:
+
+```{r}
+#| label: while-loop
+
+# Basic while loop
+counter <- 1
+while (counter <= 5) {
+  print(paste("Count:", counter))
+  counter <- counter + 1
+}
+
+# While loop with condition
+balance <- 1000
+interest_rate <- 0.05
+year <- 0
+
+while (balance < 2000) {
+  balance <- balance * (1 + interest_rate)
+  year <- year + 1
+}
+
+cat("It takes", year, "years for balance to exceed $2000\n")
+cat("Final balance: $", round(balance, 2), "\n")
+```
+
+### Loop Control: `break` and `next`
+
+```{r}
+#| label: loop-control
+
+# Using break to exit loop early
+for (i in 1:10) {
+  if (i == 6) {
+    print("Breaking at 6")
+    break
+  }
+  print(i)
+}
+
+# Using next to skip iterations
+for (i in 1:10) {
+  if (i %% 2 == 0) {  # Skip even numbers
+    next
+  }
+  print(paste("Odd number:", i))
+}
+```
+
+## Alternative to Loops: Vectorization
+
+In R, vectorized operations are usually preferred over loops:
+
+```{r}
+#| label: vectorization-vs-loops
+
+# Calculate squares using loop (slower)
+n <- 1000
+squares_loop <- numeric(n)
+system.time({
+  for (i in 1:n) {
+    squares_loop[i] <- i^2
+  }
+})
+
+# Calculate squares using vectorization (faster)
+system.time({
+  squares_vector <- (1:n)^2
+})
+
+# Both give same result
+identical(squares_loop, squares_vector)
+
+# More examples of vectorization
+numbers <- 1:100
+
+# Instead of loop for condition
+# Loop approach:
+# result <- numeric(100)
+# for (i in 1:100) {
+#   if (numbers[i] > 50) result[i] <- "high" else result[i] <- "low"
+# }
+
+# Vectorized approach:
+result <- ifelse(numbers > 50, "high", "low")
+```
+
+## The `switch` Statement
+
+For multiple discrete choices, `switch` can be cleaner than multiple `if-else`:
+
+```{r}
+#| label: switch-statement
+
+# Basic switch with character
+day_type <- function(day) {
+  switch(day,
+    "Monday" = "Start of work week",
+    "Tuesday" = "Work day",
+    "Wednesday" = "Hump day",
+    "Thursday" = "Almost there",
+    "Friday" = "TGIF!",
+    "Saturday" = "Weekend!",
+    "Sunday" = "Weekend!",
+    "Unknown day"  # Default case
+  )
+}
+
+print(day_type("Friday"))
+print(day_type("Sunday"))
+print(day_type("Holiday"))
+
+# Switch with numeric values
+grade_points <- function(letter_grade) {
+  switch(letter_grade,
+    "A" = 4.0,
+    "B" = 3.0,
+    "C" = 2.0,
+    "D" = 1.0,
+    "F" = 0.0,
+    NA  # Default for invalid grades
+  )
+}
+
+print(grade_points("A"))
+print(grade_points("C"))
+print(grade_points("X"))
+```
+
+## Practical Examples
+
+### Example 1: Data Validation and Cleaning
+
+```{r}
+#| label: data-validation
+
+# Simulate messy data
+raw_data <- data.frame(
+  age = c(25, -5, 150, 30, 22),
+  income = c(50000, 75000, -1000, 85000, 45000),
+  score = c(85, 92, 78, 150, 88)
+)
+
+# Clean the data using control structures
+cleaned_data <- raw_data
+
+for (i in 1:nrow(cleaned_data)) {
+  # Validate age
+  if (cleaned_data$age[i] < 0 | cleaned_data$age[i] > 120) {
+    cleaned_data$age[i] <- NA
+    cat("Invalid age in row", i, "- set to NA\n")
+  }
+
+  # Validate income
+  if (cleaned_data$income[i] < 0) {
+    cleaned_data$income[i] <- NA
+    cat("Invalid income in row", i, "- set to NA\n")
+  }
+
+  # Validate score (0-100 range)
+  if (cleaned_data$score[i] < 0 | cleaned_data$score[i] > 100) {
+    cleaned_data$score[i] <- NA
+    cat("Invalid score in row", i, "- set to NA\n")
+  }
+}
+
+print("Original data:")
+print(raw_data)
+print("Cleaned data:")
+print(cleaned_data)
+```
+
+### Example 2: Simulation and Analysis
+
+```{r}
+#| label: simulation-analysis
+
+# Simulate rolling dice until we get a 6
+set.seed(123)
+simulate_dice <- function() {
+  rolls <- 0
+  result <- 0
+
+  while (result != 6) {
+    result <- sample(1:6, 1)
+    rolls <- rolls + 1
+    cat("Roll", rolls, ":", result, "\n")
+  }
+
+  return(rolls)
+}
+
+cat("Simulation 1:\n")
+rolls_needed <- simulate_dice()
+cat("Took", rolls_needed, "rolls to get a 6\n\n")
+
+# Run multiple simulations
+num_simulations <- 1000
+all_rolls <- numeric(num_simulations)
+
+for (i in 1:num_simulations) {
+  rolls <- 0
+  result <- 0
+
+  while (result != 6) {
+    result <- sample(1:6, 1)
+    rolls <- rolls + 1
+  }
+
+  all_rolls[i] <- rolls
+}
+
+cat("Average rolls needed:", mean(all_rolls), "\n")
+cat("Maximum rolls needed:", max(all_rolls), "\n")
+cat("95% of games finished within", quantile(all_rolls, 0.95), "rolls\n")
+```
+
+### Example 3: Processing Survey Data
+
+```{r}
+#| label: survey-processing
+
+# Survey responses
+survey_data <- data.frame(
+  respondent = 1:10,
+  satisfaction = c(5, 4, 3, 5, 2, 4, 5, 3, 4, 5),
+  recommend = c("Yes", "Yes", "No", "Yes", "No", "Maybe", "Yes", "No", "Yes", "Yes"),
+  comments = c("Great!", "", "Could be better", "Excellent", "Poor service",
+              "", "Amazing!", "Not satisfied", "", "Very good")
+)
+
+# Process and categorize responses
+processed_data <- survey_data
+
+for (i in 1:nrow(processed_data)) {
+  # Categorize satisfaction scores
+  if (processed_data$satisfaction[i] >= 4) {
+    processed_data$satisfaction_category[i] <- "High"
+  } else if (processed_data$satisfaction[i] >= 3) {
+    processed_data$satisfaction_category[i] <- "Medium"
+  } else {
+    processed_data$satisfaction_category[i] <- "Low"
+  }
+
+  # Convert recommendation to numeric score
+  rec_score <- switch(processed_data$recommend[i],
+    "Yes" = 3,
+    "Maybe" = 2,
+    "No" = 1,
+    0  # Default for unexpected values
+  )
+  processed_data$recommend_score[i] <- rec_score
+
+  # Flag responses with comments
+  processed_data$has_comment[i] <- processed_data$comments[i] != ""
+}
+
+# Summary analysis
+cat("Satisfaction Distribution:\n")
+print(table(processed_data$satisfaction_category))
+
+cat("\nRecommendation Distribution:\n")
+print(table(processed_data$recommend))
+
+cat("\nPercent with comments:",
+    round(mean(processed_data$has_comment) * 100, 1), "%\n")
+
+# Find dissatisfied customers with comments
+dissatisfied_with_comments <- processed_data[
+  processed_data$satisfaction <= 2 & processed_data$has_comment,
+  c("respondent", "satisfaction", "comments")
+]
+
+if (nrow(dissatisfied_with_comments) > 0) {
+  cat("\nDissatisfied customers with comments:\n")
+  print(dissatisfied_with_comments)
+}
+```
+
+## When to Use Control Structures vs. Vectorization
+
+### Use Control Structures When:
+
+1. **Complex logic**: Multiple conditions that can't be easily vectorized
+2. **Sequential dependencies**: Each iteration depends on the previous result
+3. **Early termination**: Need to stop based on a condition
+4. **Complex data structures**: Working with lists or nested structures
+
+### Use Vectorization When:
+
+1. **Simple operations**: Applying the same operation to all elements
+2. **Mathematical calculations**: Arithmetic operations on vectors
+3. **Logical filtering**: Subsetting based on conditions
+4. **Performance matters**: Vectorized operations are typically faster
+
+```{r}
+#| label: when-to-use-what
+
+# Control structure appropriate: Fibonacci sequence
+fibonacci <- function(n) {
+  if (n <= 2) return(1)
+
+  fib <- numeric(n)
+  fib[1:2] <- 1
+
+  for (i in 3:n) {
+    fib[i] <- fib[i-1] + fib[i-2]
+  }
+
+  return(fib)
+}
+
+print(fibonacci(10))
+
+# Vectorization appropriate: Simple transformations
+data <- 1:1000
+squared <- data^2  # Much faster than loop
+log_values <- log(data)  # Vectorized function
+```
+
+## Best Practices and Common Pitfalls
+
+### 1. Pre-allocate Vectors in Loops
+
+```{r}
+#| label: pre-allocation
+
+# Bad: Growing vector in loop (slow)
+# result <- c()
+# for (i in 1:1000) {
+#   result <- c(result, i^2)
+# }
+
+# Good: Pre-allocate (fast)
+result <- numeric(1000)
+for (i in 1:1000) {
+  result[i] <- i^2
+}
+```
+
+### 2. Avoid Unnecessary Loops
+
+```{r}
+#| label: avoid-loops
+
+# Instead of loop:
+# result <- numeric(length(data))
+# for (i in 1:length(data)) {
+#   result[i] <- data[i] * 2
+# }
+
+# Use vectorization:
+data <- 1:100
+result <- data * 2
+```
+
+### 3. Be Careful with Conditions
+
+```{r}
+#| label: condition-safety
+
+# Dangerous: vector in condition
+scores <- c(85, 92, 78)
+# if (scores > 80) { ... }  # This would cause an error!
+
+# Safe: single logical value
+if (any(scores > 80)) {
+  print("At least one score above 80")
+}
+
+if (all(scores > 80)) {
+  print("All scores above 80")
+}
+```
+
+## Exercises
+
+### Exercise 1: Grade Calculator
+Write a function that takes a numeric score and returns the letter grade using if-else statements:
+- A: 90-100
+- B: 80-89
+- C: 70-79
+- D: 60-69
+- F: Below 60
+
+### Exercise 2: Number Guessing Game
+Create a simple number guessing game where:
+1. The computer picks a random number between 1-100
+2. User has to guess (simulate with a loop)
+3. Provide "higher" or "lower" hints
+4. Count the number of guesses
+
+### Exercise 3: Data Processing
+Given a vector of temperatures, write code that:
+1. Uses a loop to categorize each temperature as "Freezing", "Cold", "Mild", "Warm", or "Hot"
+2. Counts how many days fall into each category
+3. Compares this approach with a vectorized solution
+
+### Exercise 4: Compound Interest Calculator
+Write a function that calculates compound interest using a while loop. The function should:
+1. Take initial amount, interest rate, and target amount
+2. Calculate how many years to reach the target
+3. Print yearly balances along the way
+
+## Summary
+
+Control structures are essential tools for programming logic:
+
+### Key Concepts:
+- **Conditional statements**: `if`, `else if`, `else` for decision making
+- **Loops**: `for` and `while` for repetitive operations
+- **Loop control**: `break` and `next` for flow control
+- **Vectorized alternatives**: Often faster and more R-like
+
+### Best Practices:
+- **Prefer vectorization** when possible for performance
+- **Pre-allocate vectors** in loops to avoid memory issues
+- **Use appropriate structures** for the task at hand
+- **Test conditions carefully** to avoid errors
+
+### Remember:
+- R is designed for vectorized operations
+- Control structures are powerful but should be used judiciously
+- Always consider if there's a vectorized alternative
+- Complex logic often requires control structures
+
+Next, we'll explore how to organize code into reusable functions!

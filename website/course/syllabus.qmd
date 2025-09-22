@@ -1,0 +1,179 @@
+---
+title: "Course Syllabus"
+---
+
+## Introduction to R
+
+### What You'll Learn
+
+This course provides a comprehensive foundation in R programming tailored
+for analytics. By the end of this module, you will be able to:
+
+::: {.callout-note}
+## Core Competencies
+
+- **Set up and manage R environments** for data analysis projects using RStudio
+- **R Fundamentals**: Master R's syntax, data structures, and statistical computing concepts
+- **Write clean, efficient R code** using tidyverse principles and best practices
+- **Manipulate and analyze data** using base R and tidyverse functions
+- **Process and transform datasets** using dplyr for advanced data wrangling
+- **Develop reproducible data analysis workflows** with R scripts and R Markdown
+- **Debug and troubleshoot** common R programming issues
+- **Apply statistical thinking** to real-world analytics problems
+:::
+
+### Course Philosophy
+
+Our approach emphasizes **learning by doing**. Rather than memorizing syntax,
+you'll build practical skills through:
+
+- 🎯 **Hands-on exercises** with real datasets
+- 🔄 **Iterative learning** that builds on previous concepts
+- 🌟 **Industry-relevant** examples and case studies
+- 🤝 **Collaborative problem-solving** in group sessions
+
+## Module Structure
+
+The course is organized into six progressive modules, each building upon the
+previous:
+
+### 📚 Module 1: Getting Started with R
+**Duration**: Week 1
+
+Set up your R environment and learn the basics of working with RStudio,
+R scripts, and essential development practices.
+
+**Key Topics**: R and RStudio installation, R as calculator, RStudio interface, R projects
+
+### 🔧 Module 2: R Language Fundamentals
+**Duration**: Weeks 2
+
+Master R's fundamental building blocks including data types, data structures, and control flow.
+
+**Key Topics**: Objects, assignment, vectors, lists, data frames, factors, functions, control structures
+
+### 📊 Module 3: Introduction to Tidyverse
+**Duration**: Week 3
+
+Explore the tidyverse philosophy and learn essential packages for modern R programming.
+
+**Key Topics**: Tidyverse ecosystem, data import with readr, basic dplyr operations, tidyr principles
+
+### 🎯 Module 4: Data Types in Tidyverse
+**Duration**: Week 4
+
+Deepen your understanding of data types within the tidyverse framework and learn to work effectively with different data structures.
+
+**Key Topics**: Character strings, factors in tidyverse, dates and times with lubridate, categorical data handling
+
+### 📈 Module 5: Data Wrangling with dplyr
+**Duration**: Week 5
+
+Master advanced data manipulation techniques using dplyr for comprehensive data wrangling.
+
+**Key Topics**: Filtering, selecting, mutating, grouping, summarizing, joining datasets
+
+### 📋 Module 6: Organizing Tabular Data with tidyr
+**Duration**: Week 6
+
+Master data reshaping and organization techniques to transform messy data into tidy formats suitable for analysis.
+
+**Key Topics**: Pivoting data (wide to long, long to wide), separating and uniting columns, handling missing values, nested data structures
+
+## Learning Approach
+
+### Interactive Learning Environment
+
+We believe in **active learning** where you'll:
+
+::: {.grid}
+::: {.g-col-6}
+**During Sessions**
+
+- Live coding demonstrations
+- Pair programming exercises
+- Group problem-solving
+- Q&A discussions
+:::
+
+::: {.g-col-6}
+**Between Sessions**
+
+- Practice exercises
+- Reading assignments
+- Mini-projects
+- Peer review activities
+:::
+:::
+
+### Assessment Methods
+
+#### Formal Assessment
+MSc students enrolled in the Bayes programme must complete online quizzes via
+module IND215's Moodle page. The deadline for quiz submission is **October 10,
+2025**.
+
+#### Continuous Self-Assessment
+While formal assessment provides external validation, self-assessment forms
+the cornerstone of learning in this module. Students are encouraged to:
+
+- Monitor their understanding during lectures and practical sessions
+- Complete problem sets independently to identify knowledge gaps
+- Actively seek and incorporate feedback from instructors
+- Track their progress against module learning objectives
+
+## Course Materials
+
+### 💻 Required Software
+- R 4.0+ (via [CRAN](https://cran.r-project.org/))
+- [RStudio Desktop](https://rstudio.com/products/rstudio/download/) (latest version)
+- [Git](https://git-scm.com/) for version control
+- Essential R packages: tidyverse, readr, dplyr, ggplot2, and others (installed during the course) 
+
+### 📖 Recommended Textbooks
+- Aphalo, Pedro J. *Learn R: As a Language*. Chapman and Hall/CRC, 2020.Aphalo,
+  Pedro J. Learn R: as a language. Chapman and Hall/CRC, 2020. [Available
+  online](https://www.learnr-book.info/contents-2ed.html)
+- Bonnell, Jerry, and Mitsunori Ogihara. *Exploring Data Science with R and the
+  Tidyverse: A Concise Introduction*. Chapman and Hall/CRC, 2023. [Available on line](https://mathematics.foi.hr/Rprojekti/knjige/exploring-data-science-with-r-and-the-tidyverse.pdf)
+
+### 🎈 Online Resources
+- [Official R Documentation](https://www.r-project.org/other-docs.html)
+- [Tidyverse Documentation](https://www.tidyverse.org/)
+- [RStudio Education](https://education.rstudio.com/)
+- [CRAN Task Views](https://cran.r-project.org/web/views/)
+- [RStudio Cheat Sheets](https://rstudio.com/resources/cheatsheets/)
+- The present website (and its underlying [GitHub
+  repository](https://github.com/simoneSantoni/intro-to-R-IND215))
+
+## Course Policies
+
+### Attendance and Participation
+- Regular attendance is mandatory for IND215
+- Active participation in class discussions encouraged
+
+### Getting Help
+
+::: {.callout-tip}
+1. **Moodle Forum**: Available on course website, expect a reply within 24-48
+   hours in weekdays
+2. **Email instructor**:
+   [Sangseok.Lee@bayes.city.ac.uk](Sangseok.Lee@bayes.city.ac.uk)
+3. **Office Hours**: In-depth conceptual discussions (reach out to
+   [Sangseok.Lee@bayes.city.ac.uk](Sangseok.Lee@bayes.city.ac.uk) to book your
+   appointment)
+4. **Peer Study Groups**: Self-organized, facilitated by instructor
+:::
+
+### Accommodations
+
+Students with documented disabilities who may need accommodations should
+liaise with the course officer as soon as possible. All discussions will
+remain confidential. Students should also contact the Office of Disability
+Services to verify their eligibility for reasonable accommodations.
+
+### Changes to Syllabus
+
+The instructor reserves the right to modify this syllabus as needed. Any
+changes will be announced in class and posted on the course website with
+adequate notice.

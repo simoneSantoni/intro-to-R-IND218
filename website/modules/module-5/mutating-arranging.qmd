@@ -1,0 +1,942 @@
+---
+title: "Mutating and Arranging Data"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Data Transformation
+
+While `filter()` and `select()` help you subset data, `mutate()` and `arrange()` help you transform and organize it. The `mutate()` function creates new variables or modifies existing ones, while `arrange()` sorts your data. These operations are essential for data preparation and analysis.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+
+# Create our sample sales dataset
+set.seed(123)
+sales_data <- tibble(
+  order_id = paste0("ORD-", str_pad(1:1000, 4, pad = "0")),
+  customer_id = sample(paste0("CUST-", 1:200), 1000, replace = TRUE),
+  product_id = sample(paste0("PROD-", 1:50), 1000, replace = TRUE),
+  order_date = sample(seq(ymd("2023-01-01"), ymd("2024-12-31"), by = "day"), 1000, replace = TRUE),
+  quantity = sample(1:10, 1000, replace = TRUE),
+  unit_price = round(runif(1000, 5, 200), 2),
+  discount_pct = sample(c(0, 0.05, 0.10, 0.15, 0.20), 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05)),
+  sales_rep = sample(c("Alice Johnson", "Bob Smith", "Charlie Brown", "Diana Prince", "Eve Wilson"), 1000, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"), 1000, replace = TRUE),
+  customer_type = sample(c("Individual", "Small Business", "Enterprise"), 1000, replace = TRUE, prob = c(0.5, 0.3, 0.2))
+) %>%
+  mutate(
+    sales_rep = ifelse(row_number() %in% sample(1:1000, 50), NA, sales_rep),
+    discount_pct = ifelse(row_number() %in% sample(1:1000, 30), NA, discount_pct)
+  )
+
+cat("Working with", nrow(sales_data), "sales transactions\n")
+```
+
+## Creating New Variables with mutate()
+
+### Basic Calculations
+
+```{r}
+#| label: basic-mutations
+
+# Calculate derived financial metrics
+sales_enhanced <- sales_data %>%
+  mutate(
+    # Basic calculations
+    gross_amount = quantity * unit_price,
+    discount_amount = gross_amount * coalesce(discount_pct, 0),
+    net_amount = gross_amount - discount_amount,
+
+    # Profit calculations (assuming 60% margin)
+    cost_amount = gross_amount * 0.6,
+    profit = net_amount - cost_amount,
+    profit_margin = profit / net_amount,
+
+    # Unit economics
+    revenue_per_unit = net_amount / quantity,
+    profit_per_unit = profit / quantity
+  )
+
+# Show the new variables
+cat("New financial variables created:\n")
+sales_enhanced %>%
+  select(order_id, quantity, unit_price, gross_amount, discount_amount,
+         net_amount, profit, profit_margin) %>%
+  head(5) %>%
+  print()
+```
+
+### Date and Time Manipulations
+
+```{r}
+#| label: date-mutations
+
+sales_with_dates <- sales_enhanced %>%
+  mutate(
+    # Extract date components
+    order_year = year(order_date),
+    order_month = month(order_date, label = TRUE),
+    order_quarter = paste0("Q", quarter(order_date)),
+    order_weekday = wday(order_date, label = TRUE),
+
+    # Date calculations
+    days_since_epoch = as.numeric(order_date - ymd("2023-01-01")),
+    is_weekend = wday(order_date) %in% c(1, 7),
+    is_month_end = day(order_date) >= 25,
+
+    # Relative date calculations
+    days_ago = as.numeric(Sys.Date() - order_date),
+    is_recent = days_ago <= 30,
+
+    # Business calendar
+    order_month_year = floor_date(order_date, "month"),
+    fiscal_quarter = case_when(
+      month(order_date) %in% c(1, 2, 3) ~ paste0("FY", year(order_date), "-Q4"),
+      month(order_date) %in% c(4, 5, 6) ~ paste0("FY", year(order_date + years(1)), "-Q1"),
+      month(order_date) %in% c(7, 8, 9) ~ paste0("FY", year(order_date + years(1)), "-Q2"),
+      month(order_date) %in% c(10, 11, 12) ~ paste0("FY", year(order_date + years(1)), "-Q3")
+    )
+  )
+
+cat("Date-related variables:\n")
+sales_with_dates %>%
+  select(order_date, order_year, order_month, order_quarter,
+         order_weekday, is_weekend, days_ago, fiscal_quarter) %>%
+  head(5) %>%
+  print()
+```
+
+### Conditional Mutations with case_when()
+
+```{r}
+#| label: case-when-mutations
+
+sales_categorized <- sales_with_dates %>%
+  mutate(
+    # Order size categories
+    order_size = case_when(
+      net_amount >= 1000 ~ "Large",
+      net_amount >= 500 ~ "Medium",
+      net_amount >= 100 ~ "Small",
+      TRUE ~ "Micro"
+    ),
+
+    # Customer segment based on type and order value
+    customer_segment = case_when(
+      customer_type == "Enterprise" & net_amount >= 500 ~ "Enterprise High",
+      customer_type == "Enterprise" & net_amount < 500 ~ "Enterprise Standard",
+      customer_type == "Small Business" & net_amount >= 300 ~ "SMB High",
+      customer_type == "Small Business" & net_amount < 300 ~ "SMB Standard",
+      customer_type == "Individual" & net_amount >= 200 ~ "Individual Premium",
+      customer_type == "Individual" & net_amount < 200 ~ "Individual Standard",
+      TRUE ~ "Other"
+    ),
+
+    # Discount tier
+    discount_tier = case_when(
+      is.na(discount_pct) | discount_pct == 0 ~ "No Discount",
+      discount_pct <= 0.05 ~ "Low Discount",
+      discount_pct <= 0.15 ~ "Medium Discount",
+      discount_pct > 0.15 ~ "High Discount",
+      TRUE ~ "Unknown"
+    ),
+
+    # Sales performance indicator
+    performance_flag = case_when(
+      profit_margin >= 0.3 & net_amount >= 500 ~ "Excellent",
+      profit_margin >= 0.2 & net_amount >= 300 ~ "Good",
+      profit_margin >= 0.1 ~ "Fair",
+      profit_margin >= 0 ~ "Poor",
+      TRUE ~ "Loss"
+    ),
+
+    # Regional priority (business logic example)
+    regional_priority = case_when(
+      region == "North" & customer_type == "Enterprise" ~ "High",
+      region == "East" & customer_type %in% c("Enterprise", "Small Business") ~ "High",
+      region %in% c("South", "West") & customer_type == "Enterprise" ~ "Medium",
+      TRUE ~ "Standard"
+    )
+  )
+
+# Show the categorizations
+cat("Conditional mutations results:\n")
+sales_categorized %>%
+  count(order_size, customer_segment) %>%
+  head(10) %>%
+  print()
+
+cat("\nDiscount tier distribution:\n")
+sales_categorized %>%
+  count(discount_tier, sort = TRUE) %>%
+  print()
+```
+
+### Working with Strings
+
+```{r}
+#| label: string-mutations
+
+sales_with_strings <- sales_categorized %>%
+  mutate(
+    # Extract information from IDs
+    customer_number = str_extract(customer_id, "\\d+"),
+    product_number = str_extract(product_id, "\\d+"),
+    order_number = str_extract(order_id, "\\d+"),
+
+    # Sales rep processing
+    rep_first_name = str_extract(sales_rep, "^\\w+"),
+    rep_last_name = str_extract(sales_rep, "\\w+$"),
+    rep_initials = paste0(
+      str_sub(str_extract(sales_rep, "^\\w+"), 1, 1),
+      str_sub(str_extract(sales_rep, "\\w+$"), 1, 1)
+    ),
+
+    # Create display names and codes
+    order_display = paste0(order_quarter, "-", str_pad(order_number, 4, pad = "0")),
+    customer_code = paste0(str_sub(region, 1, 1), "-", customer_number),
+
+    # Text classifications
+    has_discount = if_else(!is.na(discount_pct) & discount_pct > 0, "Yes", "No"),
+    weekend_order = if_else(is_weekend, "Weekend", "Weekday"),
+
+    # Complex string operations
+    order_summary = paste0(
+      customer_type, " customer (", region, ") - ",
+      order_size, " order: $", round(net_amount, 0),
+      if_else(has_discount == "Yes", paste0(" (", round(discount_pct * 100, 0), "% off)"), "")
+    )
+  )
+
+cat("String manipulation results:\n")
+sales_with_strings %>%
+  select(sales_rep, rep_first_name, rep_last_name, rep_initials,
+         order_display, customer_code, order_summary) %>%
+  head(5) %>%
+  print()
+```
+
+## Working with Window Functions
+
+### Ranking and Row Numbers
+
+```{r}
+#| label: window-functions
+
+sales_ranked <- sales_with_strings %>%
+  # Add various ranking methods
+  mutate(
+    # Overall rankings
+    revenue_rank = row_number(desc(net_amount)),
+    revenue_rank_tie = rank(desc(net_amount)),
+    revenue_percentile = percent_rank(net_amount),
+
+    # Quantity rankings
+    quantity_rank = row_number(desc(quantity)),
+
+    # Date rankings
+    chronological_order = row_number(order_date),
+    reverse_chronological = row_number(desc(order_date))
+  ) %>%
+  # Add group-based rankings
+  group_by(region) %>%
+  mutate(
+    regional_revenue_rank = row_number(desc(net_amount)),
+    regional_revenue_percentile = percent_rank(net_amount)
+  ) %>%
+  ungroup() %>%
+  # Add customer-based rankings
+  group_by(customer_id) %>%
+  mutate(
+    customer_order_sequence = row_number(order_date),
+    customer_largest_order_rank = row_number(desc(net_amount)),
+    is_largest_customer_order = customer_largest_order_rank == 1
+  ) %>%
+  ungroup()
+
+# Show ranking results
+cat("Top 10 orders by revenue:\n")
+sales_ranked %>%
+  filter(revenue_rank <= 10) %>%
+  select(order_id, region, net_amount, revenue_rank, regional_revenue_rank) %>%
+  arrange(revenue_rank) %>%
+  print()
+
+cat("\nCustomer order patterns (first few customers):\n")
+sales_ranked %>%
+  filter(customer_id %in% c("CUST-1", "CUST-2", "CUST-3")) %>%
+  select(customer_id, order_date, net_amount, customer_order_sequence,
+         customer_largest_order_rank, is_largest_customer_order) %>%
+  arrange(customer_id, order_date) %>%
+  print()
+```
+
+### Lead and Lag Operations
+
+```{r}
+#| label: lead-lag-functions
+
+# Calculate period-over-period changes
+sales_with_trends <- sales_ranked %>%
+  arrange(order_date) %>%
+  mutate(
+    # Overall trends
+    prev_order_amount = lag(net_amount),
+    next_order_amount = lead(net_amount),
+    amount_change_from_prev = net_amount - prev_order_amount,
+
+    # Moving calculations
+    rolling_avg_3 = (lag(net_amount, 2) + lag(net_amount, 1) + net_amount) / 3,
+
+    # Time between orders
+    prev_order_date = lag(order_date),
+    days_since_last_order = as.numeric(order_date - prev_order_date)
+  ) %>%
+  # Customer-specific trends
+  group_by(customer_id) %>%
+  arrange(order_date) %>%
+  mutate(
+    prev_customer_order = lag(net_amount),
+    customer_order_growth = net_amount - prev_customer_order,
+    customer_order_growth_pct = (net_amount / prev_customer_order - 1) * 100,
+
+    # Customer ordering patterns
+    days_between_customer_orders = as.numeric(order_date - lag(order_date)),
+    avg_days_between_orders = mean(days_between_customer_orders, na.rm = TRUE),
+
+    # Customer value trends
+    customer_cumulative_value = cumsum(net_amount),
+    customer_running_avg = cummean(net_amount)
+  ) %>%
+  ungroup()
+
+cat("Customer ordering trends:\n")
+sales_with_trends %>%
+  filter(!is.na(customer_order_growth)) %>%
+  select(customer_id, order_date, net_amount, prev_customer_order,
+         customer_order_growth, customer_order_growth_pct) %>%
+  head(10) %>%
+  print()
+```
+
+### Cumulative Operations
+
+```{r}
+#| label: cumulative-operations
+
+sales_cumulative <- sales_with_trends %>%
+  arrange(order_date) %>%
+  mutate(
+    # Running totals
+    cumulative_revenue = cumsum(net_amount),
+    cumulative_orders = row_number(),
+    running_average = cummean(net_amount),
+
+    # Running business metrics
+    cumulative_profit = cumsum(profit),
+    running_profit_margin = cumulative_profit / cumulative_revenue
+  ) %>%
+  # Monthly cumulative metrics
+  group_by(order_month_year) %>%
+  arrange(order_date) %>%
+  mutate(
+    monthly_cumulative_revenue = cumsum(net_amount),
+    monthly_order_count = row_number(),
+    month_to_date_avg = cummean(net_amount)
+  ) %>%
+  ungroup() %>%
+  # Regional cumulative metrics
+  group_by(region) %>%
+  arrange(order_date) %>%
+  mutate(
+    regional_cumulative_revenue = cumsum(net_amount),
+    regional_market_share = regional_cumulative_revenue / sum(net_amount) * 100
+  ) %>%
+  ungroup()
+
+cat("Cumulative business metrics:\n")
+sales_cumulative %>%
+  filter(order_date >= ymd("2024-12-01")) %>%
+  select(order_date, net_amount, cumulative_revenue, running_average,
+         monthly_cumulative_revenue, monthly_order_count) %>%
+  head(10) %>%
+  print()
+```
+
+## Sorting Data with arrange()
+
+### Basic Sorting
+
+```{r}
+#| label: basic-arranging
+
+# Single column sorting
+by_amount_desc <- sales_cumulative %>%
+  arrange(desc(net_amount))
+
+by_date_asc <- sales_cumulative %>%
+  arrange(order_date)
+
+# Multiple column sorting
+by_region_then_amount <- sales_cumulative %>%
+  arrange(region, desc(net_amount))
+
+by_customer_then_date <- sales_cumulative %>%
+  arrange(customer_id, order_date)
+
+cat("Top 5 orders by amount:\n")
+by_amount_desc %>%
+  select(order_id, customer_id, region, net_amount, order_date) %>%
+  head(5) %>%
+  print()
+
+cat("\nRecent orders by date:\n")
+by_date_asc %>%
+  select(order_id, order_date, customer_id, net_amount) %>%
+  tail(5) %>%
+  print()
+```
+
+### Advanced Sorting
+
+```{r}
+#| label: advanced-arranging
+
+# Sorting with custom logic
+custom_sort <- sales_cumulative %>%
+  arrange(
+    desc(customer_type == "Enterprise"),  # Enterprise customers first
+    desc(regional_priority == "High"),    # High priority regions next
+    desc(net_amount),                     # Then by order value
+    order_date                            # Finally by date
+  )
+
+# Sorting by calculated values
+by_profit_margin <- sales_cumulative %>%
+  arrange(desc(profit_margin), desc(net_amount))
+
+# Sorting with string functions
+by_customer_alpha <- sales_cumulative %>%
+  arrange(str_extract(customer_id, "\\d+") %>% as.numeric())
+
+# Complex sorting for analysis
+analysis_sort <- sales_cumulative %>%
+  arrange(
+    order_year,
+    match(order_month, month.name),  # Sort months in calendar order
+    desc(net_amount)
+  )
+
+cat("Custom priority sorting (top 5):\n")
+custom_sort %>%
+  select(customer_type, regional_priority, region, net_amount, order_date) %>%
+  head(5) %>%
+  print()
+
+cat("\nBest profit margins (top 5):\n")
+by_profit_margin %>%
+  select(order_id, net_amount, profit, profit_margin) %>%
+  head(5) %>%
+  print()
+```
+
+### Grouped Sorting
+
+```{r}
+#| label: grouped-arranging
+
+# Sort within groups
+top_orders_per_region <- sales_cumulative %>%
+  group_by(region) %>%
+  arrange(desc(net_amount), .by_group = TRUE) %>%
+  slice_head(n = 3) %>%
+  ungroup()
+
+# Sort by group statistics
+regions_by_performance <- sales_cumulative %>%
+  group_by(region) %>%
+  summarise(
+    total_revenue = sum(net_amount),
+    avg_order_value = mean(net_amount),
+    order_count = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_revenue))
+
+# Complex grouped sorting
+customer_analysis <- sales_cumulative %>%
+  group_by(customer_id, customer_type) %>%
+  summarise(
+    total_spent = sum(net_amount),
+    order_count = n(),
+    avg_order_value = mean(net_amount),
+    first_order = min(order_date),
+    last_order = max(order_date),
+    .groups = "drop"
+  ) %>%
+  arrange(
+    customer_type,
+    desc(total_spent)
+  )
+
+cat("Top 3 orders per region:\n")
+print(top_orders_per_region %>% select(region, order_id, net_amount))
+
+cat("\nRegions by performance:\n")
+print(regions_by_performance)
+```
+
+## Advanced Mutation Techniques
+
+### Conditional Mutations with if_else()
+
+```{r}
+#| label: advanced-if-else
+
+sales_conditional <- sales_cumulative %>%
+  mutate(
+    # Simple conditional
+    high_value = if_else(net_amount > 500, "High Value", "Standard"),
+
+    # Nested conditionals
+    customer_status = if_else(
+      customer_type == "Enterprise",
+      if_else(net_amount > 1000, "Enterprise VIP", "Enterprise Standard"),
+      if_else(net_amount > 300, "High Value Individual", "Standard Individual")
+    ),
+
+    # Conditional with different data types
+    discount_description = if_else(
+      !is.na(discount_pct) & discount_pct > 0,
+      paste0(round(discount_pct * 100, 0), "% discount applied"),
+      "No discount"
+    ),
+
+    # Complex business logic
+    approval_required = if_else(
+      (customer_type == "Individual" & net_amount > 1000) |
+      (customer_type == "Small Business" & net_amount > 2000) |
+      (customer_type == "Enterprise" & net_amount > 5000),
+      "Manager Approval Required",
+      "Auto Approved"
+    ),
+
+    # Performance-based conditionals
+    rep_performance = if_else(
+      !is.na(sales_rep),
+      case_when(
+        profit_margin > 0.25 ~ "Excellent",
+        profit_margin > 0.15 ~ "Good",
+        profit_margin > 0.05 ~ "Satisfactory",
+        TRUE ~ "Needs Improvement"
+      ),
+      "No Rep Assigned"
+    )
+  )
+
+cat("Conditional mutation results:\n")
+sales_conditional %>%
+  count(customer_status, approval_required) %>%
+  print()
+```
+
+### Working with Multiple Variables
+
+```{r}
+#| label: multiple-variables
+
+# Using across() for multiple column operations
+sales_normalized <- sales_conditional %>%
+  mutate(
+    # Scale numeric variables
+    across(c(quantity, unit_price, net_amount), ~ scale(.x)[,1], .names = "{.col}_scaled"),
+
+    # Log transform financial variables
+    across(c(gross_amount, net_amount, profit), ~ log1p(.x), .names = "{.col}_log"),
+
+    # Create text versions of numeric variables
+    across(c(net_amount, profit), ~ paste0("$", format(.x, big.mark = ",")), .names = "{.col}_formatted"),
+
+    # Apply business rules across columns
+    across(ends_with("_amount"), ~ if_else(.x < 0, 0, .x), .names = "{.col}_positive")
+  )
+
+cat("Multiple variable operations:\n")
+sales_normalized %>%
+  select(net_amount, net_amount_scaled, net_amount_log,
+         net_amount_formatted, net_amount_positive) %>%
+  head(5) %>%
+  print()
+```
+
+## Real-World Examples
+
+### Example 1: Customer Lifetime Value Calculation
+
+```{r}
+#| label: customer-ltv
+
+customer_ltv <- sales_cumulative %>%
+  group_by(customer_id) %>%
+  arrange(order_date) %>%
+  mutate(
+    # Customer order sequence
+    order_sequence = row_number(),
+
+    # Time-based calculations
+    customer_tenure_days = as.numeric(max(order_date) - min(order_date)),
+    days_since_first_order = as.numeric(order_date - min(order_date)),
+
+    # Value calculations
+    customer_total_value = sum(net_amount),
+    customer_avg_order_value = mean(net_amount),
+    order_value_percentile = percent_rank(net_amount),
+
+    # Frequency calculations
+    customer_order_frequency = customer_total_value / pmax(customer_tenure_days, 1),
+
+    # Recency calculations
+    days_since_last_order = as.numeric(max(order_date) - order_date),
+
+    # Customer lifecycle stage
+    lifecycle_stage = case_when(
+      order_sequence == 1 ~ "New",
+      customer_tenure_days <= 90 ~ "Developing",
+      days_since_last_order <= 30 ~ "Active",
+      days_since_last_order <= 90 ~ "At Risk",
+      TRUE ~ "Inactive"
+    ),
+
+    # Predicted lifetime value (simplified model)
+    predicted_ltv = customer_avg_order_value *
+                   (365 / pmax(customer_tenure_days / pmax(order_sequence - 1, 1), 30)) * 2,
+
+    # Customer score (simplified)
+    customer_score = scale(customer_total_value)[,1] +
+                    scale(customer_order_frequency)[,1] +
+                    scale(-days_since_last_order)[,1]
+  ) %>%
+  ungroup()
+
+cat("Customer Lifetime Value Analysis:\n")
+customer_ltv %>%
+  group_by(customer_id) %>%
+  slice_tail(n = 1) %>%  # Get latest record per customer
+  select(customer_id, customer_total_value, customer_avg_order_value,
+         lifecycle_stage, predicted_ltv, customer_score) %>%
+  arrange(desc(customer_score)) %>%
+  head(10) %>%
+  print()
+```
+
+### Example 2: Sales Performance Dashboard Data
+
+```{r}
+#| label: sales-dashboard
+
+dashboard_data <- sales_cumulative %>%
+  mutate(
+    # Time period classifications
+    period_type = case_when(
+      order_date >= Sys.Date() - days(7) ~ "This Week",
+      order_date >= Sys.Date() - days(30) ~ "This Month",
+      order_date >= Sys.Date() - days(90) ~ "This Quarter",
+      TRUE ~ "Historical"
+    ),
+
+    # Performance metrics
+    is_target_achieved = net_amount >= 500,  # Example target
+    performance_vs_target = net_amount / 500,
+
+    # Trend indicators
+    order_month_number = as.numeric(format(order_date, "%Y%m")),
+    is_current_month = order_month_number == as.numeric(format(Sys.Date(), "%Y%m")),
+
+    # KPI classifications
+    kpi_revenue_tier = case_when(
+      net_amount >= quantile(net_amount, 0.9, na.rm = TRUE) ~ "Top 10%",
+      net_amount >= quantile(net_amount, 0.75, na.rm = TRUE) ~ "Top 25%",
+      net_amount >= quantile(net_amount, 0.5, na.rm = TRUE) ~ "Above Median",
+      TRUE ~ "Below Median"
+    ),
+
+    # Alert flags
+    alert_high_value = net_amount > 2000,
+    alert_low_margin = profit_margin < 0.1,
+    alert_large_discount = coalesce(discount_pct, 0) > 0.15,
+
+    # Summary flags
+    needs_attention = alert_low_margin | alert_large_discount,
+    opportunity_flag = alert_high_value & !needs_attention
+  ) %>%
+  # Add period comparisons
+  group_by(period_type) %>%
+  mutate(
+    period_avg_order = mean(net_amount, na.rm = TRUE),
+    period_performance = net_amount / period_avg_order,
+    period_rank = row_number(desc(net_amount))
+  ) %>%
+  ungroup()
+
+# Create dashboard summary
+dashboard_summary <- dashboard_data %>%
+  group_by(period_type, kpi_revenue_tier) %>%
+  summarise(
+    order_count = n(),
+    total_revenue = sum(net_amount),
+    avg_order_value = mean(net_amount),
+    alert_count = sum(needs_attention),
+    opportunity_count = sum(opportunity_flag),
+    .groups = "drop"
+  ) %>%
+  arrange(match(period_type, c("This Week", "This Month", "This Quarter", "Historical")))
+
+cat("Sales Dashboard Summary:\n")
+print(dashboard_summary)
+
+cat("\nHigh Priority Alerts:\n")
+dashboard_data %>%
+  filter(needs_attention) %>%
+  select(order_id, order_date, net_amount, profit_margin, discount_pct,
+         alert_low_margin, alert_large_discount) %>%
+  head(5) %>%
+  print()
+```
+
+### Example 3: Inventory and Product Analysis
+
+```{r}
+#| label: inventory-analysis
+
+product_analysis <- sales_cumulative %>%
+  group_by(product_id) %>%
+  arrange(order_date) %>%
+  mutate(
+    # Product performance over time
+    product_total_sales = sum(net_amount),
+    product_total_units = sum(quantity),
+    product_avg_price = mean(unit_price),
+
+    # Product lifecycle indicators
+    product_first_sale = min(order_date),
+    product_last_sale = max(order_date),
+    product_days_active = as.numeric(product_last_sale - product_first_sale),
+
+    # Sales velocity
+    days_since_product_launch = as.numeric(order_date - product_first_sale),
+    product_cumulative_sales = cumsum(net_amount),
+    sales_velocity = product_cumulative_sales / pmax(days_since_product_launch, 1),
+
+    # Product ranking within its timeline
+    product_order_sequence = row_number(),
+
+    # Seasonal patterns
+    product_quarter_sales = quarter(order_date),
+
+    # Product performance classification
+    product_performance = case_when(
+      product_total_sales >= quantile(product_total_sales, 0.8, na.rm = TRUE) ~ "Star",
+      product_total_sales >= quantile(product_total_sales, 0.6, na.rm = TRUE) ~ "Rising",
+      product_total_sales >= quantile(product_total_sales, 0.4, na.rm = TRUE) ~ "Steady",
+      product_total_sales >= quantile(product_total_sales, 0.2, na.rm = TRUE) ~ "Declining",
+      TRUE ~ "Lagging"
+    )
+  ) %>%
+  ungroup() %>%
+  # Add cross-product comparisons
+  mutate(
+    product_market_share = product_total_sales / sum(product_total_sales) * 100,
+    product_price_position = case_when(
+      product_avg_price >= quantile(product_avg_price, 0.8, na.rm = TRUE) ~ "Premium",
+      product_avg_price >= quantile(product_avg_price, 0.6, na.rm = TRUE) ~ "High",
+      product_avg_price >= quantile(product_avg_price, 0.4, na.rm = TRUE) ~ "Medium",
+      product_avg_price >= quantile(product_avg_price, 0.2, na.rm = TRUE) ~ "Low",
+      TRUE ~ "Budget"
+    )
+  )
+
+# Product portfolio summary
+product_portfolio <- product_analysis %>%
+  group_by(product_id) %>%
+  slice_tail(n = 1) %>%
+  ungroup() %>%
+  select(product_id, product_performance, product_price_position,
+         product_total_sales, product_market_share, sales_velocity) %>%
+  arrange(desc(product_total_sales))
+
+cat("Product Portfolio Analysis (Top 10):\n")
+print(head(product_portfolio, 10))
+
+cat("\nProduct Performance Distribution:\n")
+product_portfolio %>%
+  count(product_performance, product_price_position) %>%
+  print()
+```
+
+## Best Practices and Performance Tips
+
+### Efficient Mutations
+
+```{r}
+#| label: efficient-mutations
+
+# Good practices for performance
+efficient_mutations <- sales_data %>%
+  mutate(
+    # Calculate once, use multiple times
+    gross = quantity * unit_price,
+    discount_amt = gross * coalesce(discount_pct, 0),
+    net = gross - discount_amt,
+
+    # Use vectorized operations
+    is_large_order = net > 500,
+    order_category = if_else(is_large_order, "Large", "Standard"),
+
+    # Avoid redundant calculations
+    profit_simple = net * 0.4,  # Instead of complex profit calculations
+
+    # Use case_when efficiently
+    priority = case_when(
+      customer_type == "Enterprise" & net > 1000 ~ 1L,
+      customer_type == "Enterprise" ~ 2L,
+      net > 500 ~ 3L,
+      TRUE ~ 4L
+    )
+  )
+
+cat("Efficient mutations completed successfully\n")
+```
+
+### Common Pitfalls to Avoid
+
+```{r}
+#| label: common-pitfalls
+
+# Demonstrate common issues and solutions
+
+# Issue 1: Order of operations in mutate()
+# Bad: trying to use a variable before it's created
+# good_order <- sales_data %>%
+#   mutate(
+#     net_amount = gross_amount - discount_amount,  # Error: gross_amount doesn't exist yet
+#     gross_amount = quantity * unit_price
+#   )
+
+# Good: create variables in the right order
+good_order <- sales_data %>%
+  mutate(
+    gross_amount = quantity * unit_price,
+    discount_amount = gross_amount * coalesce(discount_pct, 0),
+    net_amount = gross_amount - discount_amount
+  )
+
+# Issue 2: Division by zero
+safe_calculations <- sales_data %>%
+  mutate(
+    # Bad: could divide by zero
+    # ratio = net_amount / quantity  # Error if quantity is 0
+
+    # Good: handle zero values
+    ratio = if_else(quantity > 0,
+                   (quantity * unit_price) / quantity,
+                   NA_real_)
+  )
+
+# Issue 3: Missing value propagation
+na_handling <- sales_data %>%
+  mutate(
+    # NA values propagate through calculations
+    discount_amt = coalesce(discount_pct, 0) * quantity * unit_price,
+
+    # Explicit NA handling
+    has_discount = !is.na(discount_pct) & discount_pct > 0,
+
+    # Safe calculations with NA
+    adjusted_price = case_when(
+      is.na(discount_pct) ~ unit_price,
+      discount_pct == 0 ~ unit_price,
+      TRUE ~ unit_price * (1 - discount_pct)
+    )
+  )
+
+cat("Common pitfalls addressed successfully\n")
+```
+
+## Exercises
+
+### Exercise 1: Financial Analysis
+Create a comprehensive financial analysis using mutate():
+1. Calculate profit margins, ROI, and markup percentages
+2. Create financial performance categories
+3. Add cumulative financial metrics
+4. Build a profitability scoring system
+
+### Exercise 2: Time Series Features
+Build time-based features:
+1. Extract all relevant date components
+2. Calculate time-based lags and leads
+3. Create seasonal indicators
+4. Build time-based rankings and percentiles
+
+### Exercise 3: Customer Segmentation
+Develop a customer segmentation system:
+1. Calculate RFM (Recency, Frequency, Monetary) scores
+2. Create customer lifecycle stages
+3. Build predictive features
+4. Develop customer risk scores
+
+### Exercise 4: Product Performance
+Analyze product performance:
+1. Calculate product velocity and trends
+2. Create product lifecycle classifications
+3. Build cross-selling opportunity indicators
+4. Develop inventory optimization metrics
+
+## Summary
+
+Mutating and arranging are essential for data transformation and organization:
+
+### Key Functions:
+- **mutate()**: Create or modify variables
+- **arrange()**: Sort data by one or more variables
+- **case_when()**: Multi-condition logic
+- **if_else()**: Binary conditional logic
+
+### Window Functions:
+- **Ranking**: `row_number()`, `rank()`, `percent_rank()`
+- **Offset**: `lag()`, `lead()`
+- **Cumulative**: `cumsum()`, `cummean()`, `cummax()`
+
+### Best Practices:
+- **Order matters** in mutate() - create variables in logical sequence
+- **Handle missing values** explicitly with `coalesce()` and `if_else()`
+- **Use case_when()** for complex multi-condition logic
+- **Group operations** when you need relative calculations
+- **Think about performance** - avoid redundant calculations
+
+### Common Patterns:
+- Financial calculations and derived metrics
+- Date/time feature engineering
+- Categorical variable creation
+- Ranking and percentile calculations
+- Cumulative and rolling metrics
+
+### Remember:
+- mutate() preserves all original columns unless overwritten
+- arrange() changes row order but preserves all data
+- Window functions work within groups when data is grouped
+- Always test complex calculations with simple examples first
+
+These transformation skills enable you to prepare raw data for analysis and create the features needed for insights and modeling!
+
+Next: **[Grouping and Summarizing Data](grouping-summarizing.qmd)**

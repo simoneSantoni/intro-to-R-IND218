@@ -1,0 +1,320 @@
+---
+title: "Module 5: Data Wrangling with dplyr"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: true
+---
+
+## Welcome to Advanced Data Wrangling! 🔧📊
+
+Now that you understand tidyverse fundamentals and can work with different data types, it's time to master the art of data wrangling. The `dplyr` package is the Swiss Army knife of data manipulation, providing intuitive functions that correspond to the most common data analysis tasks.
+
+## What You'll Learn
+
+In this module, we'll dive deep into the powerful world of dplyr, covering:
+
+### 1. Filtering and Selecting
+- Advanced row filtering with complex conditions
+- Column selection with helper functions
+- Combining and chaining operations
+- Working with missing data in filters
+
+### 2. Mutating and Arranging
+- Creating and modifying variables
+- Window functions and ranking
+- Conditional mutations with case_when()
+- Sorting data with arrange()
+
+### 3. Grouping and Summarizing
+- Group-wise operations and split-apply-combine
+- Multiple summary statistics
+- Grouped mutations and filtering
+- Working with grouped data frames
+
+### 4. Joining Data
+- Inner, left, right, and full joins
+- Anti-joins and semi-joins
+- Handling key conflicts and duplicates
+- Joining multiple tables
+
+### 5. Advanced Techniques
+- Across() for operating on multiple columns
+- Programming with dplyr using {{ and !!
+- Custom functions and non-standard evaluation
+- Performance optimization and best practices
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+- ✅ Filter and select data using complex conditions and patterns
+- ✅ Create new variables with sophisticated transformations
+- ✅ Perform group-wise operations and aggregations
+- ✅ Join multiple data sources effectively
+- ✅ Use advanced dplyr techniques for complex data manipulation
+- ✅ Write reusable data wrangling functions
+- ✅ Apply best practices for readable and efficient data pipelines
+
+## Why Master dplyr?
+
+dplyr is essential for data analysis because:
+
+1. **Intuitive verbs**: Functions named like actions (filter, select, mutate)
+2. **Consistent syntax**: All functions work the same way
+3. **Pipe-friendly**: Designed for chaining operations together
+4. **Performance**: Optimized for speed with large datasets
+5. **Versatility**: Handles 90% of data manipulation tasks
+
+## The dplyr Philosophy: Grammar of Data Manipulation
+
+```{r}
+#| label: dplyr-philosophy
+#| message: false
+
+library(tidyverse)
+
+# dplyr provides a consistent set of verbs for data manipulation
+cat("The main dplyr verbs:\n")
+cat("- filter(): choose rows based on conditions\n")
+cat("- select(): choose columns by name or pattern\n")
+cat("- mutate(): create or modify columns\n")
+cat("- arrange(): reorder rows\n")
+cat("- summarise(): reduce to summary statistics\n")
+cat("- group_by(): perform operations by groups\n")
+cat("\nJoining verbs:\n")
+cat("- left_join(), inner_join(), full_join(): combine tables\n")
+cat("- anti_join(), semi_join(): filtering joins\n")
+```
+
+## Real-World Data Challenges
+
+Let's start with a realistic, messy dataset that demonstrates why we need powerful data wrangling tools:
+
+```{r}
+#| label: realistic-dataset
+
+# Create a realistic sales dataset with common data problems
+set.seed(123)
+sales_raw <- tibble(
+  order_id = paste0("ORD-", str_pad(1:1000, 4, pad = "0")),
+  customer_id = sample(paste0("CUST-", 1:200), 1000, replace = TRUE),
+  product_id = sample(paste0("PROD-", 1:50), 1000, replace = TRUE),
+  order_date = sample(seq(ymd("2023-01-01"), ymd("2024-12-31"), by = "day"), 1000, replace = TRUE),
+  quantity = sample(1:10, 1000, replace = TRUE),
+  unit_price = round(runif(1000, 5, 200), 2),
+  discount_pct = sample(c(0, 0.05, 0.10, 0.15, 0.20), 1000, replace = TRUE, prob = c(0.6, 0.2, 0.1, 0.05, 0.05)),
+  sales_rep = sample(c("Alice Johnson", "Bob Smith", "Charlie Brown", "Diana Prince", "Eve Wilson"), 1000, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"), 1000, replace = TRUE),
+  customer_type = sample(c("Individual", "Small Business", "Enterprise"), 1000, replace = TRUE, prob = c(0.5, 0.3, 0.2))
+)
+
+# Add some realistic data quality issues
+sales_raw <- sales_raw %>%
+  mutate(
+    # Some missing values
+    sales_rep = ifelse(row_number() %in% sample(1:1000, 50), NA, sales_rep),
+    discount_pct = ifelse(row_number() %in% sample(1:1000, 30), NA, discount_pct),
+
+    # Calculate derived fields
+    gross_amount = quantity * unit_price,
+    discount_amount = gross_amount * coalesce(discount_pct, 0),
+    net_amount = gross_amount - discount_amount,
+
+    # Add some data entry errors
+    unit_price = ifelse(row_number() %in% sample(1:1000, 5), unit_price * 100, unit_price),  # Pricing errors
+    quantity = ifelse(row_number() %in% sample(1:1000, 3), 0, quantity)  # Zero quantities
+  )
+
+# Add customer information
+customers <- tibble(
+  customer_id = paste0("CUST-", 1:200),
+  customer_name = paste("Customer", 1:200),
+  industry = sample(c("Technology", "Healthcare", "Finance", "Retail", "Manufacturing"), 200, replace = TRUE),
+  signup_date = sample(seq(ymd("2020-01-01"), ymd("2023-12-31"), by = "day"), 200),
+  credit_limit = sample(c(1000, 5000, 10000, 25000, 50000), 200, replace = TRUE)
+)
+
+# Add product information
+products <- tibble(
+  product_id = paste0("PROD-", 1:50),
+  product_name = paste("Product", LETTERS[1:50]),
+  category = sample(c("Electronics", "Software", "Services", "Hardware"), 50, replace = TRUE),
+  cost = round(runif(50, 2, 100), 2),
+  launch_date = sample(seq(ymd("2020-01-01"), ymd("2024-01-01"), by = "day"), 50)
+)
+
+cat("Created realistic business dataset:\n")
+cat("Sales transactions:", nrow(sales_raw), "rows\n")
+cat("Unique customers:", n_distinct(sales_raw$customer_id), "\n")
+cat("Date range:", as.character(min(sales_raw$order_date)), "to", as.character(max(sales_raw$order_date)), "\n")
+cat("Total revenue: $", format(sum(sales_raw$net_amount), big.mark = ","), "\n")
+
+# Show data quality issues
+cat("\nData quality issues to address:\n")
+cat("Missing sales reps:", sum(is.na(sales_raw$sales_rep)), "\n")
+cat("Missing discounts:", sum(is.na(sales_raw$discount_pct)), "\n")
+cat("Suspicious high prices (>$500):", sum(sales_raw$unit_price > 500), "\n")
+cat("Zero quantities:", sum(sales_raw$quantity == 0), "\n")
+```
+
+This dataset represents the kind of messy, real-world data you'll encounter in business. Throughout this module, we'll learn how to clean, transform, and analyze it using dplyr's powerful tools.
+
+## Module Structure
+
+This module is organized into five comprehensive sections:
+
+1. **[Filtering and Selecting](filtering-selecting.qmd)**: Master row and column selection
+2. **[Mutating and Arranging](mutating-arranging.qmd)**: Create variables and sort data
+3. **[Grouping and Summarizing](grouping-summarizing.qmd)**: Aggregate data by groups
+4. **[Joining Data](joining-data.qmd)**: Combine multiple tables
+5. **[Advanced Techniques](advanced-techniques.qmd)**: Programming and optimization
+
+Each section includes:
+- Core concepts with clear explanations
+- Practical examples using real business scenarios
+- Common patterns and best practices
+- Performance tips and troubleshooting
+- Hands-on exercises
+
+## The Power of Pipes
+
+Before diving in, let's appreciate the elegance of dplyr's pipe-friendly design:
+
+```{r}
+#| label: pipe-power
+
+# Without pipes (nested and hard to read)
+result_nested <- arrange(
+  summarise(
+    group_by(
+      filter(sales_raw, !is.na(sales_rep)),
+      region
+    ),
+    total_sales = sum(net_amount),
+    avg_order = mean(net_amount),
+    order_count = n()
+  ),
+  desc(total_sales)
+)
+
+# With pipes (readable and intuitive)
+result_piped <- sales_raw %>%
+  filter(!is.na(sales_rep)) %>%
+  group_by(region) %>%
+  summarise(
+    total_sales = sum(net_amount),
+    avg_order = mean(net_amount),
+    order_count = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_sales))
+
+# Both produce the same result
+identical(result_nested, result_piped)
+
+# Show the clean, readable result
+cat("Regional sales summary:\n")
+print(result_piped)
+```
+
+The pipe makes data analysis feel like describing what you want to do in plain English!
+
+## A Motivating Example
+
+Here's a taste of what you'll be able to do by the end of this module:
+
+```{r}
+#| label: motivating-example
+
+# Complex business analysis in a single, readable pipeline
+quarterly_performance <- sales_raw %>%
+  # Data cleaning
+  filter(
+    quantity > 0,                    # Remove invalid orders
+    unit_price <= 500,               # Remove pricing errors
+    !is.na(sales_rep)                # Only orders with assigned reps
+  ) %>%
+
+  # Join with customer and product data
+  left_join(customers, by = "customer_id") %>%
+  left_join(products, by = "product_id") %>%
+
+  # Create time-based variables
+  mutate(
+    quarter = paste0(year(order_date), "-Q", quarter(order_date)),
+    profit = net_amount - (quantity * cost),
+    profit_margin = profit / net_amount
+  ) %>%
+
+  # Group by multiple dimensions
+  group_by(quarter, region, customer_type) %>%
+
+  # Calculate comprehensive metrics
+  summarise(
+    # Revenue metrics
+    total_revenue = sum(net_amount),
+    total_profit = sum(profit),
+    avg_profit_margin = mean(profit_margin, na.rm = TRUE),
+
+    # Volume metrics
+    total_orders = n(),
+    total_units = sum(quantity),
+
+    # Customer metrics
+    unique_customers = n_distinct(customer_id),
+    avg_order_value = mean(net_amount),
+
+    .groups = "drop"
+  ) %>%
+
+  # Add rankings and comparisons
+  group_by(quarter) %>%
+  mutate(
+    revenue_rank = row_number(desc(total_revenue)),
+    revenue_pct_of_total = total_revenue / sum(total_revenue) * 100
+  ) %>%
+  ungroup() %>%
+
+  # Final sorting
+  arrange(quarter, revenue_rank)
+
+cat("Quarterly performance analysis:\n")
+quarterly_performance %>%
+  filter(quarter %in% c("2024-Q1", "2024-Q2")) %>%
+  select(quarter, region, customer_type, total_revenue, revenue_rank, revenue_pct_of_total) %>%
+  print()
+```
+
+This analysis combines filtering, joining, grouping, summarizing, and ranking - all in a single, readable pipeline. By the end of this module, this kind of complex analysis will feel natural and intuitive.
+
+## Prerequisites
+
+Before starting this module, make sure you have:
+
+- Completed Module 3 (Tidyverse Introduction) and Module 4 (Data Types)
+- Understanding of the pipe operator (`%>%`)
+- Basic knowledge of tibbles and data frames
+- Familiarity with tidyverse loading and basic functions
+
+## Getting Started
+
+Ready to become a data wrangling expert? Let's start with the foundation: **[Filtering and Selecting](filtering-selecting.qmd)**
+
+## Summary
+
+Data wrangling with dplyr is both an art and a science. The key principles to remember:
+
+- **Think in verbs**: Each dplyr function does one thing well
+- **Chain operations**: Use pipes to create readable data pipelines
+- **Be explicit**: Clear, descriptive code is better than clever shortcuts
+- **Test incrementally**: Build complex operations step by step
+- **Handle missing data**: Always consider how NAs affect your analysis
+
+dplyr transforms messy, real-world data into clean, analysis-ready datasets. With these skills, you'll be able to tackle any data challenge with confidence and clarity.
+
+Let's begin your journey to dplyr mastery! 🚀

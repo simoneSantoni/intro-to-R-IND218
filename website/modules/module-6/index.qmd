@@ -1,0 +1,366 @@
+---
+title: "Module 6: Organizing Tabular Data with tidyr"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: true
+---
+
+## Welcome to Data Reshaping and Tidying! 📊🔄
+
+Data rarely comes in the format you need for analysis. Sometimes it's too wide, sometimes too long, sometimes messy with multiple values in single cells. The `tidyr` package provides powerful tools to reshape and tidy your data, transforming it into the clean, analysis-ready format that other tidyverse packages expect.
+
+## What You'll Learn
+
+In this module, we'll master the art of data reshaping and tidying with tidyr:
+
+### 1. Tidy Data Principles
+- Understanding the three fundamental rules of tidy data
+- Identifying common "messy" data patterns
+- Diagnosing data structure problems
+- Planning transformation strategies
+
+### 2. Pivoting Data
+- `pivot_longer()`: Converting wide data to long format
+- `pivot_wider()`: Converting long data to wide format
+- Handling multiple value columns and complex pivots
+- Real-world reshaping scenarios
+
+### 3. Separating and Uniting
+- `separate()`: Splitting one column into multiple columns
+- `unite()`: Combining multiple columns into one
+- Working with delimiters and patterns
+- Handling missing values in separation
+
+### 4. Nested Data and Rectangling
+- Working with list-columns and nested data
+- `unnest()`: Expanding nested data structures
+- `hoist()`: Extracting specific elements from lists
+- Rectangling JSON-like data
+
+### 5. Advanced Tidying Techniques
+- Handling multiple types of messiness simultaneously
+- Custom separation and parsing functions
+- Performance considerations for large datasets
+- Integration with other tidyverse packages
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+- ✅ Identify and apply tidy data principles to any dataset
+- ✅ Reshape data between wide and long formats efficiently
+- ✅ Split and combine columns using various delimiters
+- ✅ Work with complex nested data structures
+- ✅ Handle real-world messy data transformation challenges
+- ✅ Choose the right tidyr function for any data structure problem
+- ✅ Build data cleaning pipelines that integrate with dplyr workflows
+
+## Why Master tidyr?
+
+Data reshaping is essential because:
+
+1. **Analysis requirements**: Different analyses need different data shapes
+2. **Visualization needs**: ggplot2 works best with long-format data
+3. **Modeling prep**: Machine learning models need specific data structures
+4. **Real-world messiness**: Raw data is rarely in the format you need
+5. **Reproducible workflows**: Systematic tidying ensures consistent results
+
+## The Tidy Data Philosophy
+
+```{r}
+#| label: tidy-philosophy
+#| message: false
+
+library(tidyverse)
+
+cat("The three fundamental rules of tidy data:\n")
+cat("1. Each variable forms a column\n")
+cat("2. Each observation forms a row\n")
+cat("3. Each type of observational unit forms a table\n\n")
+
+cat("Common tidyr functions:\n")
+cat("- pivot_longer(): Wide to long (gather)\n")
+cat("- pivot_wider(): Long to wide (spread)\n")
+cat("- separate(): Split one column into many\n")
+cat("- unite(): Combine many columns into one\n")
+cat("- unnest(): Expand list-columns\n")
+cat("- fill(): Fill missing values\n")
+```
+
+## Real-World Messy Data Examples
+
+Let's start with realistic examples of the messy data you'll encounter and need to clean:
+
+```{r}
+#| label: messy-data-examples
+
+# Example 1: Wide sales data (common in spreadsheets)
+sales_wide <- tibble(
+  sales_rep = c("Alice", "Bob", "Charlie", "Diana"),
+  region = c("North", "South", "East", "West"),
+  Q1_2023 = c(45000, 52000, 48000, 51000),
+  Q2_2023 = c(47000, 54000, 50000, 53000),
+  Q3_2023 = c(49000, 56000, 52000, 55000),
+  Q4_2023 = c(51000, 58000, 54000, 57000),
+  Q1_2024 = c(53000, 60000, 56000, 59000),
+  Q2_2024 = c(55000, 62000, 58000, 61000)
+)
+
+cat("Example 1: Wide sales data (quarters as columns)\n")
+print(sales_wide)
+
+# Example 2: Multiple variables in column names
+survey_wide <- tibble(
+  respondent_id = 1:4,
+  age = c(25, 34, 28, 45),
+  satisfaction_pre = c(3, 4, 2, 5),
+  satisfaction_post = c(4, 5, 4, 5),
+  recommendation_pre = c(2, 3, 2, 4),
+  recommendation_post = c(4, 4, 3, 5)
+)
+
+cat("\nExample 2: Pre/post measurements in column names\n")
+print(survey_wide)
+
+# Example 3: Multiple values in single cells
+contact_messy <- tibble(
+  id = 1:4,
+  name = c("John Doe", "Jane Smith", "Bob Johnson", "Alice Brown"),
+  contact = c("john@email.com; 555-1234",
+              "jane@company.org; 555-5678; LinkedIn: jsmith",
+              "bob.j@domain.com",
+              "alice@startup.io; 555-9999; Twitter: @alice_b"),
+  skills = c("R, Python, SQL", "Excel, Tableau, SQL", "Python, Java", "R, Statistics, Machine Learning")
+)
+
+cat("\nExample 3: Multiple values in single cells\n")
+print(contact_messy)
+
+# Example 4: Missing structure (common in real data)
+sales_messy <- tibble(
+  entry = 1:8,
+  data = c("Product: Widget A", "Q1: 1000", "Q2: 1200", "Q3: 1100",
+           "Product: Widget B", "Q1: 800", "Q2: 950", "Q3: 900")
+)
+
+cat("\nExample 4: Unstructured data that needs parsing\n")
+print(sales_messy)
+```
+
+These examples represent real challenges you'll face. By the end of this module, you'll be able to transform all of these into clean, tidy formats!
+
+## The Power of Tidy Data
+
+Let's see the dramatic difference between messy and tidy data for analysis:
+
+```{r}
+#| label: tidy-transformation-preview
+
+# Transform the wide sales data to tidy format
+sales_tidy <- sales_wide %>%
+  pivot_longer(
+    cols = starts_with("Q"),
+    names_to = "quarter_year",
+    values_to = "sales"
+  ) %>%
+  separate(quarter_year, into = c("quarter", "year"), sep = "_") %>%
+  mutate(
+    year = as.numeric(year),
+    date = ymd(paste(year, case_when(
+      quarter == "Q1" ~ "03-31",
+      quarter == "Q2" ~ "06-30",
+      quarter == "Q3" ~ "09-30",
+      quarter == "Q4" ~ "12-31"
+    )))
+  )
+
+cat("Transformed to tidy format:\n")
+print(head(sales_tidy, 10))
+
+# Now analysis becomes straightforward
+cat("\nWith tidy data, analysis is simple:\n")
+
+# Growth analysis
+growth_analysis <- sales_tidy %>%
+  arrange(sales_rep, date) %>%
+  group_by(sales_rep) %>%
+  mutate(
+    previous_sales = lag(sales),
+    growth_rate = (sales - previous_sales) / previous_sales * 100
+  ) %>%
+  filter(!is.na(growth_rate))
+
+cat("Average quarterly growth by rep:\n")
+growth_analysis %>%
+  group_by(sales_rep) %>%
+  summarise(avg_growth = round(mean(growth_rate, na.rm = TRUE), 1), .groups = "drop") %>%
+  arrange(desc(avg_growth)) %>%
+  print()
+
+# Regional performance
+cat("\nBest performing region by year:\n")
+sales_tidy %>%
+  group_by(region, year) %>%
+  summarise(total_sales = sum(sales), .groups = "drop") %>%
+  group_by(year) %>%
+  slice_max(total_sales, n = 1) %>%
+  print()
+```
+
+This transformation from wide to long format makes complex analyses straightforward!
+
+## Module Structure
+
+This module is organized into four comprehensive sections:
+
+1. **[Tidy Data Principles](tidy-principles.qmd)**: Master the fundamentals of tidy data
+2. **[Pivoting Data](pivoting-data.qmd)**: Reshape between wide and long formats
+3. **[Separating and Uniting](separating-uniting.qmd)**: Split and combine columns
+4. **[Nested Data and Rectangling](nested-rectangling.qmd)**: Work with complex structures
+
+Each section includes:
+- Core concepts with clear explanations
+- Before-and-after transformation examples
+- Real-world data scenarios and solutions
+- Integration with dplyr for complete workflows
+- Performance tips and best practices
+
+## Common Data Shapes and When to Use Them
+
+Understanding when to use different data shapes is crucial:
+
+```{r}
+#| label: data-shapes
+
+# Wide format: Good for human reading, reporting
+cat("WIDE FORMAT - Good for:\n")
+cat("- Spreadsheet-style reports\n")
+cat("- Side-by-side comparisons\n")
+cat("- Correlation matrices\n")
+cat("- Human-readable summaries\n\n")
+
+# Long format: Good for analysis, visualization
+cat("LONG FORMAT - Good for:\n")
+cat("- ggplot2 visualizations\n")
+cat("- Statistical modeling\n")
+cat("- Group-by operations\n")
+cat("- Time series analysis\n\n")
+
+# Demonstrate with a simple example
+demo_wide <- tibble(
+  person = c("Alice", "Bob"),
+  height = c(165, 180),
+  weight = c(60, 75)
+)
+
+demo_long <- demo_wide %>%
+  pivot_longer(cols = c(height, weight), names_to = "measurement", values_to = "value")
+
+cat("Wide format (2 rows, 3 columns):\n")
+print(demo_wide)
+
+cat("\nLong format (4 rows, 3 columns):\n")
+print(demo_long)
+
+cat("\nUse wide for comparison, long for analysis!\n")
+```
+
+## Integration with the Tidyverse Ecosystem
+
+tidyr works seamlessly with other tidyverse packages:
+
+```{r}
+#| label: tidyverse-integration
+
+# Complete data cleaning pipeline
+messy_sales <- tibble(
+  rep_region = c("Alice_North", "Bob_South", "Charlie_East"),
+  jan_feb = c("1000,1200", "800,900", "1100,1050"),
+  mar_apr = c("1300,1400", "950,1000", "1200,1250"),
+  contact = c("alice@co.com", "bob@co.com", "charlie@co.com")
+)
+
+cat("Starting with messy data:\n")
+print(messy_sales)
+
+# Complete tidying pipeline
+clean_sales <- messy_sales %>%
+  # Step 1: Separate rep and region
+  separate(rep_region, into = c("sales_rep", "region"), sep = "_") %>%
+
+  # Step 2: Pivot longer to get month pairs in rows
+  pivot_longer(
+    cols = c(jan_feb, mar_apr),
+    names_to = "month_pair",
+    values_to = "sales_pair"
+  ) %>%
+
+  # Step 3: Separate the sales pairs
+  separate(sales_pair, into = c("month1_sales", "month2_sales"), sep = ",") %>%
+
+  # Step 4: Convert to proper structure
+  mutate(
+    month1_sales = as.numeric(month1_sales),
+    month2_sales = as.numeric(month2_sales)
+  ) %>%
+
+  # Step 5: Pivot longer again to get one row per month
+  pivot_longer(
+    cols = c(month1_sales, month2_sales),
+    names_to = "month_type",
+    values_to = "sales"
+  ) %>%
+
+  # Step 6: Clean up month names with dplyr
+  mutate(
+    month = case_when(
+      month_pair == "jan_feb" & month_type == "month1_sales" ~ "January",
+      month_pair == "jan_feb" & month_type == "month2_sales" ~ "February",
+      month_pair == "mar_apr" & month_type == "month1_sales" ~ "March",
+      month_pair == "mar_apr" & month_type == "month2_sales" ~ "April"
+    )
+  ) %>%
+
+  # Step 7: Select final columns
+  select(sales_rep, region, month, sales, contact) %>%
+  arrange(sales_rep, match(month, c("January", "February", "March", "April")))
+
+cat("\nAfter complete tidying pipeline:\n")
+print(clean_sales)
+
+cat("\nNow ready for analysis with dplyr, ggplot2, etc.!\n")
+```
+
+This shows the power of combining tidyr with dplyr for complete data transformation workflows.
+
+## Prerequisites
+
+Before starting this module, make sure you have:
+
+- Completed Module 3 (Tidyverse Introduction) and Module 5 (Data Wrangling with dplyr)
+- Understanding of the pipe operator and dplyr verbs
+- Basic knowledge of data types and tibbles
+- Familiarity with the concept of "tidy data"
+
+## Getting Started
+
+Ready to master data reshaping and tidying? Let's begin with the fundamental principles: **[Tidy Data Principles](tidy-principles.qmd)**
+
+## Summary
+
+Data tidying with tidyr is both an art and a science. The key principles to remember:
+
+- **Think tidy first**: Always consider what the final tidy structure should look like
+- **One step at a time**: Complex transformations are easier when broken into steps
+- **Combine tools**: tidyr + dplyr creates powerful data cleaning pipelines
+- **Document your logic**: Reshaping operations can be complex - comment your code
+- **Test incrementally**: Verify each transformation step before moving to the next
+
+tidyr transforms chaotic, real-world data into the clean, consistent format that enables powerful analysis. With these skills, no data structure challenge will be too complex to handle!
+
+Let's begin your journey to data tidying mastery! 🧹📊

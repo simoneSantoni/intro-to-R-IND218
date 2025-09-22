@@ -1,0 +1,879 @@
+---
+title: "Working with Dates and Times using lubridate"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to Date and Time Data
+
+Working with dates and times is crucial for time series analysis, scheduling, and understanding temporal patterns in data. The `lubridate` package makes date manipulation intuitive and powerful, providing functions that closely match how we naturally think about dates and times.
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(lubridate)
+
+# Key lubridate functions we'll explore
+cat("Key lubridate functions:\n")
+cat("- Parsing: ymd(), mdy(), dmy(), ymd_hms()\n")
+cat("- Extracting: year(), month(), day(), hour(), minute()\n")
+cat("- Arithmetic: +, -, years(), months(), days(), hours()\n")
+cat("- Rounding: floor_date(), ceiling_date(), round_date()\n")
+cat("- Intervals: interval(), duration(), period()\n")
+cat("- Time zones: with_tz(), force_tz()\n")
+```
+
+## Parsing Dates from Text
+
+### Basic Date Parsing
+
+```{r}
+#| label: date-parsing-basic
+
+# Different date formats commonly found in data
+date_strings <- c(
+  "2024-01-15",           # ISO format
+  "01/15/2024",           # US format
+  "15/01/2024",           # European format
+  "January 15, 2024",     # Written format
+  "15-Jan-2024",          # Mixed format
+  "2024-01-15 14:30:00"   # With time
+)
+
+# Use appropriate parsing functions based on order
+iso_dates <- ymd("2024-01-15")           # Year-Month-Day
+us_dates <- mdy("01/15/2024")            # Month-Day-Year
+euro_dates <- dmy("15/01/2024")          # Day-Month-Year
+written_dates <- mdy("January 15, 2024") # Month-Day-Year (text month)
+
+cat("Parsed dates (all represent the same date):\n")
+print(iso_dates)
+print(us_dates)
+print(euro_dates)
+print(written_dates)
+
+# Verify they're all the same
+identical(iso_dates, us_dates, euro_dates, written_dates)
+```
+
+### Parsing with Times
+
+```{r}
+#| label: datetime-parsing
+
+# Different datetime formats
+datetime_strings <- c(
+  "2024-01-15 14:30:00",
+  "01/15/2024 2:30 PM",
+  "15-01-2024 14:30",
+  "2024-01-15T14:30:00Z"
+)
+
+# Parse datetimes
+ymd_hms("2024-01-15 14:30:00")
+mdy_hms("01/15/2024 2:30:00 PM")
+dmy_hm("15-01-2024 14:30")
+
+# Handle different separators
+ymd_hms("2024/01/15 14:30:00")
+ymd_hms("2024.01.15 14.30.00")
+
+# Parse times only
+hms("14:30:00")
+hm("14:30")
+ms("30:45")  # Minutes:Seconds
+```
+
+### Handling Messy Date Data
+
+```{r}
+#| label: messy-dates
+
+# Real-world messy date data
+messy_dates <- c(
+  "2024-01-15",
+  "01/16/2024",
+  "17-Jan-2024",
+  "2024-1-18",          # Single digit month
+  "01/19/24",           # Two-digit year
+  "20th January 2024",  # Ordinal day
+  "invalid date",
+  NA,
+  "2024/01/21"
+)
+
+# Parse with error handling
+parse_date_safely <- function(date_string) {
+  # Try different parsing functions
+  parsed <- ymd(date_string, quiet = TRUE)
+  if (is.na(parsed)) parsed <- mdy(date_string, quiet = TRUE)
+  if (is.na(parsed)) parsed <- dmy(date_string, quiet = TRUE)
+  return(parsed)
+}
+
+# Apply to messy data
+parsed_dates <- map(messy_dates, parse_date_safely)
+parsed_dates <- as.Date(unlist(parsed_dates), origin = "1970-01-01")
+
+cat("Original messy dates:\n")
+print(messy_dates)
+cat("\nParsed dates:\n")
+print(parsed_dates)
+
+# Count parsing failures
+cat("\nParsing success rate:", mean(!is.na(parsed_dates)), "\n")
+```
+
+## Extracting Date Components
+
+### Basic Date Components
+
+```{r}
+#| label: date-components
+
+# Sample dates
+sample_dates <- ymd(c("2024-01-15", "2024-06-30", "2024-12-25"))
+sample_datetimes <- ymd_hms(c("2024-01-15 09:30:00", "2024-06-30 15:45:30", "2024-12-25 20:15:45"))
+
+# Extract date components
+year(sample_dates)
+month(sample_dates)
+month(sample_dates, label = TRUE)        # Month names
+month(sample_dates, label = TRUE, abbr = FALSE)  # Full month names
+day(sample_dates)
+mday(sample_dates)      # Day of month (same as day())
+yday(sample_dates)      # Day of year
+wday(sample_dates)      # Day of week (numeric)
+wday(sample_dates, label = TRUE)         # Day of week names
+wday(sample_dates, label = TRUE, abbr = FALSE)   # Full day names
+
+# Week information
+week(sample_dates)      # Week of year
+isoweek(sample_dates)   # ISO week (Monday as week start)
+```
+
+### Time Components
+
+```{r}
+#| label: time-components
+
+# Extract time components
+hour(sample_datetimes)
+minute(sample_datetimes)
+second(sample_datetimes)
+
+# AM/PM
+am(sample_datetimes)
+pm(sample_datetimes)
+
+# Extract multiple components at once
+datetime_components <- tibble(
+  datetime = sample_datetimes,
+  year = year(datetime),
+  month = month(datetime, label = TRUE),
+  day = day(datetime),
+  weekday = wday(datetime, label = TRUE),
+  hour = hour(datetime),
+  minute = minute(datetime),
+  am_pm = ifelse(am(datetime), "AM", "PM")
+)
+
+print(datetime_components)
+```
+
+### Creating Date Summaries
+
+```{r}
+#| label: date-summaries
+
+# Create sample transaction data
+set.seed(123)
+transactions <- tibble(
+  transaction_id = 1:100,
+  date = sample(seq(ymd("2024-01-01"), ymd("2024-12-31"), by = "day"), 100),
+  amount = round(runif(100, 10, 500), 2)
+)
+
+# Add date components for analysis
+transactions <- transactions %>%
+  mutate(
+    year = year(date),
+    month = month(date, label = TRUE),
+    quarter = quarter(date),
+    weekday = wday(date, label = TRUE),
+    is_weekend = wday(date) %in% c(1, 7),  # Sunday = 1, Saturday = 7
+    week_of_year = week(date)
+  )
+
+# Analyze patterns
+cat("Sales by day of week:\n")
+transactions %>%
+  group_by(weekday) %>%
+  summarise(
+    total_sales = sum(amount),
+    avg_sale = round(mean(amount), 2),
+    transaction_count = n(),
+    .groups = "drop"
+  ) %>%
+  print()
+
+cat("\nWeekend vs Weekday sales:\n")
+transactions %>%
+  group_by(is_weekend) %>%
+  summarise(
+    total_sales = sum(amount),
+    avg_sale = round(mean(amount), 2),
+    .groups = "drop"
+  ) %>%
+  mutate(day_type = ifelse(is_weekend, "Weekend", "Weekday")) %>%
+  select(day_type, everything(), -is_weekend) %>%
+  print()
+```
+
+## Date Arithmetic and Manipulation
+
+### Basic Date Arithmetic
+
+```{r}
+#| label: date-arithmetic
+
+# Start with a date
+start_date <- ymd("2024-01-15")
+
+# Add and subtract time periods
+start_date + days(30)          # 30 days later
+start_date + months(3)         # 3 months later
+start_date + years(1)          # 1 year later
+
+# Combine periods
+start_date + years(1) + months(6) + days(15)
+
+# Subtract periods
+start_date - days(10)
+start_date - months(2)
+
+# Date sequences
+seq(from = start_date, to = start_date + months(6), by = "month")
+seq(from = start_date, length.out = 10, by = "2 weeks")
+
+# Business days (excluding weekends)
+business_days <- seq(from = start_date, to = start_date + days(20), by = "day")
+business_days[!wday(business_days) %in% c(1, 7)]  # Remove weekends
+```
+
+### Period vs Duration vs Interval
+
+```{r}
+#| label: periods-durations-intervals
+
+# Periods: Human-friendly units (months, years can vary)
+period_1_month <- period(1, "month")
+period_30_days <- period(30, "days")
+
+# Duration: Exact time spans (always in seconds)
+duration_1_month <- duration(30, "days")  # Assumes 30 days
+duration_exactly <- ddays(30)             # Exactly 30 days
+
+# Compare period vs duration
+leap_year_date <- ymd("2024-01-31")  # 2024 is a leap year
+cat("Starting date:", as.character(leap_year_date), "\n")
+cat("Plus 1 month (period):", as.character(leap_year_date + months(1)), "\n")
+cat("Plus 30 days (duration):", as.character(leap_year_date + days(30)), "\n")
+
+# Intervals: Specific time spans between two dates
+start_date <- ymd("2024-01-01")
+end_date <- ymd("2024-12-31")
+year_interval <- interval(start_date, end_date)
+
+cat("Interval:", as.character(year_interval), "\n")
+cat("Duration in days:", as.numeric(year_interval, "days"), "\n")
+cat("Duration in months:", as.numeric(year_interval, "months"), "\n")
+
+# Check if dates fall within interval
+test_dates <- ymd(c("2023-12-31", "2024-06-15", "2025-01-01"))
+test_dates %within% year_interval
+```
+
+### Date Rounding and Truncation
+
+```{r}
+#| label: date-rounding
+
+# Sample datetime data
+sample_datetime <- ymd_hms("2024-03-15 14:37:23")
+
+# Round to different units
+floor_date(sample_datetime, "month")     # Beginning of month
+floor_date(sample_datetime, "week")      # Beginning of week (Sunday)
+floor_date(sample_datetime, "day")       # Beginning of day
+floor_date(sample_datetime, "hour")      # Beginning of hour
+
+ceiling_date(sample_datetime, "month")   # End of month
+ceiling_date(sample_datetime, "week")    # End of week
+ceiling_date(sample_datetime, "day")     # End of day
+
+round_date(sample_datetime, "hour")      # Nearest hour
+round_date(sample_datetime, "15 minutes") # Nearest 15 minutes
+
+# Useful for grouping data
+sales_data <- tibble(
+  timestamp = ymd_hms("2024-01-15 09:00:00") + minutes(seq(0, 480, 30)),  # Every 30 min for 8 hours
+  sales = round(runif(17, 100, 500), 2)
+)
+
+# Group by hour
+hourly_sales <- sales_data %>%
+  mutate(hour = floor_date(timestamp, "hour")) %>%
+  group_by(hour) %>%
+  summarise(total_sales = sum(sales), .groups = "drop")
+
+print(hourly_sales)
+```
+
+## Time Zones and International Dates
+
+### Working with Time Zones
+
+```{r}
+#| label: time-zones
+
+# Create datetime in different time zones
+utc_time <- ymd_hms("2024-01-15 12:00:00", tz = "UTC")
+ny_time <- ymd_hms("2024-01-15 12:00:00", tz = "America/New_York")
+london_time <- ymd_hms("2024-01-15 12:00:00", tz = "Europe/London")
+tokyo_time <- ymd_hms("2024-01-15 12:00:00", tz = "Asia/Tokyo")
+
+cat("Same wall clock time in different zones:\n")
+cat("UTC:", as.character(utc_time), "\n")
+cat("New York:", as.character(ny_time), "\n")
+cat("London:", as.character(london_time), "\n")
+cat("Tokyo:", as.character(tokyo_time), "\n")
+
+# Convert between time zones
+cat("\nSame moment in different zones:\n")
+cat("UTC:", as.character(utc_time), "\n")
+cat("In New York:", as.character(with_tz(utc_time, "America/New_York")), "\n")
+cat("In London:", as.character(with_tz(utc_time, "Europe/London")), "\n")
+cat("In Tokyo:", as.character(with_tz(utc_time, "Asia/Tokyo")), "\n")
+
+# Force timezone (changes the timezone label without converting)
+cat("\nForcing timezone (wall clock time stays same):\n")
+utc_forced <- force_tz(ymd_hms("2024-01-15 12:00:00"), "UTC")
+ny_forced <- force_tz(ymd_hms("2024-01-15 12:00:00"), "America/New_York")
+cat("UTC forced:", as.character(utc_forced), "\n")
+cat("NY forced:", as.character(ny_forced), "\n")
+cat("Difference:", as.numeric(difftime(ny_forced, utc_forced, units = "hours")), "hours\n")
+```
+
+### Handling Daylight Saving Time
+
+```{r}
+#| label: daylight-saving
+
+# Daylight saving time transitions in 2024
+# Spring forward: March 10, 2024 (2:00 AM becomes 3:00 AM)
+# Fall back: November 3, 2024 (2:00 AM becomes 1:00 AM)
+
+# Create times around DST transition
+spring_transition <- ymd_hms("2024-03-10 01:30:00", tz = "America/New_York")
+spring_after <- spring_transition + hours(1)
+
+fall_transition <- ymd_hms("2024-11-03 01:30:00", tz = "America/New_York")
+fall_after <- fall_transition + hours(1)
+
+cat("Spring DST transition (spring forward):\n")
+cat("Before:", as.character(spring_transition), "\n")
+cat("After +1 hour:", as.character(spring_after), "\n")
+
+cat("\nFall DST transition (fall back):\n")
+cat("Before:", as.character(fall_transition), "\n")
+cat("After +1 hour:", as.character(fall_after), "\n")
+
+# Working with DST-aware periods
+cat("\nDST-aware periods:\n")
+dst_start <- ymd_hms("2024-03-09 12:00:00", tz = "America/New_York")
+dst_plus_24h <- dst_start + hours(24)  # Exactly 24 hours
+dst_plus_1d <- dst_start + days(1)     # 1 calendar day (23 hours due to DST)
+
+cat("Start:", as.character(dst_start), "\n")
+cat("Plus 24 hours:", as.character(dst_plus_24h), "\n")
+cat("Plus 1 day:", as.character(dst_plus_1d), "\n")
+```
+
+## Real-World Date Applications
+
+### Example 1: Business Analytics
+
+```{r}
+#| label: business-analytics
+
+# Create realistic business data
+set.seed(123)
+business_data <- tibble(
+  date = sample(seq(ymd("2023-01-01"), ymd("2024-12-31"), by = "day"), 500),
+  revenue = round(rnorm(500, 1000, 300), 2),
+  customers = round(rnorm(500, 50, 15)),
+  product_category = sample(c("Electronics", "Clothing", "Home", "Sports"), 500, replace = TRUE)
+) %>%
+  arrange(date)
+
+# Add comprehensive date features
+business_data <- business_data %>%
+  mutate(
+    year = year(date),
+    month = month(date, label = TRUE),
+    quarter = paste0("Q", quarter(date)),
+    weekday = wday(date, label = TRUE),
+    is_weekend = wday(date) %in% c(1, 7),
+    week_of_year = week(date),
+    month_year = floor_date(date, "month"),
+
+    # Business calendar features
+    is_holiday_season = month(date) %in% c(11, 12),  # Nov-Dec
+    is_summer = month(date) %in% c(6, 7, 8),         # Jun-Aug
+    days_since_start = as.numeric(difftime(date, min(date), units = "days")),
+
+    # Seasonal indicators
+    season = case_when(
+      month(date) %in% c(12, 1, 2) ~ "Winter",
+      month(date) %in% c(3, 4, 5) ~ "Spring",
+      month(date) %in% c(6, 7, 8) ~ "Summer",
+      month(date) %in% c(9, 10, 11) ~ "Fall"
+    )
+  )
+
+# Analyze seasonal patterns
+seasonal_analysis <- business_data %>%
+  group_by(season, year) %>%
+  summarise(
+    avg_daily_revenue = round(mean(revenue), 2),
+    avg_daily_customers = round(mean(customers), 1),
+    total_days = n(),
+    .groups = "drop"
+  )
+
+cat("Seasonal business patterns:\n")
+print(seasonal_analysis)
+
+# Monthly trends
+monthly_trends <- business_data %>%
+  group_by(month_year) %>%
+  summarise(
+    total_revenue = sum(revenue),
+    total_customers = sum(customers),
+    avg_order_value = round(total_revenue / total_customers, 2),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    revenue_growth = round((total_revenue / lag(total_revenue) - 1) * 100, 1),
+    customer_growth = round((total_customers / lag(total_customers) - 1) * 100, 1)
+  )
+
+cat("\nRecent monthly trends:\n")
+monthly_trends %>%
+  tail(6) %>%
+  print()
+```
+
+### Example 2: Employee Scheduling
+
+```{r}
+#| label: employee-scheduling
+
+# Create employee shift data
+shift_schedule <- tibble(
+  employee_id = rep(1:10, each = 30),
+  shift_date = rep(seq(ymd("2024-01-01"), by = "day", length.out = 30), 10),
+  shift_start = sample(c("06:00", "14:00", "22:00"), 300, replace = TRUE),
+  hours_worked = sample(c(8, 10, 12), 300, replace = TRUE)
+) %>%
+  mutate(
+    shift_start_time = ymd_hm(paste(shift_date, shift_start)),
+    shift_end_time = shift_start_time + hours(hours_worked),
+
+    # Shift classification
+    shift_type = case_when(
+      hour(shift_start_time) < 10 ~ "Morning",
+      hour(shift_start_time) < 18 ~ "Afternoon",
+      TRUE ~ "Night"
+    ),
+
+    # Date features
+    weekday = wday(shift_date, label = TRUE),
+    is_weekend = wday(shift_date) %in% c(1, 7),
+    week_of_year = week(shift_date)
+  )
+
+# Analyze shift patterns
+shift_analysis <- shift_schedule %>%
+  group_by(shift_type, weekday) %>%
+  summarise(
+    total_shifts = n(),
+    total_hours = sum(hours_worked),
+    avg_hours_per_shift = round(mean(hours_worked), 1),
+    .groups = "drop"
+  )
+
+cat("Shift distribution by type and day:\n")
+print(shift_analysis)
+
+# Identify potential overtime issues
+overtime_analysis <- shift_schedule %>%
+  group_by(employee_id, week = floor_date(shift_date, "week")) %>%
+  summarise(
+    weekly_hours = sum(hours_worked),
+    shifts_worked = n(),
+    weekend_shifts = sum(is_weekend),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    potential_overtime = weekly_hours > 40,
+    excessive_hours = weekly_hours > 50
+  )
+
+cat("\nEmployees with potential overtime (>40 hours/week):\n")
+overtime_analysis %>%
+  filter(potential_overtime) %>%
+  arrange(desc(weekly_hours)) %>%
+  head(10) %>%
+  print()
+```
+
+### Example 3: Event Planning and Deadlines
+
+```{r}
+#| label: event-planning
+
+# Create project timeline
+project_events <- tibble(
+  event_name = c("Project Kickoff", "Requirements Complete", "Design Review",
+                "Development Start", "Alpha Release", "Beta Release",
+                "User Testing", "Final Review", "Launch"),
+  planned_date = ymd(c("2024-01-15", "2024-02-01", "2024-02-15",
+                      "2024-03-01", "2024-04-15", "2024-05-15",
+                      "2024-06-01", "2024-06-15", "2024-07-01")),
+  actual_date = ymd(c("2024-01-15", "2024-02-03", "2024-02-18",
+                     "2024-03-05", "2024-04-20", "2024-05-22",
+                     "2024-06-05", NA, NA))  # Future events not yet complete
+)
+
+# Calculate delays and time to completion
+project_analysis <- project_events %>%
+  mutate(
+    # Days between planned and actual
+    delay_days = as.numeric(difftime(actual_date, planned_date, units = "days")),
+
+    # Time since project start
+    days_from_start_planned = as.numeric(difftime(planned_date, first(planned_date), units = "days")),
+    days_from_start_actual = as.numeric(difftime(actual_date, first(planned_date), units = "days")),
+
+    # Status
+    status = case_when(
+      is.na(actual_date) ~ "Pending",
+      delay_days > 0 ~ "Delayed",
+      delay_days == 0 ~ "On Time",
+      delay_days < 0 ~ "Early"
+    ),
+
+    # Days until planned completion (for pending items)
+    days_until_planned = ifelse(is.na(actual_date),
+                               as.numeric(difftime(planned_date, Sys.Date(), units = "days")),
+                               NA)
+  )
+
+cat("Project timeline analysis:\n")
+project_analysis %>%
+  select(event_name, planned_date, actual_date, delay_days, status, days_until_planned) %>%
+  print()
+
+# Calculate project health metrics
+project_health <- project_analysis %>%
+  filter(!is.na(actual_date)) %>%
+  summarise(
+    completed_events = n(),
+    avg_delay = round(mean(delay_days, na.rm = TRUE), 1),
+    total_delay = sum(pmax(delay_days, 0), na.rm = TRUE),
+    on_time_rate = round(mean(delay_days <= 0, na.rm = TRUE) * 100, 1)
+  )
+
+cat("\nProject health metrics:\n")
+print(project_health)
+
+# Predict remaining timeline
+remaining_events <- project_events %>%
+  filter(is.na(actual_date))
+
+if (nrow(remaining_events) > 0) {
+  avg_delay <- project_health$avg_delay
+
+  predicted_completion <- remaining_events %>%
+    mutate(
+      predicted_date = planned_date + days(ceiling(avg_delay)),
+      days_until_predicted = as.numeric(difftime(predicted_date, Sys.Date(), units = "days"))
+    )
+
+  cat("\nPredicted completion dates (based on average delay):\n")
+  predicted_completion %>%
+    select(event_name, planned_date, predicted_date, days_until_predicted) %>%
+    print()
+}
+```
+
+## Advanced Date Techniques
+
+### Rolling Date Windows
+
+```{r}
+#| label: rolling-windows
+
+# Create daily sales data
+daily_sales <- tibble(
+  date = seq(ymd("2024-01-01"), ymd("2024-12-31"), by = "day"),
+  sales = round(rnorm(366, 1000, 200) + sin(seq_along(date) * 2 * pi / 365) * 100, 2)  # Seasonal pattern
+)
+
+# Calculate rolling averages
+daily_sales <- daily_sales %>%
+  mutate(
+    # Rolling 7-day average
+    sales_7d_avg = zoo::rollmean(sales, 7, fill = NA, align = "right"),
+
+    # Rolling 30-day average
+    sales_30d_avg = zoo::rollmean(sales, 30, fill = NA, align = "right"),
+
+    # Year-over-year comparison (simulated)
+    sales_yoy = sales * runif(n(), 0.9, 1.2),  # Simulate YoY growth
+    yoy_change = round((sales / sales_yoy - 1) * 100, 1),
+
+    # Month-to-date and quarter-to-date
+    month_start = floor_date(date, "month"),
+    quarter_start = floor_date(date, "quarter")
+  )
+
+# Show recent rolling averages
+cat("Recent sales with rolling averages:\n")
+daily_sales %>%
+  filter(date >= ymd("2024-12-20")) %>%
+  select(date, sales, sales_7d_avg, sales_30d_avg) %>%
+  print()
+```
+
+### Business Day Calculations
+
+```{r}
+#| label: business-days
+
+# Function to check if date is a business day
+is_business_day <- function(date) {
+  # Exclude weekends
+  weekday <- wday(date)
+  !weekday %in% c(1, 7)  # Not Sunday or Saturday
+}
+
+# Function to add business days
+add_business_days <- function(start_date, days_to_add) {
+  current_date <- start_date
+  days_added <- 0
+
+  while (days_added < days_to_add) {
+    current_date <- current_date + days(1)
+    if (is_business_day(current_date)) {
+      days_added <- days_added + 1
+    }
+  }
+  return(current_date)
+}
+
+# Calculate business days between dates
+count_business_days <- function(start_date, end_date) {
+  if (start_date > end_date) return(0)
+
+  date_seq <- seq(from = start_date + days(1), to = end_date, by = "day")
+  sum(is_business_day(date_seq))
+}
+
+# Test business day functions
+start_date <- ymd("2024-01-15")  # Monday
+cat("Start date:", format(start_date, "%A, %B %d, %Y"), "\n")
+
+# Add 5 business days
+end_date <- add_business_days(start_date, 5)
+cat("5 business days later:", format(end_date, "%A, %B %d, %Y"), "\n")
+
+# Count business days in January 2024
+jan_start <- ymd("2024-01-01")
+jan_end <- ymd("2024-01-31")
+business_days_jan <- count_business_days(jan_start, jan_end)
+cat("Business days in January 2024:", business_days_jan, "\n")
+
+# Create business day sequence
+business_day_seq <- seq(from = ymd("2024-01-01"), to = ymd("2024-01-31"), by = "day")
+business_days_only <- business_day_seq[is_business_day(business_day_seq)]
+
+cat("First 10 business days of 2024:\n")
+print(head(business_days_only, 10))
+```
+
+## Best Practices and Common Pitfalls
+
+### Date Parsing Best Practices
+
+```{r}
+#| label: date-best-practices
+
+# Best Practice 1: Always specify format when possible
+# Good
+explicit_dates <- ymd("2024-01-15")
+
+# Less reliable (could be misinterpreted)
+ambiguous_dates <- as.Date("01/02/2024", format = "%m/%d/%Y")  # Is this Jan 2 or Feb 1?
+
+# Best Practice 2: Handle parsing failures gracefully
+messy_input <- c("2024-01-15", "invalid", "2024/01/16", NA)
+
+safe_parse <- function(date_strings) {
+  results <- ymd(date_strings, quiet = TRUE)
+
+  # Report parsing issues
+  failed <- is.na(results) & !is.na(date_strings)
+  if (any(failed)) {
+    cat("Failed to parse:", sum(failed), "dates\n")
+    cat("Failed values:", paste(date_strings[failed], collapse = ", "), "\n")
+  }
+
+  return(results)
+}
+
+parsed_safely <- safe_parse(messy_input)
+
+# Best Practice 3: Validate date ranges
+validate_date_range <- function(dates, min_date = ymd("1900-01-01"), max_date = Sys.Date()) {
+  valid <- !is.na(dates) & dates >= min_date & dates <= max_date
+
+  if (!all(valid, na.rm = TRUE)) {
+    invalid_dates <- dates[!valid & !is.na(dates)]
+    cat("Found", length(invalid_dates), "dates outside valid range\n")
+    cat("Invalid dates:", paste(as.character(invalid_dates), collapse = ", "), "\n")
+  }
+
+  return(valid)
+}
+
+# Test validation
+test_dates <- ymd(c("1850-01-01", "2024-01-15", "2050-01-01"))
+validation_results <- validate_date_range(test_dates)
+```
+
+### Common Mistakes
+
+```{r}
+#| label: date-mistakes
+
+# Mistake 1: Confusing time zones
+# Problem: Creating datetime without specifying timezone
+ambiguous_time <- ymd_hms("2024-01-15 12:00:00")  # What timezone?
+cat("Ambiguous timezone:", tz(ambiguous_time), "\n")
+
+# Better: Always specify timezone when it matters
+explicit_time <- ymd_hms("2024-01-15 12:00:00", tz = "America/New_York")
+cat("Explicit timezone:", tz(explicit_time), "\n")
+
+# Mistake 2: Not handling leap years
+# Problem: Assuming February always has 28 days
+leap_year_check <- function(year) {
+  feb_29 <- ymd(paste(year, "02", "29", sep = "-"))
+  !is.na(feb_29)
+}
+
+cat("Is 2024 a leap year?", leap_year_check(2024), "\n")
+cat("Is 2023 a leap year?", leap_year_check(2023), "\n")
+
+# Mistake 3: Ignoring DST in calculations
+# Problem: Assuming all days have 24 hours
+dst_spring <- ymd("2024-03-10", tz = "America/New_York")  # Spring forward
+hours_in_day <- as.numeric(difftime(dst_spring + days(1), dst_spring, units = "hours"))
+cat("Hours in DST transition day:", hours_in_day, "\n")
+
+# Mistake 4: Not validating date arithmetic
+# Problem: Invalid dates from arithmetic
+jan_31 <- ymd("2024-01-31")
+invalid_result <- jan_31 + months(1)  # What's January 31 + 1 month?
+cat("Jan 31 + 1 month:", as.character(invalid_result), "\n")
+
+# Better: Use %m+% for month arithmetic that handles this
+valid_result <- jan_31 %m+% months(1)
+cat("Jan 31 %m+% 1 month:", as.character(valid_result), "\n")
+```
+
+## Exercises
+
+### Exercise 1: Sales Data Analysis
+Given daily sales data with various date formats:
+1. Parse dates from mixed formats
+2. Extract seasonal and trend components
+3. Calculate rolling averages and growth rates
+4. Identify business day vs weekend patterns
+
+### Exercise 2: Employee Time Tracking
+Create a time tracking system that:
+1. Handles different time zones for global employees
+2. Calculates overtime based on business rules
+3. Accounts for holidays and vacation days
+4. Generates payroll reports by pay period
+
+### Exercise 3: Project Timeline Management
+Build a project management system that:
+1. Tracks milestones and deadlines
+2. Calculates critical path and delays
+3. Handles business day scheduling
+4. Predicts completion dates based on current progress
+
+### Exercise 4: Event Scheduling
+Design an event scheduling application that:
+1. Handles recurring events (daily, weekly, monthly)
+2. Manages time zone conversions for global events
+3. Avoids scheduling conflicts
+4. Sends reminders based on time until event
+
+## Summary
+
+The `lubridate` package makes date and time manipulation intuitive and powerful:
+
+### Key Functions:
+- **Parsing**: `ymd()`, `mdy()`, `dmy()`, `ymd_hms()`
+- **Extracting**: `year()`, `month()`, `day()`, `hour()`, `minute()`
+- **Arithmetic**: `+`, `-`, `years()`, `months()`, `days()`
+- **Rounding**: `floor_date()`, `ceiling_date()`, `round_date()`
+- **Time zones**: `with_tz()`, `force_tz()`, `tz()`
+
+### Best Practices:
+- **Specify time zones explicitly** when they matter
+- **Handle parsing failures gracefully** with error checking
+- **Validate date ranges** to catch data entry errors
+- **Use appropriate period types** (period vs duration)
+- **Account for leap years and DST** in calculations
+
+### Common Applications:
+- **Time series analysis**: Extracting seasonal patterns
+- **Business analytics**: Calculating rolling metrics
+- **Scheduling**: Managing appointments and deadlines
+- **International applications**: Handling multiple time zones
+
+### Remember:
+- Dates in R are stored as numbers (days since 1970-01-01)
+- Time zones can be tricky - always be explicit
+- Business day calculations need custom logic
+- DST transitions affect duration calculations
+- Use `%m+%` for safer month arithmetic
+
+Date and time manipulation is essential for many data analysis tasks. With lubridate, you can handle even complex temporal data scenarios with confidence!
+
+This completes our exploration of data types in the tidyverse. You now have the tools to work effectively with strings, factors, and dates in your data analysis projects!

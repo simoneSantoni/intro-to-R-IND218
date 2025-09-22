@@ -1,0 +1,20 @@
+Data Export Metadata
+===================
+
+File: employees_with_metadata.csv
+Description: Sample employee data for training purposes
+Export Date: 2025-09-22 01:02:39.239851
+R Version: R version 4.3.2 (2023-10-31)
+
+Data Summary:
+  Rows: 4
+  Columns: 4
+
+Column Information:
+  Names: name, age, salary, department
+
+Column Types:
+   name : character
+   age : numeric
+   salary : numeric
+   department : character

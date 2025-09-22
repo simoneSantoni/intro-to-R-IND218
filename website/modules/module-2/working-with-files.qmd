@@ -1,0 +1,965 @@
+---
+title: "Working with Files in R"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to File Operations
+
+Working with files is a fundamental part of data analysis. In this section, you'll learn how to:
+
+- **Read data** from various file formats
+- **Write data** to files for sharing and storage
+- **Navigate file systems** and organize projects
+- **Handle different data formats** (CSV, Excel, text files)
+- **Work with file paths** across different operating systems
+
+R provides powerful tools for file operations that integrate seamlessly with data analysis workflows.
+
+## Understanding File Paths
+
+### Absolute vs Relative Paths
+
+```{r}
+#| label: file-paths
+#| eval: false
+
+# Absolute paths (full path from root)
+# Windows: "C:/Users/YourName/Documents/data.csv"
+# Mac/Linux: "/home/username/documents/data.csv"
+
+# Relative paths (relative to current working directory)
+# "data.csv"           - file in current directory
+# "data/sales.csv"     - file in 'data' subdirectory
+# "../data.csv"        - file in parent directory
+```
+
+### Working Directory Operations
+
+```{r}
+#| label: working-directory
+
+# Check current working directory
+current_dir <- getwd()
+print(current_dir)
+
+# List files in current directory
+files_here <- list.files()
+print(files_here)
+
+# List files with full paths
+files_full <- list.files(full.names = TRUE)
+head(files_full)
+
+# List files with specific pattern
+csv_files <- list.files(pattern = "\\.csv$")
+print(csv_files)
+
+# Check if file exists
+file.exists("data.csv")
+file.exists("nonexistent.csv")
+```
+
+### Creating Directories and File Paths
+
+```{r}
+#| label: directory-operations
+
+# Create directory (if it doesn't exist)
+if (!dir.exists("output")) {
+  dir.create("output")
+  cat("Created 'output' directory\n")
+}
+
+# Create nested directories
+if (!dir.exists("data/raw")) {
+  dir.create("data/raw", recursive = TRUE)
+  cat("Created 'data/raw' directory structure\n")
+}
+
+# Build file paths safely (works across operating systems)
+data_path <- file.path("data", "raw", "sales_data.csv")
+print(data_path)
+
+# Get file information
+if (file.exists(data_path)) {
+  file_info <- file.info(data_path)
+  print(file_info)
+}
+```
+
+## Reading Data Files
+
+### Reading CSV Files
+
+CSV (Comma-Separated Values) files are the most common format for data exchange:
+
+```{r}
+#| label: reading-csv
+
+# Create sample CSV data for demonstration
+sample_data <- data.frame(
+  name = c("Alice", "Bob", "Charlie", "Diana"),
+  age = c(25, 30, 35, 28),
+  salary = c(50000, 60000, 55000, 52000),
+  department = c("Sales", "IT", "Marketing", "HR")
+)
+
+# Write sample data to demonstrate reading
+write.csv(sample_data, "sample_employees.csv", row.names = FALSE)
+
+# Read CSV file
+employees <- read.csv("sample_employees.csv")
+print(employees)
+
+# Check structure
+str(employees)
+
+# Read CSV with custom settings
+employees_custom <- read.csv("sample_employees.csv",
+                            stringsAsFactors = FALSE,  # Keep strings as characters
+                            header = TRUE,             # First row contains column names
+                            sep = ",")                 # Comma separator
+print(employees_custom)
+```
+
+### Handling Different Separators
+
+```{r}
+#| label: different-separators
+
+# Create tab-separated file
+write.table(sample_data, "sample_employees.tsv",
+           sep = "\t", row.names = FALSE, quote = FALSE)
+
+# Read tab-separated file
+employees_tsv <- read.table("sample_employees.tsv",
+                           header = TRUE, sep = "\t",
+                           stringsAsFactors = FALSE)
+print(employees_tsv)
+
+# Create semicolon-separated file (common in European locales)
+write.table(sample_data, "sample_employees_semi.csv",
+           sep = ";", row.names = FALSE, quote = FALSE)
+
+# Read semicolon-separated file
+employees_semi <- read.table("sample_employees_semi.csv",
+                            header = TRUE, sep = ";",
+                            stringsAsFactors = FALSE)
+print(employees_semi)
+```
+
+### Reading Text Files
+
+```{r}
+#| label: reading-text
+
+# Create a simple text file
+text_content <- c(
+  "This is line 1",
+  "This is line 2",
+  "This is line 3 with more text",
+  "Final line"
+)
+
+writeLines(text_content, "sample_text.txt")
+
+# Read entire file as character vector
+file_lines <- readLines("sample_text.txt")
+print(file_lines)
+
+# Read specific number of lines
+first_two_lines <- readLines("sample_text.txt", n = 2)
+print(first_two_lines)
+
+# Read file as single string
+file_content <- paste(readLines("sample_text.txt"), collapse = "\n")
+cat(file_content)
+```
+
+### Reading Excel Files
+
+```{r}
+#| label: reading-excel
+#| eval: false
+
+# Note: This requires the readxl package
+# install.packages("readxl")
+library(readxl)
+
+# Read Excel file (first sheet by default)
+excel_data <- read_excel("data.xlsx")
+
+# Read specific sheet
+excel_data_sheet2 <- read_excel("data.xlsx", sheet = "Sheet2")
+
+# Read specific sheet by number
+excel_data_sheet1 <- read_excel("data.xlsx", sheet = 1)
+
+# Read with specific range
+excel_range <- read_excel("data.xlsx", range = "A1:D10")
+
+# Skip rows and specify column types
+excel_custom <- read_excel("data.xlsx",
+                          skip = 2,  # Skip first 2 rows
+                          col_types = c("text", "numeric", "date"))
+```
+
+## Writing Data Files
+
+### Writing CSV Files
+
+```{r}
+#| label: writing-csv
+
+# Create analysis results
+analysis_results <- data.frame(
+  metric = c("Total Sales", "Average Sale", "Max Sale", "Min Sale"),
+  value = c(125000, 2500, 15000, 250),
+  period = rep("Q1 2024", 4)
+)
+
+# Write to CSV
+write.csv(analysis_results, "analysis_results.csv", row.names = FALSE)
+
+# Write with custom settings
+write.csv(analysis_results, "analysis_results_custom.csv",
+         row.names = FALSE,    # Don't include row numbers
+         quote = FALSE,        # Don't quote text fields
+         na = "")             # How to represent missing values
+
+# Verify the file was written
+if (file.exists("analysis_results.csv")) {
+  cat("File written successfully!\n")
+  cat("File size:", file.info("analysis_results.csv")$size, "bytes\n")
+}
+```
+
+### Writing Other Formats
+
+```{r}
+#| label: writing-other-formats
+
+# Write tab-separated file
+write.table(analysis_results, "analysis_results.tsv",
+           sep = "\t", row.names = FALSE, quote = FALSE)
+
+# Write space-separated file
+write.table(analysis_results, "analysis_results.txt",
+           sep = " ", row.names = FALSE, quote = FALSE)
+
+# Write with custom separator
+write.table(analysis_results, "analysis_results_pipe.txt",
+           sep = "|", row.names = FALSE, quote = FALSE)
+
+# Write R data file (preserves data types perfectly)
+save(analysis_results, file = "analysis_results.RData")
+
+# Write individual object to RDS file (more efficient)
+saveRDS(analysis_results, "analysis_results.rds")
+```
+
+### Writing Text Files
+
+```{r}
+#| label: writing-text
+
+# Create a report
+report_lines <- c(
+  "Data Analysis Report",
+  "====================",
+  "",
+  paste("Generated on:", Sys.Date()),
+  paste("Total records analyzed:", nrow(sample_data)),
+  "",
+  "Summary Statistics:",
+  paste("Average age:", round(mean(sample_data$age), 1)),
+  paste("Average salary: $", format(mean(sample_data$salary), big.mark = ",")),
+  "",
+  "End of report"
+)
+
+# Write report to text file
+writeLines(report_lines, "analysis_report.txt")
+
+# Write using cat() for more control
+cat("Custom Report\n",
+    "=============\n\n",
+    "This report was generated using cat().\n",
+    "Current time:", format(Sys.time()), "\n",
+    file = "custom_report.txt")
+
+# Append to existing file
+cat("\nAdditional information added later.\n",
+    file = "custom_report.txt", append = TRUE)
+```
+
+## Project Organization
+
+### Creating a Standard Project Structure
+
+```{r}
+#| label: project-structure
+
+# Function to create standard project directories
+create_project_structure <- function(project_name) {
+
+  # Create main project directory
+  if (!dir.exists(project_name)) {
+    dir.create(project_name)
+  }
+
+  # Create subdirectories
+  subdirs <- c("data/raw", "data/processed", "scripts", "output", "docs")
+
+  for (subdir in subdirs) {
+    full_path <- file.path(project_name, subdir)
+    if (!dir.exists(full_path)) {
+      dir.create(full_path, recursive = TRUE)
+      cat("Created:", full_path, "\n")
+    }
+  }
+
+  # Create README file
+  readme_content <- c(
+    paste("#", project_name),
+    "",
+    "## Project Structure",
+    "- `data/raw/` - Original, unmodified data",
+    "- `data/processed/` - Cleaned and processed data",
+    "- `scripts/` - R scripts for analysis",
+    "- `output/` - Results, plots, reports",
+    "- `docs/` - Documentation",
+    "",
+    paste("Created:", Sys.Date())
+  )
+
+  writeLines(readme_content, file.path(project_name, "README.md"))
+  cat("Created README.md\n")
+
+  cat("Project structure created successfully!\n")
+}
+
+# Create a sample project
+create_project_structure("my_analysis_project")
+
+# List the created structure
+if (dir.exists("my_analysis_project")) {
+  cat("\nProject structure:\n")
+  files <- list.files("my_analysis_project", recursive = TRUE, include.dirs = TRUE)
+  for (file in files) {
+    cat("  ", file, "\n")
+  }
+}
+```
+
+### File Naming Conventions
+
+```{r}
+#| label: file-naming
+
+# Good file naming practices
+create_analysis_files <- function() {
+
+  # Use ISO date format for chronological ordering
+  today <- format(Sys.Date(), "%Y%m%d")
+
+  # Descriptive names with underscores
+  good_names <- c(
+    paste0(today, "_sales_analysis.R"),
+    paste0(today, "_customer_data_cleaning.R"),
+    "01_data_import.R",
+    "02_data_cleaning.R",
+    "03_exploratory_analysis.R",
+    "04_modeling.R",
+    "05_report_generation.R"
+  )
+
+  # Create empty files to demonstrate naming
+  for (name in good_names) {
+    file_path <- file.path("scripts", name)
+    if (!file.exists(file_path)) {
+      # Create directory if it doesn't exist
+      if (!dir.exists("scripts")) {
+        dir.create("scripts")
+      }
+      # Create empty file
+      file.create(file_path)
+      cat("Created:", name, "\n")
+    }
+  }
+
+  cat("\nFile naming best practices:\n")
+  cat("✓ Use dates in YYYYMMDD format\n")
+  cat("✓ Use descriptive names\n")
+  cat("✓ Use underscores instead of spaces\n")
+  cat("✓ Use numbers for sequential scripts\n")
+  cat("✓ Avoid special characters\n")
+}
+
+create_analysis_files()
+```
+
+## Advanced File Operations
+
+### Reading Large Files Efficiently
+
+```{r}
+#| label: large-files
+
+# Function to read large files in chunks
+read_large_csv_chunked <- function(filename, chunk_size = 1000) {
+
+  # First, count total rows
+  total_rows <- length(readLines(filename)) - 1  # Subtract header
+  cat("Total rows to process:", total_rows, "\n")
+
+  # Read file in chunks
+  all_data <- list()
+  connection <- file(filename, "r")
+
+  # Read header first
+  header <- readLines(connection, n = 1)
+
+  chunk_num <- 1
+  while (TRUE) {
+    # Read chunk
+    lines <- readLines(connection, n = chunk_size)
+
+    if (length(lines) == 0) break  # End of file
+
+    # Convert to data frame
+    chunk_text <- c(header, lines)
+    chunk_data <- read.csv(text = paste(chunk_text, collapse = "\n"))
+
+    all_data[[chunk_num]] <- chunk_data
+    cat("Processed chunk", chunk_num, "with", nrow(chunk_data), "rows\n")
+
+    chunk_num <- chunk_num + 1
+  }
+
+  close(connection)
+
+  # Combine all chunks
+  final_data <- do.call(rbind, all_data)
+  return(final_data)
+}
+
+# For demonstration, create a larger file
+large_sample <- data.frame(
+  id = 1:500,
+  name = paste("Person", 1:500),
+  value = runif(500, 1, 100),
+  category = sample(c("A", "B", "C"), 500, replace = TRUE)
+)
+
+write.csv(large_sample, "large_sample.csv", row.names = FALSE)
+
+# Read it back in chunks
+# chunked_data <- read_large_csv_chunked("large_sample.csv", chunk_size = 100)
+```
+
+### Working with Compressed Files
+
+```{r}
+#| label: compressed-files
+
+# Create sample data
+compression_demo <- data.frame(
+  x = 1:1000,
+  y = rnorm(1000),
+  text = paste("Text entry", 1:1000)
+)
+
+# Write regular CSV
+write.csv(compression_demo, "uncompressed.csv", row.names = FALSE)
+
+# Write compressed CSV (gzip)
+gz_connection <- gzfile("compressed.csv.gz", "w")
+write.csv(compression_demo, gz_connection, row.names = FALSE)
+close(gz_connection)
+
+# Read compressed file
+compressed_data <- read.csv("compressed.csv.gz")
+
+# Compare file sizes
+uncompressed_size <- file.info("uncompressed.csv")$size
+compressed_size <- file.info("compressed.csv.gz")$size
+
+cat("Uncompressed size:", uncompressed_size, "bytes\n")
+cat("Compressed size:", compressed_size, "bytes\n")
+cat("Compression ratio:", round(compressed_size / uncompressed_size * 100, 1), "%\n")
+```
+
+### File Manipulation
+
+```{r}
+#| label: file-manipulation
+
+# Copy files
+if (file.exists("sample_employees.csv")) {
+  file.copy("sample_employees.csv", "backup_employees.csv")
+  cat("File copied successfully\n")
+}
+
+# Rename files
+if (file.exists("backup_employees.csv")) {
+  file.rename("backup_employees.csv", "employees_backup.csv")
+  cat("File renamed successfully\n")
+}
+
+# Get file information
+file_info <- file.info("sample_employees.csv")
+cat("File size:", file_info$size, "bytes\n")
+cat("Created:", file_info$ctime, "\n")
+cat("Modified:", file_info$mtime, "\n")
+
+# Remove files (be careful!)
+temp_files <- c("temp1.txt", "temp2.txt")
+for (temp_file in temp_files) {
+  cat("Creating temporary file:", temp_file, "\n")
+  writeLines("Temporary content", temp_file)
+}
+
+# List temporary files
+existing_temp <- temp_files[file.exists(temp_files)]
+cat("Temporary files found:", paste(existing_temp, collapse = ", "), "\n")
+
+# Remove temporary files
+for (temp_file in existing_temp) {
+  file.remove(temp_file)
+  cat("Removed:", temp_file, "\n")
+}
+```
+
+## Data Import/Export Best Practices
+
+### Robust Data Reading Function
+
+```{r}
+#| label: robust-reading
+
+# Robust function for reading CSV files
+read_csv_safe <- function(filename, ...) {
+
+  # Check if file exists
+  if (!file.exists(filename)) {
+    stop("File does not exist: ", filename)
+  }
+
+  # Get file information
+  file_info <- file.info(filename)
+  cat("Reading file:", filename, "\n")
+  cat("File size:", file_info$size, "bytes\n")
+
+  # Try to read the file
+  tryCatch({
+    data <- read.csv(filename, stringsAsFactors = FALSE, ...)
+
+    cat("Successfully read", nrow(data), "rows and", ncol(data), "columns\n")
+
+    # Basic data quality checks
+    if (nrow(data) == 0) {
+      warning("File contains no data rows")
+    }
+
+    # Check for missing values
+    missing_counts <- sapply(data, function(x) sum(is.na(x)))
+    if (any(missing_counts > 0)) {
+      cat("Missing values found:\n")
+      for (col in names(missing_counts)[missing_counts > 0]) {
+        cat("  ", col, ":", missing_counts[col], "\n")
+      }
+    }
+
+    return(data)
+
+  }, error = function(e) {
+    stop("Error reading file: ", e$message)
+  })
+}
+
+# Test the robust reading function
+safe_data <- read_csv_safe("sample_employees.csv")
+str(safe_data)
+```
+
+### Data Export with Metadata
+
+```{r}
+#| label: export-with-metadata
+
+# Function to export data with metadata
+export_with_metadata <- function(data, filename, description = "") {
+
+  # Create metadata
+  metadata <- list(
+    filename = filename,
+    description = description,
+    export_date = Sys.time(),
+    rows = nrow(data),
+    columns = ncol(data),
+    column_names = names(data),
+    column_types = sapply(data, class),
+    r_version = R.version.string
+  )
+
+  # Write data file
+  write.csv(data, filename, row.names = FALSE)
+
+  # Write metadata file
+  metadata_filename <- sub("\\.csv$", "_metadata.txt", filename)
+
+  metadata_text <- c(
+    "Data Export Metadata",
+    "===================",
+    "",
+    paste("File:", metadata$filename),
+    paste("Description:", metadata$description),
+    paste("Export Date:", metadata$export_date),
+    paste("R Version:", metadata$r_version),
+    "",
+    "Data Summary:",
+    paste("  Rows:", metadata$rows),
+    paste("  Columns:", metadata$columns),
+    "",
+    "Column Information:",
+    paste("  Names:", paste(metadata$column_names, collapse = ", ")),
+    "",
+    "Column Types:"
+  )
+
+  for (i in seq_along(metadata$column_types)) {
+    metadata_text <- c(metadata_text,
+                      paste("  ", metadata$column_names[i], ":", metadata$column_types[i]))
+  }
+
+  writeLines(metadata_text, metadata_filename)
+
+  cat("Data exported to:", filename, "\n")
+  cat("Metadata exported to:", metadata_filename, "\n")
+
+  return(invisible(metadata))
+}
+
+# Test the export function
+export_with_metadata(sample_data, "employees_with_metadata.csv",
+                    "Sample employee data for training purposes")
+```
+
+## Practical Examples
+
+### Example 1: Data Pipeline
+
+```{r}
+#| label: data-pipeline
+
+# Complete data processing pipeline
+process_sales_data <- function(input_file, output_dir = "output") {
+
+  cat("=== Sales Data Processing Pipeline ===\n")
+
+  # Create output directory
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir)
+  }
+
+  # Step 1: Read raw data
+  cat("Step 1: Reading raw data...\n")
+  tryCatch({
+    raw_data <- read.csv(input_file, stringsAsFactors = FALSE)
+    cat("  ✓ Read", nrow(raw_data), "records\n")
+  }, error = function(e) {
+    stop("Failed to read input file: ", e$message)
+  })
+
+  # Step 2: Data cleaning
+  cat("Step 2: Cleaning data...\n")
+
+  # Remove duplicates
+  initial_rows <- nrow(raw_data)
+  clean_data <- unique(raw_data)
+  duplicates_removed <- initial_rows - nrow(clean_data)
+  if (duplicates_removed > 0) {
+    cat("  ✓ Removed", duplicates_removed, "duplicate records\n")
+  }
+
+  # Handle missing values (example: remove rows with missing sales)
+  if ("sales" %in% names(clean_data)) {
+    clean_data <- clean_data[!is.na(clean_data$sales), ]
+    cat("  ✓ Removed records with missing sales values\n")
+  }
+
+  # Step 3: Add calculated fields
+  cat("Step 3: Adding calculated fields...\n")
+  if ("sales" %in% names(clean_data)) {
+    clean_data$sales_category <- ifelse(clean_data$sales > mean(clean_data$sales),
+                                       "High", "Low")
+    cat("  ✓ Added sales category field\n")
+  }
+
+  # Step 4: Generate summary
+  cat("Step 4: Generating summary...\n")
+  summary_stats <- list(
+    total_records = nrow(clean_data),
+    date_processed = Sys.time()
+  )
+
+  if ("sales" %in% names(clean_data)) {
+    summary_stats$total_sales <- sum(clean_data$sales)
+    summary_stats$avg_sales <- mean(clean_data$sales)
+    summary_stats$max_sales <- max(clean_data$sales)
+    summary_stats$min_sales <- min(clean_data$sales)
+  }
+
+  # Step 5: Export results
+  cat("Step 5: Exporting results...\n")
+
+  # Export cleaned data
+  output_file <- file.path(output_dir, "cleaned_sales_data.csv")
+  write.csv(clean_data, output_file, row.names = FALSE)
+  cat("  ✓ Exported cleaned data to", output_file, "\n")
+
+  # Export summary
+  summary_file <- file.path(output_dir, "processing_summary.txt")
+  summary_text <- c(
+    "Sales Data Processing Summary",
+    "============================",
+    "",
+    paste("Processing Date:", summary_stats$date_processed),
+    paste("Total Records:", summary_stats$total_records),
+    ""
+  )
+
+  if ("sales" %in% names(clean_data)) {
+    summary_text <- c(summary_text,
+                     paste("Total Sales: $", format(summary_stats$total_sales, big.mark = ",")),
+                     paste("Average Sales: $", round(summary_stats$avg_sales, 2)),
+                     paste("Max Sales: $", format(summary_stats$max_sales, big.mark = ",")),
+                     paste("Min Sales: $", format(summary_stats$min_sales, big.mark = ",")))
+  }
+
+  writeLines(summary_text, summary_file)
+  cat("  ✓ Exported summary to", summary_file, "\n")
+
+  cat("=== Pipeline completed successfully! ===\n")
+  return(clean_data)
+}
+
+# Create sample sales data for testing
+sample_sales <- data.frame(
+  date = seq(as.Date("2024-01-01"), by = "day", length.out = 100),
+  sales = round(runif(100, 1000, 5000), 2),
+  region = sample(c("North", "South", "East", "West"), 100, replace = TRUE)
+)
+
+# Add some duplicates and missing values for demonstration
+sample_sales <- rbind(sample_sales, sample_sales[1:5, ])  # Add duplicates
+sample_sales$sales[c(10, 25, 50)] <- NA  # Add missing values
+
+write.csv(sample_sales, "sample_sales_raw.csv", row.names = FALSE)
+
+# Run the pipeline
+processed_data <- process_sales_data("sample_sales_raw.csv")
+```
+
+### Example 2: Automated Reporting
+
+```{r}
+#| label: automated-reporting
+
+# Function to generate automated reports
+generate_data_report <- function(data, output_file = "data_report.txt") {
+
+  # Start report
+  report_lines <- c(
+    "AUTOMATED DATA REPORT",
+    paste(rep("=", 40), collapse = ""),
+    "",
+    paste("Generated:", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+    paste("R Version:", R.version.string),
+    ""
+  )
+
+  # Data overview
+  report_lines <- c(report_lines,
+    "DATA OVERVIEW",
+    paste(rep("-", 20), collapse = ""),
+    paste("Rows:", nrow(data)),
+    paste("Columns:", ncol(data)),
+    paste("Column Names:", paste(names(data), collapse = ", ")),
+    ""
+  )
+
+  # Column analysis
+  report_lines <- c(report_lines, "COLUMN ANALYSIS", paste(rep("-", 20), collapse = ""))
+
+  for (col_name in names(data)) {
+    col_data <- data[[col_name]]
+
+    report_lines <- c(report_lines, paste("Column:", col_name))
+    report_lines <- c(report_lines, paste("  Type:", class(col_data)[1]))
+    report_lines <- c(report_lines, paste("  Missing:", sum(is.na(col_data))))
+
+    if (is.numeric(col_data)) {
+      report_lines <- c(report_lines,
+        paste("  Min:", round(min(col_data, na.rm = TRUE), 3)),
+        paste("  Max:", round(max(col_data, na.rm = TRUE), 3)),
+        paste("  Mean:", round(mean(col_data, na.rm = TRUE), 3)),
+        paste("  Std Dev:", round(sd(col_data, na.rm = TRUE), 3))
+      )
+    } else if (is.character(col_data) || is.factor(col_data)) {
+      unique_vals <- length(unique(col_data[!is.na(col_data)]))
+      report_lines <- c(report_lines, paste("  Unique Values:", unique_vals))
+
+      if (unique_vals <= 10) {
+        top_values <- names(sort(table(col_data), decreasing = TRUE))[1:min(5, unique_vals)]
+        report_lines <- c(report_lines, paste("  Top Values:", paste(top_values, collapse = ", ")))
+      }
+    }
+
+    report_lines <- c(report_lines, "")
+  }
+
+  # Write report
+  writeLines(report_lines, output_file)
+  cat("Report generated:", output_file, "\n")
+
+  # Return report content for display
+  return(report_lines)
+}
+
+# Generate report for our sample data
+report_content <- generate_data_report(sample_data, "employee_data_report.txt")
+
+# Display first part of report
+cat(paste(report_content[1:20], collapse = "\n"))
+```
+
+## Common Pitfalls and Solutions
+
+### 1. Encoding Issues
+
+```{r}
+#| label: encoding-issues
+
+# Handle different text encodings
+read_with_encoding <- function(filename, encoding = "UTF-8") {
+
+  # Try different encodings if the first one fails
+  encodings_to_try <- c(encoding, "UTF-8", "latin1", "CP1252")
+
+  for (enc in encodings_to_try) {
+    tryCatch({
+      cat("Trying encoding:", enc, "\n")
+      data <- read.csv(filename, fileEncoding = enc, stringsAsFactors = FALSE)
+      cat("Success with encoding:", enc, "\n")
+      return(data)
+    }, error = function(e) {
+      cat("Failed with", enc, ":", e$message, "\n")
+    })
+  }
+
+  stop("Could not read file with any of the attempted encodings")
+}
+```
+
+### 2. Large File Handling
+
+```{r}
+#| label: large-file-tips
+
+# Tips for handling large files
+large_file_tips <- function() {
+  cat("Tips for working with large files:\n")
+  cat("1. Use read.csv with nrows parameter to test structure:\n")
+  cat("   sample <- read.csv('large_file.csv', nrows = 100)\n\n")
+
+  cat("2. Specify column types to save memory:\n")
+  cat("   col_classes <- c('character', 'numeric', 'Date')\n")
+  cat("   data <- read.csv('file.csv', colClasses = col_classes)\n\n")
+
+  cat("3. Consider using data.table or readr for better performance:\n")
+  cat("   library(data.table)\n")
+  cat("   data <- fread('large_file.csv')\n\n")
+
+  cat("4. Process in chunks if memory is limited\n")
+  cat("5. Use compression for storage (gzip, bzip2)\n")
+  cat("6. Consider binary formats like RDS for R-specific data\n")
+}
+
+large_file_tips()
+```
+
+## Exercises
+
+### Exercise 1: File Organization
+Create a function that:
+1. Takes a directory path as input
+2. Creates a standard data science project structure
+3. Adds a README file with project description
+4. Creates sample R scripts with appropriate names
+
+### Exercise 2: Data Import Pipeline
+Write a robust data import function that:
+1. Checks if the file exists
+2. Determines the file type automatically
+3. Reads the data with appropriate functions
+4. Performs basic data quality checks
+5. Returns a list with data and quality report
+
+### Exercise 3: Batch Processing
+Create a function that:
+1. Processes multiple CSV files in a directory
+2. Combines them into a single dataset
+3. Handles files with different structures gracefully
+4. Exports the combined data with a processing log
+
+### Exercise 4: Report Generation
+Build an automated reporting system that:
+1. Takes a dataset as input
+2. Generates summary statistics
+3. Creates visualizations (if plotting libraries available)
+4. Exports everything to a formatted text report
+5. Includes metadata about the analysis
+
+## Summary
+
+Working with files effectively is crucial for data analysis workflows:
+
+### Key Concepts:
+- **File paths**: Understanding absolute vs relative paths and cross-platform compatibility
+- **Reading data**: CSV, text, Excel, and other formats with appropriate functions
+- **Writing data**: Exporting results in various formats with proper encoding
+- **Project organization**: Creating consistent, logical file structures
+- **Error handling**: Robust file operations with proper validation
+
+### Best Practices:
+- **Use consistent naming conventions** for files and directories
+- **Validate inputs** before processing files
+- **Handle errors gracefully** with informative messages
+- **Document data sources** and processing steps
+- **Use compression** for large files to save space
+- **Create backups** of important data
+
+### Common Functions:
+- **Reading**: `read.csv()`, `readLines()`, `read.table()`
+- **Writing**: `write.csv()`, `writeLines()`, `save()`, `saveRDS()`
+- **File operations**: `file.exists()`, `list.files()`, `file.copy()`, `file.remove()`
+- **Directory operations**: `getwd()`, `setwd()`, `dir.create()`, `file.path()`
+
+### Advanced Features:
+- **Chunk processing** for large files
+- **Compression support** with gzip connections
+- **Encoding handling** for international text
+- **Metadata preservation** for reproducible analyses
+
+Proper file handling skills will serve you well throughout your data analysis career. They ensure your work is reproducible, shareable, and maintainable!
+
+This completes our exploration of R fundamentals. You now have the foundation to tackle real-world data analysis projects!

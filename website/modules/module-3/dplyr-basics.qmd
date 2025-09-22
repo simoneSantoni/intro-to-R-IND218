@@ -1,0 +1,695 @@
+---
+title: "Data Transformation with dplyr Basics"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-tools: true
+---
+
+## Introduction to dplyr
+
+dplyr is the tidyverse's grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges. Think of dplyr verbs as the fundamental building blocks for data transformation.
+
+```{r}
+#| label: setup
+library(tidyverse)
+
+# We'll use the built-in mtcars dataset for examples
+data(mtcars)
+cars <- as_tibble(mtcars, rownames = "model")
+glimpse(cars)
+```
+
+## The Five Key Verbs
+
+dplyr provides five key verbs for data manipulation:
+
+1. **`select()`** - Choose columns
+2. **`filter()`** - Choose rows
+3. **`mutate()`** - Create or modify columns
+4. **`arrange()`** - Reorder rows
+5. **`summarize()`** - Reduce multiple values to a single summary
+
+## select(): Choose Columns
+
+### Basic Column Selection
+
+```{r}
+#| label: select-basics
+
+# Select specific columns by name
+cars %>%
+  select(model, mpg, cyl, hp) %>%
+  head()
+
+# Select columns by position
+cars %>%
+  select(1:4) %>%
+  head()
+
+# Select all columns except some
+cars %>%
+  select(-am, -gear, -carb) %>%
+  head()
+```
+
+### Selection Helpers
+
+dplyr provides helpful functions for column selection:
+
+```{r}
+#| label: select-helpers
+
+# Select columns starting with "d"
+cars %>%
+  select(model, starts_with("d")) %>%
+  head()
+
+# Select columns ending with "p"
+cars %>%
+  select(model, ends_with("p")) %>%
+  head()
+
+# Select columns containing "a"
+cars %>%
+  select(model, contains("a")) %>%
+  head()
+
+# Select columns matching a pattern
+cars %>%
+  select(model, matches("^[md]")) %>%
+  head()
+```
+
+### Renaming While Selecting
+
+```{r}
+#| label: select-rename
+
+# Rename columns while selecting
+cars %>%
+  select(
+    car = model,
+    miles_per_gallon = mpg,
+    cylinders = cyl,
+    horsepower = hp
+  ) %>%
+  head()
+
+# Or use rename() to keep all columns
+cars %>%
+  rename(
+    miles_per_gallon = mpg,
+    cylinders = cyl
+  ) %>%
+  select(model, miles_per_gallon, cylinders) %>%
+  head()
+```
+
+### Reordering Columns
+
+```{r}
+#| label: select-reorder
+
+# Move specific columns to the front
+cars %>%
+  select(model, mpg, hp, everything()) %>%
+  head()
+
+# Use relocate() for more control
+cars %>%
+  relocate(hp, .before = mpg) %>%
+  select(model, hp, mpg, cyl) %>%
+  head()
+```
+
+## filter(): Choose Rows
+
+### Basic Filtering
+
+```{r}
+#| label: filter-basics
+
+# Filter for cars with mpg > 20
+cars %>%
+  filter(mpg > 20) %>%
+  select(model, mpg, cyl)
+
+# Multiple conditions (AND)
+cars %>%
+  filter(mpg > 20, cyl == 4) %>%
+  select(model, mpg, cyl)
+
+# Multiple conditions (OR)
+cars %>%
+  filter(mpg > 30 | hp > 200) %>%
+  select(model, mpg, hp)
+```
+
+### Complex Filtering
+
+```{r}
+#| label: filter-complex
+
+# Using %in% for multiple values
+cars %>%
+  filter(cyl %in% c(4, 6)) %>%
+  select(model, cyl, mpg) %>%
+  head()
+
+# Combining conditions
+cars %>%
+  filter(
+    (mpg > 20 & cyl == 4) | (hp > 200 & cyl == 8)
+  ) %>%
+  select(model, mpg, cyl, hp)
+
+# Filter with between()
+cars %>%
+  filter(between(mpg, 15, 25)) %>%
+  select(model, mpg) %>%
+  head()
+```
+
+### Filtering with String Matching
+
+```{r}
+#| label: filter-strings
+
+# Filter models containing "Merc"
+cars %>%
+  filter(str_detect(model, "Merc")) %>%
+  select(model, mpg)
+
+# Case-insensitive matching
+cars %>%
+  filter(str_detect(model, "(?i)MAZDA")) %>%
+  select(model, mpg)
+```
+
+### Filtering Missing Values
+
+```{r}
+#| label: filter-na
+
+# Create data with NAs
+cars_with_na <- cars %>%
+  mutate(mpg = if_else(row_number() %in% c(2, 5, 8), NA_real_, mpg))
+
+# Remove rows with NA in mpg
+cars_with_na %>%
+  filter(!is.na(mpg)) %>%
+  select(model, mpg) %>%
+  head()
+
+# Keep only complete cases
+cars_with_na %>%
+  filter(complete.cases(.)) %>%
+  nrow()
+```
+
+## mutate(): Create or Modify Columns
+
+### Creating New Columns
+
+```{r}
+#| label: mutate-create
+
+# Create new columns based on existing ones
+cars %>%
+  mutate(
+    mpg_per_cyl = mpg / cyl,
+    hp_per_cyl = hp / cyl,
+    performance_ratio = hp / wt,
+    is_efficient = mpg > 20
+  ) %>%
+  select(model, mpg_per_cyl, hp_per_cyl, performance_ratio, is_efficient) %>%
+  head()
+```
+
+### Modifying Existing Columns
+
+```{r}
+#| label: mutate-modify
+
+# Modify existing columns
+cars %>%
+  mutate(
+    mpg = round(mpg, 0),
+    wt = wt * 1000,  # Convert to pounds
+    model = str_to_upper(model)
+  ) %>%
+  select(model, mpg, wt) %>%
+  head()
+```
+
+### Conditional Mutations
+
+```{r}
+#| label: mutate-conditional
+
+# Using if_else()
+cars %>%
+  mutate(
+    efficiency = if_else(mpg > 20, "Efficient", "Not Efficient"),
+    size = if_else(wt < 3, "Light", "Heavy")
+  ) %>%
+  select(model, mpg, wt, efficiency, size) %>%
+  head()
+
+# Using case_when() for multiple conditions
+cars %>%
+  mutate(
+    performance = case_when(
+      hp < 100 ~ "Low Power",
+      hp < 150 ~ "Medium Power",
+      hp < 200 ~ "High Power",
+      TRUE ~ "Very High Power"
+    ),
+    efficiency = case_when(
+      mpg > 30 ~ "Excellent",
+      mpg > 25 ~ "Good",
+      mpg > 20 ~ "Fair",
+      TRUE ~ "Poor"
+    )
+  ) %>%
+  select(model, hp, mpg, performance, efficiency) %>%
+  head(10)
+```
+
+### Window Functions in mutate()
+
+```{r}
+#| label: mutate-window
+
+# Add ranking and cumulative statistics
+cars %>%
+  arrange(desc(mpg)) %>%
+  mutate(
+    mpg_rank = row_number(),
+    mpg_dense_rank = dense_rank(mpg),
+    mpg_percent_rank = percent_rank(mpg),
+    cumulative_avg_mpg = cummean(mpg)
+  ) %>%
+  select(model, mpg, mpg_rank, cumulative_avg_mpg) %>%
+  head(10)
+```
+
+## arrange(): Reorder Rows
+
+### Basic Sorting
+
+```{r}
+#| label: arrange-basics
+
+# Sort by mpg (ascending)
+cars %>%
+  arrange(mpg) %>%
+  select(model, mpg) %>%
+  head()
+
+# Sort by mpg (descending)
+cars %>%
+  arrange(desc(mpg)) %>%
+  select(model, mpg) %>%
+  head()
+```
+
+### Multiple Column Sorting
+
+```{r}
+#| label: arrange-multiple
+
+# Sort by multiple columns
+cars %>%
+  arrange(cyl, desc(mpg)) %>%
+  select(model, cyl, mpg) %>%
+  head(10)
+
+# Complex sorting with calculated values
+cars %>%
+  mutate(efficiency_score = mpg / wt) %>%
+  arrange(desc(efficiency_score)) %>%
+  select(model, mpg, wt, efficiency_score) %>%
+  head()
+```
+
+## summarize(): Reduce to Single Values
+
+### Basic Summarization
+
+```{r}
+#| label: summarize-basics
+
+# Calculate summary statistics
+cars %>%
+  summarize(
+    avg_mpg = mean(mpg),
+    median_mpg = median(mpg),
+    sd_mpg = sd(mpg),
+    min_mpg = min(mpg),
+    max_mpg = max(mpg),
+    n_cars = n()
+  )
+
+# Multiple summary statistics
+cars %>%
+  summarize(
+    across(c(mpg, hp, wt),
+           list(mean = mean,
+                median = median,
+                sd = sd),
+           .names = "{.col}_{.fn}")
+  )
+```
+
+### Counting and Proportions
+
+```{r}
+#| label: summarize-count
+
+# Count unique values
+cars %>%
+  summarize(
+    n_total = n(),
+    n_efficient = sum(mpg > 20),
+    prop_efficient = mean(mpg > 20),
+    n_unique_cyl = n_distinct(cyl)
+  )
+
+# Using count() shortcut
+cars %>%
+  count(cyl, sort = TRUE)
+
+# Count with weights
+cars %>%
+  count(cyl, wt = hp, name = "total_hp")
+```
+
+## group_by(): The Power Multiplier
+
+### Grouped Operations
+
+```{r}
+#| label: group-by-basics
+
+# Group by cylinder and calculate summaries
+cars %>%
+  group_by(cyl) %>%
+  summarize(
+    n = n(),
+    avg_mpg = mean(mpg),
+    avg_hp = mean(hp),
+    avg_wt = mean(wt),
+    .groups = "drop"
+  )
+
+# Multiple grouping variables
+cars %>%
+  mutate(transmission = if_else(am == 1, "Manual", "Automatic")) %>%
+  group_by(cyl, transmission) %>%
+  summarize(
+    n = n(),
+    avg_mpg = mean(mpg),
+    .groups = "drop"
+  ) %>%
+  arrange(cyl, transmission)
+```
+
+### Grouped Mutations
+
+```{r}
+#| label: group-mutate
+
+# Add group-level statistics to each row
+cars %>%
+  group_by(cyl) %>%
+  mutate(
+    avg_mpg_for_cyl = mean(mpg),
+    mpg_diff_from_group = mpg - avg_mpg_for_cyl,
+    mpg_rank_in_group = rank(desc(mpg))
+  ) %>%
+  select(model, cyl, mpg, avg_mpg_for_cyl, mpg_diff_from_group, mpg_rank_in_group) %>%
+  arrange(cyl, mpg_rank_in_group) %>%
+  head(10)
+```
+
+### Grouped Filtering
+
+```{r}
+#| label: group-filter
+
+# Keep only the most efficient car in each cylinder group
+cars %>%
+  group_by(cyl) %>%
+  filter(mpg == max(mpg)) %>%
+  select(model, cyl, mpg) %>%
+  arrange(cyl)
+
+# Keep groups meeting certain criteria
+cars %>%
+  group_by(cyl) %>%
+  filter(mean(mpg) > 20) %>%
+  ungroup() %>%
+  count(cyl)
+```
+
+## Combining Multiple Operations
+
+### Complex Data Pipelines
+
+```{r}
+#| label: complex-pipeline
+
+# Comprehensive analysis pipeline
+analysis <- cars %>%
+  # Add calculated columns
+  mutate(
+    efficiency = mpg / wt,
+    performance = hp / wt,
+    transmission = if_else(am == 1, "Manual", "Automatic")
+  ) %>%
+  # Filter for relevant cases
+  filter(complete.cases(.)) %>%
+  # Group for analysis
+  group_by(cyl, transmission) %>%
+  # Calculate summaries
+  summarize(
+    n_cars = n(),
+    avg_mpg = mean(mpg),
+    avg_efficiency = mean(efficiency),
+    avg_performance = mean(performance),
+    best_mpg = max(mpg),
+    .groups = "drop"
+  ) %>%
+  # Add overall rankings
+  mutate(
+    efficiency_rank = dense_rank(desc(avg_efficiency)),
+    performance_rank = dense_rank(desc(avg_performance))
+  ) %>%
+  # Sort by efficiency
+  arrange(efficiency_rank)
+
+analysis
+```
+
+### Real-World Example: Sales Analysis
+
+```{r}
+#| label: sales-example
+
+# Create sample sales data
+set.seed(123)
+sales <- tibble(
+  date = sample(seq.Date(from = as.Date("2024-01-01"),
+                        to = as.Date("2024-03-31"),
+                        by = "day"), 500, replace = TRUE),
+  product = sample(c("Widget A", "Widget B", "Widget C", "Widget D"),
+                  500, replace = TRUE),
+  region = sample(c("North", "South", "East", "West"),
+                 500, replace = TRUE),
+  quantity = sample(1:20, 500, replace = TRUE),
+  price = sample(c(9.99, 14.99, 19.99, 24.99), 500, replace = TRUE),
+  discount = sample(c(0, 0.1, 0.15, 0.2), 500, replace = TRUE,
+                   prob = c(0.6, 0.2, 0.15, 0.05))
+)
+
+# Complex analysis
+sales_analysis <- sales %>%
+  # Calculate revenue
+  mutate(
+    revenue = quantity * price * (1 - discount),
+    month = format(date, "%Y-%m"),
+    has_discount = discount > 0
+  ) %>%
+  # Monthly product performance by region
+  group_by(month, product, region) %>%
+  summarize(
+    n_transactions = n(),
+    total_quantity = sum(quantity),
+    total_revenue = sum(revenue),
+    avg_discount = mean(discount),
+    pct_with_discount = mean(has_discount),
+    .groups = "drop"
+  ) %>%
+  # Add product-level rankings within each month
+  group_by(month) %>%
+  mutate(
+    revenue_rank = dense_rank(desc(total_revenue)),
+    quantity_rank = dense_rank(desc(total_quantity))
+  ) %>%
+  ungroup() %>%
+  # Focus on top performers
+  filter(revenue_rank <= 3) %>%
+  arrange(month, revenue_rank)
+
+head(sales_analysis, 10)
+```
+
+## Common Patterns and Best Practices
+
+### Pattern 1: Filter-Select-Arrange
+
+```{r}
+#| label: pattern-fsa
+
+# Common pattern for data exploration
+cars %>%
+  filter(mpg > 20) %>%
+  select(model, mpg, cyl, hp) %>%
+  arrange(desc(mpg))
+```
+
+### Pattern 2: Group-Summarize-Arrange
+
+```{r}
+#| label: pattern-gsa
+
+# Common pattern for aggregation
+cars %>%
+  group_by(cyl) %>%
+  summarize(
+    n = n(),
+    avg_mpg = mean(mpg),
+    avg_hp = mean(hp),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(avg_mpg))
+```
+
+### Pattern 3: Mutate-Filter-Select
+
+```{r}
+#| label: pattern-mfs
+
+# Common pattern for feature engineering
+cars %>%
+  mutate(
+    efficiency_ratio = mpg / wt,
+    is_efficient = efficiency_ratio > 7
+  ) %>%
+  filter(is_efficient) %>%
+  select(model, mpg, wt, efficiency_ratio)
+```
+
+## Advanced Tips
+
+### 1. Using across() for Multiple Columns
+
+```{r}
+#| label: across-examples
+
+# Apply same operation to multiple columns
+cars %>%
+  mutate(across(c(mpg, hp, wt), ~round(.x, 0))) %>%
+  select(model, mpg, hp, wt) %>%
+  head()
+
+# Summarize multiple columns
+cars %>%
+  group_by(cyl) %>%
+  summarize(across(c(mpg, hp, wt),
+                  list(mean = mean, sd = sd),
+                  .names = "{.col}_{.fn}")) %>%
+  round(2)
+```
+
+### 2. Using slice() Functions
+
+```{r}
+#| label: slice-functions
+
+# Get top N rows per group
+cars %>%
+  group_by(cyl) %>%
+  slice_max(mpg, n = 2) %>%
+  select(model, cyl, mpg)
+
+# Get random sample per group
+set.seed(123)
+cars %>%
+  group_by(cyl) %>%
+  slice_sample(n = 2) %>%
+  select(model, cyl, mpg) %>%
+  arrange(cyl)
+```
+
+### 3. Scoped Variants
+
+```{r}
+#| label: scoped-variants
+
+# Select columns by condition
+cars %>%
+  select(model, where(is.numeric)) %>%
+  head(3)
+
+# Summarize all numeric columns
+cars %>%
+  summarize(across(where(is.numeric), mean)) %>%
+  round(2)
+```
+
+## Exercises
+
+### Exercise 1: Basic Verbs
+Using the `iris` dataset:
+1. Select only the Petal columns and Species
+2. Filter for Petal.Length > 4
+3. Create a new column for Petal.Area (Length × Width)
+4. Arrange by Petal.Area descending
+5. Show only the top 10 rows
+
+### Exercise 2: Grouped Operations
+Using `mtcars`:
+1. Group by number of gears
+2. Calculate average mpg and hp for each group
+3. Add a column showing the difference from overall average mpg
+4. Keep only groups where average mpg > 20
+
+### Exercise 3: Complex Pipeline
+Create a pipeline that:
+1. Filters cars with 4 or 6 cylinders
+2. Creates an efficiency score (mpg × 1000 / (hp × wt))
+3. Groups by cylinder count
+4. Finds the most and least efficient car in each group
+5. Presents the results in a clean summary table
+
+## Summary
+
+dplyr provides a powerful, intuitive grammar for data manipulation:
+
+- **`select()`**: Choose your columns
+- **`filter()`**: Choose your rows
+- **`mutate()`**: Create new variables
+- **`arrange()`**: Order your data
+- **`summarize()`**: Calculate summaries
+- **`group_by()`**: Split-apply-combine operations
+
+These verbs can be combined in endless ways to solve virtually any data manipulation challenge. The key is to think of data transformation as a series of simple steps, each accomplishing one specific task.
+
+Next, we'll explore [data reshaping with tidyr](tidyr-principles.qmd) to complement these transformation skills!

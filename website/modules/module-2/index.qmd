@@ -1,0 +1,204 @@
+---
+title: "Module 2: R Fundamentals"
+author: "IND215"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    code-tools: true
+---
+
+## Welcome to R Programming! 🚀
+
+Now that you have R and RStudio set up, it's time to dive into the fundamentals of R programming. This module will introduce you to the core concepts that form the foundation of data analysis in R.
+
+## What You'll Learn
+
+In this module, we'll explore the essential building blocks of R programming:
+
+### 1. Data Types and Objects
+- Understanding R's fundamental data types: integers, doubles, characters, and logicals
+- Working with different object types and their properties
+- Type conversion and checking data types
+
+### 2. Vectors: R's Building Blocks
+- Creating and manipulating vectors
+- Element-wise operations
+- Vector indexing and subsetting
+- Working with named vectors
+
+### 3. Data Structures
+- Lists: heterogeneous data containers
+- Data frames: the backbone of data analysis
+- Matrices and arrays for multidimensional data
+
+### 4. Control Structures
+- Conditional statements (if/else)
+- Loops (for, while)
+- Vectorized operations vs. loops
+
+### 5. Functions
+- Using built-in functions
+- Creating your own functions
+- Function arguments and return values
+- Scope and environments
+
+### 6. Working with Files
+- Reading and writing data files
+- File paths and project organization
+- Basic data import/export
+
+## Learning Objectives
+
+By the end of this module, you will be able to:
+
+- ✅ Understand and work with R's fundamental data types
+- ✅ Create, manipulate, and subset vectors effectively
+- ✅ Build and work with lists and data frames
+- ✅ Write conditional statements and loops
+- ✅ Create and use custom functions
+- ✅ Import and export data files
+- ✅ Organize your R projects effectively
+
+## Why These Concepts Matter
+
+Understanding R fundamentals is crucial because:
+
+1. **Foundation for Everything**: Every data analysis task builds on these concepts
+2. **Efficient Problem Solving**: Knowing the right data structure saves time and effort
+3. **Debugging Skills**: Understanding how R works helps you fix problems
+4. **Code Quality**: Well-structured code is easier to read, maintain, and share
+
+## Module Overview
+
+### The R Philosophy
+
+R is designed around a few key principles:
+
+- **Everything is an object**: In R, everything from numbers to functions is an object
+- **Vectorization**: Operations work on entire vectors, not just single values
+- **Functional programming**: Functions are first-class objects that can be passed around
+- **Statistical focus**: Built with statistical analysis and data science in mind
+
+### Getting Started
+
+Let's begin with a simple example that demonstrates several key concepts:
+
+```{r}
+#| label: intro-example
+
+# Create a vector of temperatures
+temperatures <- c(72, 75, 68, 80, 77, 73, 71)
+
+# Calculate basic statistics
+avg_temp <- mean(temperatures)
+max_temp <- max(temperatures)
+min_temp <- min(temperatures)
+
+# Create a summary data frame
+temp_summary <- data.frame(
+  statistic = c("Average", "Maximum", "Minimum"),
+  value = c(avg_temp, max_temp, min_temp)
+)
+
+print(temp_summary)
+```
+
+This simple example demonstrates:
+- Creating vectors with `c()`
+- Using built-in functions like `mean()`, `max()`, `min()`
+- Creating data frames
+- Combining different data types
+
+## Module Structure
+
+This module is organized into six main sections:
+
+1. **[Data Types and Objects](data-types.qmd)**: Learn about R's fundamental data types
+2. **[Vectors](vectors.qmd)**: Master R's most important data structure
+3. **[Lists and Data Frames](data-structures.qmd)**: Work with complex data containers
+4. **[Control Structures](control-structures.qmd)**: Add logic and iteration to your code
+5. **[Functions](functions.qmd)**: Create reusable code and understand scope
+6. **[Working with Files](working-with-files.qmd)**: Import, export, and organize data
+
+## Prerequisites
+
+Before starting this module, make sure you have:
+
+- R and RStudio installed (covered in Module 1)
+- Basic familiarity with the RStudio interface
+- Understanding of how to create and run R scripts
+
+## Practice Philosophy
+
+Throughout this module, we emphasize:
+
+- **Hands-on learning**: Every concept includes practical examples
+- **Real-world applications**: Examples use realistic data scenarios
+- **Progressive complexity**: Start simple, build to more complex concepts
+- **Common patterns**: Learn the most frequently used approaches
+
+## Getting Help
+
+As you work through this module, remember these resources:
+
+- **R Help System**: Use `?function_name` to get help on any function
+- **RStudio Help**: Use the Help tab in RStudio
+- **Error Messages**: Read them carefully - they often contain helpful information
+- **Practice**: The more you code, the more intuitive R becomes
+
+## A Quick Motivation
+
+Here's why learning R fundamentals is worth the effort:
+
+```{r}
+#| label: motivation-example
+
+# Generate some sample data
+set.seed(123)  # For reproducible results
+sales_data <- data.frame(
+  month = month.name[1:12],
+  sales = round(rnorm(12, mean = 50000, sd = 10000)),
+  expenses = round(rnorm(12, mean = 30000, sd = 5000))
+)
+
+# Calculate profit and growth
+sales_data$profit <- sales_data$sales - sales_data$expenses
+sales_data$profit_margin <- round(sales_data$profit / sales_data$sales * 100, 1)
+
+# Find best performing months
+best_month <- sales_data[which.max(sales_data$profit), "month"]
+worst_month <- sales_data[which.min(sales_data$profit), "month"]
+
+cat("Best month:", best_month, "\n")
+cat("Worst month:", worst_month, "\n")
+cat("Average profit margin:", mean(sales_data$profit_margin), "%\n")
+```
+
+In just a few lines of R code, we've:
+- Created a dataset
+- Performed calculations
+- Added new variables
+- Found extremes
+- Calculated summaries
+
+This is the power of R fundamentals in action!
+
+## Ready to Begin?
+
+Let's start with the foundation: [Data Types and Objects](data-types.qmd)
+
+## Summary
+
+R fundamentals form the bedrock of all data analysis in R. While these concepts might seem abstract at first, they quickly become second nature with practice. Remember:
+
+- **Start small**: Master basic concepts before moving to complex ones
+- **Practice regularly**: Coding is learned by doing
+- **Don't memorize**: Focus on understanding patterns and principles
+- **Use resources**: R has excellent built-in help and documentation
+
+The investment you make in learning these fundamentals will pay dividends throughout your R journey. Every advanced technique builds on these basic concepts, so take time to really understand them.
+
+Happy coding! 🎯

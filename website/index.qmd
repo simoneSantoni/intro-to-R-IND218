@@ -1,5 +1,5 @@
 ---
-title: "Introduction to R—IND215"
+title: "Introduction to R—IND218"
 subtitle: "A curated set of R materials for analytics students"
 ---
 

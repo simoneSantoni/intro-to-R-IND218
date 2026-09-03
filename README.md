@@ -1,4 +1,4 @@
-# IND215 - Introduction to R
+# IND218 - Introduction to R
 
 A comprehensive MSc module on R programming for analytics students, covering R fundamentals and the tidyverse ecosystem for modern data analysis and statistical computing.
 

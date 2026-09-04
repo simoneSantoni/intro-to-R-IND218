@@ -34,7 +34,44 @@ $sidebar-hl: #ffe6e6;
 
 // Dark theme specific overrides
 .hero-banner {
-  background: linear-gradient(135deg, #4a2f22 0%, #2b211d 100%);
+  background: linear-gradient(135deg, #292929 0%, #202020 100%);
+  border-top: 1px solid #8a4a1b;
+  border-bottom: 1px solid #8a4a1b;
+  color: #f7eee9;
+
+  h1 {
+    color: #fff8f3;
+  }
+
+  p {
+    color: #f7eee9;
+    opacity: 0.95;
+  }
+
+  .btn-primary {
+    background-color: #f4a261;
+    border-color: #f4a261;
+    color: #1a1a1a;
+
+    &:hover,
+    &:focus {
+      background-color: #ffc497;
+      border-color: #ffc497;
+      color: #1a1a1a;
+    }
+  }
+
+  .btn-outline-primary {
+    border-color: #ffc497;
+    color: #ffd9b8;
+
+    &:hover,
+    &:focus {
+      background-color: #ffc497;
+      border-color: #ffc497;
+      color: #1a1a1a;
+    }
+  }
 }
 
 .course-path {

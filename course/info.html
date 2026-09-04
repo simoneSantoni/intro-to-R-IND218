@@ -1,18 +1,24 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Course Information – IND215 - Introduction to R</title>
+<title>Course Information – IND218 - Introduction to R</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -36,14 +42,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-4bb4daaf52156cdc308924d505834e78.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-db698481b807d6183e2bc35455b80049.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-4bb4daaf52156cdc308924d505834e78.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-cb0cd53d62cf798e704710f72f45ab99.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -261,12 +267,13 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
-      <img src="../imgs/r-module-icon-light.svg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="../imgs/r-module-icon-light.svg" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../imgs/r-module-icon-light.svg" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main tools-wide">
-    <a href="https://github.com/simoneSantoni/intro-to-R-IND215" title="Repository" class="quarto-navigation-tool px-1" aria-label="Repository"><i class="bi bi-github"></i></a>
-    <a href="https://github.com/simoneSantoni/intro-to-R-IND215/edit/master/{{< meta quarto:source >}}" title="Edit this page" class="quarto-navigation-tool px-1" aria-label="Edit this page"><i class="bi bi-pencil-square"></i></a>
-    <a href="https://github.com/simoneSantoni/intro-to-R-IND215/issues/new" title="Report an issue" class="quarto-navigation-tool px-1" aria-label="Report an issue"><i class="bi bi-bug"></i></a>
+    <a href="https://github.com/simoneSantoni/intro-to-R-IND218" title="Repository" class="quarto-navigation-tool px-1" aria-label="Repository"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/simoneSantoni/intro-to-R-IND218/edit/master/{{< meta quarto:source >}}" title="Edit this page" class="quarto-navigation-tool px-1" aria-label="Edit this page"><i class="bi bi-pencil-square"></i></a>
+    <a href="https://github.com/simoneSantoni/intro-to-R-IND218/issues/new" title="Report an issue" class="quarto-navigation-tool px-1" aria-label="Report an issue"><i class="bi bi-bug"></i></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div>
@@ -587,7 +594,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#module-1-getting-started-with-r" id="toc-module-1-getting-started-with-r" class="nav-link" data-scroll-target="#module-1-getting-started-with-r">Module 1: Getting Started with R</a></li>
   <li><a href="#module-2-r-fundamentals" id="toc-module-2-r-fundamentals" class="nav-link" data-scroll-target="#module-2-r-fundamentals">Module 2: R Fundamentals</a></li>
   <li><a href="#module-3-introduction-to-tidyverse" id="toc-module-3-introduction-to-tidyverse" class="nav-link" data-scroll-target="#module-3-introduction-to-tidyverse">Module 3: Introduction to Tidyverse</a></li>
-  <li><a href="#module-4-data-wrangling-with-dplyr" id="toc-module-4-data-wrangling-with-dplyr" class="nav-link" data-scroll-target="#module-4-data-wrangling-with-dplyr">Module 4: Data Wrangling with dplyr</a></li>
+  <li><a href="#module-4-data-types-in-the-tidyverse" id="toc-module-4-data-types-in-the-tidyverse" class="nav-link" data-scroll-target="#module-4-data-types-in-the-tidyverse">Module 4: Data Types in the Tidyverse</a></li>
+  <li><a href="#module-5-data-wrangling-with-dplyr" id="toc-module-5-data-wrangling-with-dplyr" class="nav-link" data-scroll-target="#module-5-data-wrangling-with-dplyr">Module 5: Data Wrangling with dplyr</a></li>
+  <li><a href="#module-6-organizing-data-with-tidyr" id="toc-module-6-organizing-data-with-tidyr" class="nav-link" data-scroll-target="#module-6-organizing-data-with-tidyr">Module 6: Organizing Data with tidyr</a></li>
   </ul></li>
   <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
   <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
@@ -624,7 +633,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="course-overview" class="level2">
 <h2 class="anchored" data-anchor-id="course-overview">Course Overview</h2>
-<p>IND215 - Introduction to R for Analytics is designed specifically for MSc students in analytics who want to develop practical programming skills for data analysis. This course provides a foundation in R programming with a focus on statistical computing, data manipulation, and the tidyverse ecosystem.</p>
+<p>IND218 - Introduction to R for Analytics is designed specifically for MSc students in analytics who want to develop practical programming skills for data analysis. This course provides a foundation in R programming with a focus on statistical computing, data manipulation, and the tidyverse ecosystem.</p>
 </section>
 <section id="learning-philosophy" class="level2">
 <h2 class="anchored" data-anchor-id="learning-philosophy">Learning Philosophy</h2>
@@ -638,7 +647,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="course-structure" class="level2">
 <h2 class="anchored" data-anchor-id="course-structure">Course Structure</h2>
-<p>The course is organized into four substantive modules:</p>
+<p>The course is organized into six progressive modules. Modules 1–2 establish base R foundations; Modules 3–6 apply those foundations in the tidyverse.</p>
 <section id="module-1-getting-started-with-r" class="level3">
 <h3 class="anchored" data-anchor-id="module-1-getting-started-with-r">Module 1: Getting Started with R</h3>
 <ul>
@@ -667,13 +676,26 @@ ul.task-list li input[type="checkbox"] {
 <li>Data tidying principles with tidyr</li>
 </ul>
 </section>
-<section id="module-4-data-wrangling-with-dplyr" class="level3">
-<h3 class="anchored" data-anchor-id="module-4-data-wrangling-with-dplyr">Module 4: Data Wrangling with dplyr</h3>
+<section id="module-4-data-types-in-the-tidyverse" class="level3">
+<h3 class="anchored" data-anchor-id="module-4-data-types-in-the-tidyverse">Module 4: Data Types in the Tidyverse</h3>
 <ul>
-<li>Filtering, selecting, and arranging data</li>
-<li>Creating new variables with mutate</li>
-<li>Grouping and summarizing data</li>
-<li>Joining datasets and advanced data manipulation</li>
+<li>Character data, factors, dates, and times</li>
+<li>Choosing types that preserve analytical meaning</li>
+</ul>
+</section>
+<section id="module-5-data-wrangling-with-dplyr" class="level3">
+<h3 class="anchored" data-anchor-id="module-5-data-wrangling-with-dplyr">Module 5: Data Wrangling with dplyr</h3>
+<ul>
+<li>Filtering, selecting, arranging, and creating variables</li>
+<li>Grouped summaries and joins</li>
+</ul>
+</section>
+<section id="module-6-organizing-data-with-tidyr" class="level3">
+<h3 class="anchored" data-anchor-id="module-6-organizing-data-with-tidyr">Module 6: Organizing Data with tidyr</h3>
+<ul>
+<li>Diagnosing whether tabular data are tidy</li>
+<li>Reshaping, separating, and uniting columns</li>
+<li>Representing and handling missing values</li>
 </ul>
 </section>
 </section>
@@ -686,7 +708,7 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Manipulate and analyze data</strong> using base R and tidyverse functions</li>
 <li><strong>Process and transform datasets</strong> using dplyr for data wrangling</li>
 <li><strong>Import and export data</strong> from various file formats using readr and base R</li>
-<li><strong>Create reproducible data analysis workflows</strong> with R scripts and R Markdown</li>
+<li><strong>Create reproducible data analysis workflows</strong> with R scripts and Quarto</li>
 <li><strong>Apply statistical thinking</strong> to data exploration and basic analysis tasks</li>
 </ol>
 </section>
@@ -702,7 +724,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="software-requirements" class="level2">
 <h2 class="anchored" data-anchor-id="software-requirements">Software Requirements</h2>
 <ul>
-<li><strong>R 4.0+</strong> (we recommend R 4.3 or newer)</li>
+<li>A currently supported release of <strong>R</strong></li>
 <li><strong>RStudio Desktop</strong> (latest version for the best experience)</li>
 <li><strong>Essential R packages</strong> (tidyverse, readr, dplyr, ggplot2, and others)</li>
 <li><strong>Git</strong> for version control (optional but recommended)</li>
@@ -723,7 +745,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Use the course materials and examples as your first reference</li>
 <li>Practice with the provided exercises and datasets</li>
-<li>Consult Python documentation and community resources</li>
+<li>Consult R’s built-in help (<code>?mean</code>, for example) and package documentation</li>
 <li>Ask questions during class sessions or office hours</li>
 </ul>
 </section>
@@ -742,9 +764,9 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="course-resources">Course Resources</h2>
 <ul>
 <li><strong>Official R Documentation</strong>: <a href="https://www.r-project.org/other-docs.html">r-project.org</a></li>
-<li><strong>RStudio Resources</strong>: <a href="https://rstudio.com/resources/">rstudio.com</a></li>
+<li><strong>Posit Education Resources</strong>: <a href="https://posit.co/resources/">posit.co/resources/</a></li>
 <li><strong>Tidyverse Documentation</strong>: <a href="https://www.tidyverse.org/">tidyverse.org</a></li>
-<li><strong>R for Data Science Book</strong>: <a href="https://r4ds.had.co.nz/">r4ds.had.co.nz</a></li>
+<li><strong>R for Data Science (2e)</strong>: <a href="https://r4ds.hadley.nz/">r4ds.hadley.nz</a></li>
 </ul>
 
 
@@ -815,13 +837,14 @@ ul.task-list li input[type="checkbox"] {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -836,7 +859,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/simonesantoni\.github\.io\/intro-to-R-IND215");
+        var filterRegex = new RegExp("https:\/\/simonesantoni\.github\.io\/intro-to-R-IND218");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1167,10 +1190,10 @@ ul.task-list li input[type="checkbox"] {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 Simone Santoni</p>
+<p>© 2026 Simone Santoni</p>
 </div>   
     <div class="nav-footer-center">
-<p><a href="https://github.com/simoneSantoni/intro-to-R-IND215">IND215 - Introduction to R</a></p>
+<p><a href="https://github.com/simoneSantoni/intro-to-R-IND218">IND218 - Introduction to R</a></p>
 </div>
     <div class="nav-footer-right">
 <p>Made with <a href="https://quarto.org/">Quarto</a></p>

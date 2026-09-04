@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="IND215">
-<meta name="dcterms.date" content="2025-09-22">
+<meta name="author" content="IND218">
+<meta name="dcterms.date" content="2026-09-04">
 
-<title>Module 5: Data Wrangling with dplyr – IND215 - Introduction to R</title>
+<title>Module 5: Data Wrangling with dplyr – IND218 - Introduction to R</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -75,14 +81,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-4bb4daaf52156cdc308924d505834e78.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-db698481b807d6183e2bc35455b80049.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-4bb4daaf52156cdc308924d505834e78.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-cb0cd53d62cf798e704710f72f45ab99.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -300,12 +306,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
       <a href="../../index.html" class="sidebar-logo-link">
-      <img src="../../imgs/r-module-icon-light.svg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="../../imgs/r-module-icon-light.svg" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../../imgs/r-module-icon-light.svg" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main tools-wide">
-    <a href="https://github.com/simoneSantoni/intro-to-R-IND215" title="Repository" class="quarto-navigation-tool px-1" aria-label="Repository"><i class="bi bi-github"></i></a>
-    <a href="https://github.com/simoneSantoni/intro-to-R-IND215/edit/master/{{< meta quarto:source >}}" title="Edit this page" class="quarto-navigation-tool px-1" aria-label="Edit this page"><i class="bi bi-pencil-square"></i></a>
-    <a href="https://github.com/simoneSantoni/intro-to-R-IND215/issues/new" title="Report an issue" class="quarto-navigation-tool px-1" aria-label="Report an issue"><i class="bi bi-bug"></i></a>
+    <a href="https://github.com/simoneSantoni/intro-to-R-IND218" title="Repository" class="quarto-navigation-tool px-1" aria-label="Repository"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/simoneSantoni/intro-to-R-IND218/edit/master/{{< meta quarto:source >}}" title="Edit this page" class="quarto-navigation-tool px-1" aria-label="Edit this page"><i class="bi bi-pencil-square"></i></a>
+    <a href="https://github.com/simoneSantoni/intro-to-R-IND218/issues/new" title="Report an issue" class="quarto-navigation-tool px-1" aria-label="Report an issue"><i class="bi bi-bug"></i></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div>
@@ -650,14 +657,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>IND215 </p>
+             <p>IND218 </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 22, 2025</p>
+      <p class="date">4 September 2026</p>
     </div>
   </div>
   
@@ -672,6 +679,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="welcome-to-advanced-data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="welcome-to-advanced-data-wrangling">Welcome to Advanced Data Wrangling! 🔧📊</h2>
 <p>Now that you understand tidyverse fundamentals and can work with different data types, it’s time to master the art of data wrangling. The <code>dplyr</code> package is the Swiss Army knife of data manipulation, providing intuitive functions that correspond to the most common data analysis tasks.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="The analyst's contract">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The analyst’s contract
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Every pipeline should make three things explicit: the question being answered, the table’s unit of observation, and the checks that make the result trustworthy. In this module, the working table usually contains <strong>one row per order</strong>. A regional total therefore answers “How much order revenue was recorded?”—not “How profitable is each customer?” Keep that distinction visible when interpreting output.</p>
+</div>
+</div>
 </section>
 <section id="what-youll-learn" class="level2">
 <h2 class="anchored" data-anchor-id="what-youll-learn">What You’ll Learn</h2>
@@ -721,6 +741,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Performance optimization and best practices</li>
 </ul>
 </section>
+<section id="a-repeatable-decision-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="a-repeatable-decision-workflow">A repeatable decision workflow</h3>
+<ol type="1">
+<li><strong>Define</strong> the decision, metric, and unit of observation.</li>
+<li><strong>Diagnose</strong> keys, missingness, ranges, and duplicate records.</li>
+<li><strong>Transform</strong> with small, named steps whose intermediate results can be inspected.</li>
+<li><strong>Validate</strong> row counts and totals before and after joins or filters.</li>
+<li><strong>Communicate</strong> the result, assumptions, and limitations—not only the final number.</li>
+</ol>
+</section>
 </section>
 <section id="learning-objectives" class="level2">
 <h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
@@ -749,47 +779,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-dplyr-philosophy-grammar-of-data-manipulation" class="level2">
 <h2 class="anchored" data-anchor-id="the-dplyr-philosophy-grammar-of-data-manipulation">The dplyr Philosophy: Grammar of Data Manipulation</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr provides a consistent set of verbs for data manipulation</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The main dplyr verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The main dplyr verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The main dplyr verbs:</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- filter(): choose rows based on conditions</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- filter(): choose rows based on conditions</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- filter(): choose rows based on conditions</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- select(): choose columns by name or pattern</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- select(): choose columns by name or pattern</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- select(): choose columns by name or pattern</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- mutate(): create or modify columns</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- mutate(): create or modify columns</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- mutate(): create or modify columns</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- arrange(): reorder rows</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- arrange(): reorder rows</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- arrange(): reorder rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- summarise(): reduce to summary statistics</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- summarise(): reduce to summary statistics</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- summarise(): reduce to summary statistics</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- group_by(): perform operations by groups</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- group_by(): perform operations by groups</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- group_by(): perform operations by groups</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Joining verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Joining verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Joining verbs:</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- left_join(), inner_join(), full_join(): combine tables</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- left_join(), inner_join(), full_join(): combine tables</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- left_join(), inner_join(), full_join(): combine tables</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- anti_join(), semi_join(): filtering joins</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- anti_join(), semi_join(): filtering joins</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>- anti_join(), semi_join(): filtering joins</code></pre>
 </div>
@@ -799,7 +829,7 @@ Joining verbs:</code></pre>
 <h2 class="anchored" data-anchor-id="real-world-data-challenges">Real-World Data Challenges</h2>
 <p>Let’s start with a realistic, messy dataset that demonstrates why we need powerful data wrangling tools:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a realistic sales dataset with common data problems</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a realistic sales dataset with common data problems</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>sales_raw <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">order_id =</span> <span class="fu">paste0</span>(<span class="st">"ORD-"</span>, <span class="fu">str_pad</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">4</span>, <span class="at">pad =</span> <span class="st">"0"</span>)),</span>
@@ -849,45 +879,45 @@ Joining verbs:</code></pre>
 <span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">launch_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2020-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2024-01-01"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">50</span>)</span>
 <span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Created realistic business dataset:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Created realistic business dataset:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Created realistic business dataset:</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sales transactions:"</span>, <span class="fu">nrow</span>(sales_raw), <span class="st">"rows</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sales transactions:"</span>, <span class="fu">nrow</span>(sales_raw), <span class="st">"rows</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Sales transactions: 1000 rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unique customers:"</span>, <span class="fu">n_distinct</span>(sales_raw<span class="sc">$</span>customer_id), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unique customers:"</span>, <span class="fu">n_distinct</span>(sales_raw<span class="sc">$</span>customer_id), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unique customers: 199 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Date range:"</span>, <span class="fu">as.character</span>(<span class="fu">min</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"to"</span>, <span class="fu">as.character</span>(<span class="fu">max</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Date range:"</span>, <span class="fu">as.character</span>(<span class="fu">min</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"to"</span>, <span class="fu">as.character</span>(<span class="fu">max</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Date range: 2023-01-01 to 2024-12-31 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total revenue: $"</span>, <span class="fu">format</span>(<span class="fu">sum</span>(sales_raw<span class="sc">$</span>net_amount), <span class="at">big.mark =</span> <span class="st">","</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total revenue: $"</span>, <span class="fu">format</span>(<span class="fu">sum</span>(sales_raw<span class="sc">$</span>net_amount), <span class="at">big.mark =</span> <span class="st">","</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Total revenue: $ 517,995.5 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show data quality issues</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Data quality issues to address:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show data quality issues</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Data quality issues to address:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Data quality issues to address:</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing sales reps:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>sales_rep)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing sales reps:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>sales_rep)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Missing sales reps: 50 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing discounts:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>discount_pct)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing discounts:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>discount_pct)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Missing discounts: 30 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Suspicious high prices (&gt;$500):"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>unit_price <span class="sc">&gt;</span> <span class="dv">500</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Suspicious high prices (&gt;$500):"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>unit_price <span class="sc">&gt;</span> <span class="dv">500</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Suspicious high prices (&gt;$500): 5 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zero quantities:"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>quantity <span class="sc">==</span> <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zero quantities:"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>quantity <span class="sc">==</span> <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Zero quantities: 3 </code></pre>
 </div>
@@ -910,7 +940,7 @@ Data quality issues to address:</code></pre>
 <h2 class="anchored" data-anchor-id="the-power-of-pipes">The Power of Pipes</h2>
 <p>Before diving in, let’s appreciate the elegance of dplyr’s pipe-friendly design:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Without pipes (nested and hard to read)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Without pipes (nested and hard to read)</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>result_nested <span class="ot">&lt;-</span> <span class="fu">arrange</span>(</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(</span>
@@ -937,16 +967,16 @@ Data quality issues to address:</code></pre>
 <span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_sales))</span>
 <span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Both produce the same result</span></span>
-<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(result_nested, result_piped)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(result_nested, result_piped)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the clean, readable result</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Regional sales summary:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the clean, readable result</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Regional sales summary:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Regional sales summary:</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_piped)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_piped)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 4
   region total_sales avg_order order_count
@@ -963,7 +993,7 @@ Data quality issues to address:</code></pre>
 <h2 class="anchored" data-anchor-id="a-motivating-example">A Motivating Example</h2>
 <p>Here’s a taste of what you’ll be able to do by the end of this module:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Complex business analysis in a single, readable pipeline</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Complex business analysis in a single, readable pipeline</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Data cleaning</span></span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
@@ -1015,14 +1045,14 @@ Data quality issues to address:</code></pre>
 <span id="cb47-50"><a href="#cb47-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Final sorting</span></span>
 <span id="cb47-51"><a href="#cb47-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(quarter, revenue_rank)</span>
 <span id="cb47-52"><a href="#cb47-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-53"><a href="#cb47-53" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Quarterly performance analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb47-53"><a href="#cb47-53" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Quarterly performance analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Quarterly performance analysis:</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="sc">%&gt;%</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(quarter <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2024-Q1"</span>, <span class="st">"2024-Q2"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(quarter, region, customer_type, total_revenue, revenue_rank, revenue_pct_of_total) <span class="sc">%&gt;%</span></span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 6
    quarter region customer_type  total_revenue revenue_rank revenue_pct_of_total
@@ -1139,13 +1169,14 @@ Data quality issues to address:</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1179,16 +1210,16 @@ Data quality issues to address:</code></pre>
     }
     function toggleCodeHandler(show) {
       return function(e) {
-        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-        for (let i=0; i<detailsSrc.length; i++) {
-          const details = detailsSrc[i].parentElement;
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
           if (show) {
             details.open = true;
           } else {
             details.removeAttribute("open");
           }
         }
-        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
         const fromCls = show ? "hidden" : "unhidden";
         const toCls = show ? "unhidden" : "hidden";
         for (let i=0; i<cellCodeDivs.length; i++) {
@@ -1211,7 +1242,7 @@ Data quality issues to address:</code></pre>
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/simonesantoni\.github\.io\/intro-to-R-IND215");
+        var filterRegex = new RegExp("https:\/\/simonesantoni\.github\.io\/intro-to-R-IND218");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1550,9 +1581,9 @@ Data quality issues to address:</code></pre>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb51" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Module 5: Data Wrangling with dplyr"</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "IND215"</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "IND218"</span></span>
 <span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
 <span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
 <span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
@@ -1566,320 +1597,332 @@ Data quality issues to address:</code></pre>
 <span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>Now that you understand tidyverse fundamentals and can work with different data types, it's time to master the art of data wrangling. The <span class="in">`dplyr`</span> package is the Swiss Army knife of data manipulation, providing intuitive functions that correspond to the most common data analysis tasks.</span>
 <span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## What You'll Learn</span></span>
-<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>In this module, we'll dive deep into the powerful world of dplyr, covering:</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="The analyst's contract"}</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>Every pipeline should make three things explicit: the question being answered, the table's unit of observation, and the checks that make the result trustworthy. In this module, the working table usually contains **one row per order**. A regional total therefore answers “How much order revenue was recorded?”—not “How profitable is each customer?” Keep that distinction visible when interpreting output.</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Filtering and Selecting</span></span>
-<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Advanced row filtering with complex conditions</span>
-<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Column selection with helper functions</span>
-<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Combining and chaining operations</span>
-<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Working with missing data in filters</span>
-<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Mutating and Arranging</span></span>
-<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Creating and modifying variables</span>
-<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Window functions and ranking</span>
-<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Conditional mutations with case_when()</span>
-<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sorting data with arrange()</span>
-<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Grouping and Summarizing</span></span>
-<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Group-wise operations and split-apply-combine</span>
-<span id="cb51-35"><a href="#cb51-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple summary statistics</span>
-<span id="cb51-36"><a href="#cb51-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Grouped mutations and filtering</span>
-<span id="cb51-37"><a href="#cb51-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Working with grouped data frames</span>
-<span id="cb51-38"><a href="#cb51-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-39"><a href="#cb51-39" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Joining Data</span></span>
-<span id="cb51-40"><a href="#cb51-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Inner, left, right, and full joins</span>
-<span id="cb51-41"><a href="#cb51-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Anti-joins and semi-joins</span>
-<span id="cb51-42"><a href="#cb51-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Handling key conflicts and duplicates</span>
-<span id="cb51-43"><a href="#cb51-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Joining multiple tables</span>
-<span id="cb51-44"><a href="#cb51-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-45"><a href="#cb51-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Advanced Techniques</span></span>
-<span id="cb51-46"><a href="#cb51-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Across() for operating on multiple columns</span>
-<span id="cb51-47"><a href="#cb51-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Programming with dplyr using {{ and !!</span>
-<span id="cb51-48"><a href="#cb51-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Custom functions and non-standard evaluation</span>
-<span id="cb51-49"><a href="#cb51-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Performance optimization and best practices</span>
-<span id="cb51-50"><a href="#cb51-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-51"><a href="#cb51-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning Objectives</span></span>
-<span id="cb51-52"><a href="#cb51-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-53"><a href="#cb51-53" aria-hidden="true" tabindex="-1"></a>By the end of this module, you will be able to:</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## What You'll Learn</span></span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>In this module, we'll dive deep into the powerful world of dplyr, covering:</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Filtering and Selecting</span></span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Advanced row filtering with complex conditions</span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Column selection with helper functions</span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Combining and chaining operations</span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Working with missing data in filters</span>
+<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Mutating and Arranging</span></span>
+<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Creating and modifying variables</span>
+<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Window functions and ranking</span>
+<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Conditional mutations with case_when()</span>
+<span id="cb51-35"><a href="#cb51-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sorting data with arrange()</span>
+<span id="cb51-36"><a href="#cb51-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-37"><a href="#cb51-37" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Grouping and Summarizing</span></span>
+<span id="cb51-38"><a href="#cb51-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Group-wise operations and split-apply-combine</span>
+<span id="cb51-39"><a href="#cb51-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple summary statistics</span>
+<span id="cb51-40"><a href="#cb51-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Grouped mutations and filtering</span>
+<span id="cb51-41"><a href="#cb51-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Working with grouped data frames</span>
+<span id="cb51-42"><a href="#cb51-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-43"><a href="#cb51-43" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Joining Data</span></span>
+<span id="cb51-44"><a href="#cb51-44" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Inner, left, right, and full joins</span>
+<span id="cb51-45"><a href="#cb51-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Anti-joins and semi-joins</span>
+<span id="cb51-46"><a href="#cb51-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Handling key conflicts and duplicates</span>
+<span id="cb51-47"><a href="#cb51-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Joining multiple tables</span>
+<span id="cb51-48"><a href="#cb51-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-49"><a href="#cb51-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5. Advanced Techniques</span></span>
+<span id="cb51-50"><a href="#cb51-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Across() for operating on multiple columns</span>
+<span id="cb51-51"><a href="#cb51-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Programming with dplyr using {{ and !!</span>
+<span id="cb51-52"><a href="#cb51-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Custom functions and non-standard evaluation</span>
+<span id="cb51-53"><a href="#cb51-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Performance optimization and best practices</span>
 <span id="cb51-54"><a href="#cb51-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-55"><a href="#cb51-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Filter and select data using complex conditions and patterns</span>
-<span id="cb51-56"><a href="#cb51-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Create new variables with sophisticated transformations</span>
-<span id="cb51-57"><a href="#cb51-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Perform group-wise operations and aggregations</span>
-<span id="cb51-58"><a href="#cb51-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Join multiple data sources effectively</span>
-<span id="cb51-59"><a href="#cb51-59" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Use advanced dplyr techniques for complex data manipulation</span>
-<span id="cb51-60"><a href="#cb51-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Write reusable data wrangling functions</span>
-<span id="cb51-61"><a href="#cb51-61" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Apply best practices for readable and efficient data pipelines</span>
+<span id="cb51-55"><a href="#cb51-55" aria-hidden="true" tabindex="-1"></a><span class="fu">### A repeatable decision workflow</span></span>
+<span id="cb51-56"><a href="#cb51-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-57"><a href="#cb51-57" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Define** the decision, metric, and unit of observation.</span>
+<span id="cb51-58"><a href="#cb51-58" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Diagnose** keys, missingness, ranges, and duplicate records.</span>
+<span id="cb51-59"><a href="#cb51-59" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Transform** with small, named steps whose intermediate results can be inspected.</span>
+<span id="cb51-60"><a href="#cb51-60" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Validate** row counts and totals before and after joins or filters.</span>
+<span id="cb51-61"><a href="#cb51-61" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Communicate** the result, assumptions, and limitations—not only the final number.</span>
 <span id="cb51-62"><a href="#cb51-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-63"><a href="#cb51-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why Master dplyr?</span></span>
+<span id="cb51-63"><a href="#cb51-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learning Objectives</span></span>
 <span id="cb51-64"><a href="#cb51-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-65"><a href="#cb51-65" aria-hidden="true" tabindex="-1"></a>dplyr is essential for data analysis because:</span>
+<span id="cb51-65"><a href="#cb51-65" aria-hidden="true" tabindex="-1"></a>By the end of this module, you will be able to:</span>
 <span id="cb51-66"><a href="#cb51-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-67"><a href="#cb51-67" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Intuitive verbs**: Functions named like actions (filter, select, mutate)</span>
-<span id="cb51-68"><a href="#cb51-68" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Consistent syntax**: All functions work the same way</span>
-<span id="cb51-69"><a href="#cb51-69" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Pipe-friendly**: Designed for chaining operations together</span>
-<span id="cb51-70"><a href="#cb51-70" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Performance**: Optimized for speed with large datasets</span>
-<span id="cb51-71"><a href="#cb51-71" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Versatility**: Handles 90% of data manipulation tasks</span>
-<span id="cb51-72"><a href="#cb51-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-73"><a href="#cb51-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## The dplyr Philosophy: Grammar of Data Manipulation</span></span>
+<span id="cb51-67"><a href="#cb51-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Filter and select data using complex conditions and patterns</span>
+<span id="cb51-68"><a href="#cb51-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Create new variables with sophisticated transformations</span>
+<span id="cb51-69"><a href="#cb51-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Perform group-wise operations and aggregations</span>
+<span id="cb51-70"><a href="#cb51-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Join multiple data sources effectively</span>
+<span id="cb51-71"><a href="#cb51-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Use advanced dplyr techniques for complex data manipulation</span>
+<span id="cb51-72"><a href="#cb51-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Write reusable data wrangling functions</span>
+<span id="cb51-73"><a href="#cb51-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Apply best practices for readable and efficient data pipelines</span>
 <span id="cb51-74"><a href="#cb51-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-77"><a href="#cb51-77" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb51-78"><a href="#cb51-78" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dplyr-philosophy</span></span>
-<span id="cb51-79"><a href="#cb51-79" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb51-80"><a href="#cb51-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-81"><a href="#cb51-81" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb51-82"><a href="#cb51-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-83"><a href="#cb51-83" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr provides a consistent set of verbs for data manipulation</span></span>
-<span id="cb51-84"><a href="#cb51-84" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The main dplyr verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-85"><a href="#cb51-85" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- filter(): choose rows based on conditions</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-86"><a href="#cb51-86" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- select(): choose columns by name or pattern</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-87"><a href="#cb51-87" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- mutate(): create or modify columns</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-88"><a href="#cb51-88" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- arrange(): reorder rows</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-89"><a href="#cb51-89" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- summarise(): reduce to summary statistics</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-90"><a href="#cb51-90" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- group_by(): perform operations by groups</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-91"><a href="#cb51-91" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Joining verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-92"><a href="#cb51-92" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- left_join(), inner_join(), full_join(): combine tables</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-93"><a href="#cb51-93" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- anti_join(), semi_join(): filtering joins</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-94"><a href="#cb51-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-95"><a href="#cb51-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-96"><a href="#cb51-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real-World Data Challenges</span></span>
-<span id="cb51-97"><a href="#cb51-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-98"><a href="#cb51-98" aria-hidden="true" tabindex="-1"></a>Let's start with a realistic, messy dataset that demonstrates why we need powerful data wrangling tools:</span>
-<span id="cb51-99"><a href="#cb51-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-102"><a href="#cb51-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb51-103"><a href="#cb51-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: realistic-dataset</span></span>
-<span id="cb51-104"><a href="#cb51-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-105"><a href="#cb51-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a realistic sales dataset with common data problems</span></span>
-<span id="cb51-106"><a href="#cb51-106" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb51-107"><a href="#cb51-107" aria-hidden="true" tabindex="-1"></a>sales_raw <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb51-108"><a href="#cb51-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">order_id =</span> <span class="fu">paste0</span>(<span class="st">"ORD-"</span>, <span class="fu">str_pad</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">4</span>, <span class="at">pad =</span> <span class="st">"0"</span>)),</span>
-<span id="cb51-109"><a href="#cb51-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_id =</span> <span class="fu">sample</span>(<span class="fu">paste0</span>(<span class="st">"CUST-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-110"><a href="#cb51-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_id =</span> <span class="fu">sample</span>(<span class="fu">paste0</span>(<span class="st">"PROD-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-111"><a href="#cb51-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">order_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2023-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2024-12-31"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-112"><a href="#cb51-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-113"><a href="#cb51-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit_price =</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">1000</span>, <span class="dv">5</span>, <span class="dv">200</span>), <span class="dv">2</span>),</span>
-<span id="cb51-114"><a href="#cb51-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">discount_pct =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.15</span>, <span class="fl">0.20</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.6</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.05</span>, <span class="fl">0.05</span>)),</span>
-<span id="cb51-115"><a href="#cb51-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales_rep =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Alice Johnson"</span>, <span class="st">"Bob Smith"</span>, <span class="st">"Charlie Brown"</span>, <span class="st">"Diana Prince"</span>, <span class="st">"Eve Wilson"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-116"><a href="#cb51-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">region =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"North"</span>, <span class="st">"South"</span>, <span class="st">"East"</span>, <span class="st">"West"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-117"><a href="#cb51-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_type =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Individual"</span>, <span class="st">"Small Business"</span>, <span class="st">"Enterprise"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>))</span>
-<span id="cb51-118"><a href="#cb51-118" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-119"><a href="#cb51-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-120"><a href="#cb51-120" aria-hidden="true" tabindex="-1"></a><span class="co"># Add some realistic data quality issues</span></span>
-<span id="cb51-121"><a href="#cb51-121" aria-hidden="true" tabindex="-1"></a>sales_raw <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
-<span id="cb51-122"><a href="#cb51-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb51-123"><a href="#cb51-123" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Some missing values</span></span>
-<span id="cb51-124"><a href="#cb51-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">sales_rep =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">50</span>), <span class="cn">NA</span>, sales_rep),</span>
-<span id="cb51-125"><a href="#cb51-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">discount_pct =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">30</span>), <span class="cn">NA</span>, discount_pct),</span>
-<span id="cb51-126"><a href="#cb51-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-127"><a href="#cb51-127" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate derived fields</span></span>
-<span id="cb51-128"><a href="#cb51-128" aria-hidden="true" tabindex="-1"></a>    <span class="at">gross_amount =</span> quantity <span class="sc">*</span> unit_price,</span>
-<span id="cb51-129"><a href="#cb51-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">discount_amount =</span> gross_amount <span class="sc">*</span> <span class="fu">coalesce</span>(discount_pct, <span class="dv">0</span>),</span>
-<span id="cb51-130"><a href="#cb51-130" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_amount =</span> gross_amount <span class="sc">-</span> discount_amount,</span>
+<span id="cb51-75"><a href="#cb51-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why Master dplyr?</span></span>
+<span id="cb51-76"><a href="#cb51-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-77"><a href="#cb51-77" aria-hidden="true" tabindex="-1"></a>dplyr is essential for data analysis because:</span>
+<span id="cb51-78"><a href="#cb51-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-79"><a href="#cb51-79" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Intuitive verbs**: Functions named like actions (filter, select, mutate)</span>
+<span id="cb51-80"><a href="#cb51-80" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Consistent syntax**: All functions work the same way</span>
+<span id="cb51-81"><a href="#cb51-81" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Pipe-friendly**: Designed for chaining operations together</span>
+<span id="cb51-82"><a href="#cb51-82" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Performance**: Optimized for speed with large datasets</span>
+<span id="cb51-83"><a href="#cb51-83" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Versatility**: Handles 90% of data manipulation tasks</span>
+<span id="cb51-84"><a href="#cb51-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-85"><a href="#cb51-85" aria-hidden="true" tabindex="-1"></a><span class="fu">## The dplyr Philosophy: Grammar of Data Manipulation</span></span>
+<span id="cb51-86"><a href="#cb51-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-89"><a href="#cb51-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb51-90"><a href="#cb51-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: dplyr-philosophy</span></span>
+<span id="cb51-91"><a href="#cb51-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb51-92"><a href="#cb51-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-93"><a href="#cb51-93" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb51-94"><a href="#cb51-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-95"><a href="#cb51-95" aria-hidden="true" tabindex="-1"></a><span class="co"># dplyr provides a consistent set of verbs for data manipulation</span></span>
+<span id="cb51-96"><a href="#cb51-96" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The main dplyr verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-97"><a href="#cb51-97" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- filter(): choose rows based on conditions</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-98"><a href="#cb51-98" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- select(): choose columns by name or pattern</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-99"><a href="#cb51-99" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- mutate(): create or modify columns</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-100"><a href="#cb51-100" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- arrange(): reorder rows</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-101"><a href="#cb51-101" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- summarise(): reduce to summary statistics</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-102"><a href="#cb51-102" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- group_by(): perform operations by groups</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-103"><a href="#cb51-103" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Joining verbs:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-104"><a href="#cb51-104" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- left_join(), inner_join(), full_join(): combine tables</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-105"><a href="#cb51-105" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"- anti_join(), semi_join(): filtering joins</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-106"><a href="#cb51-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb51-107"><a href="#cb51-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-108"><a href="#cb51-108" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real-World Data Challenges</span></span>
+<span id="cb51-109"><a href="#cb51-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-110"><a href="#cb51-110" aria-hidden="true" tabindex="-1"></a>Let's start with a realistic, messy dataset that demonstrates why we need powerful data wrangling tools:</span>
+<span id="cb51-111"><a href="#cb51-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-114"><a href="#cb51-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb51-115"><a href="#cb51-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: realistic-dataset</span></span>
+<span id="cb51-116"><a href="#cb51-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-117"><a href="#cb51-117" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a realistic sales dataset with common data problems</span></span>
+<span id="cb51-118"><a href="#cb51-118" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb51-119"><a href="#cb51-119" aria-hidden="true" tabindex="-1"></a>sales_raw <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb51-120"><a href="#cb51-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">order_id =</span> <span class="fu">paste0</span>(<span class="st">"ORD-"</span>, <span class="fu">str_pad</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">4</span>, <span class="at">pad =</span> <span class="st">"0"</span>)),</span>
+<span id="cb51-121"><a href="#cb51-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_id =</span> <span class="fu">sample</span>(<span class="fu">paste0</span>(<span class="st">"CUST-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-122"><a href="#cb51-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_id =</span> <span class="fu">sample</span>(<span class="fu">paste0</span>(<span class="st">"PROD-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-123"><a href="#cb51-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">order_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2023-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2024-12-31"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-124"><a href="#cb51-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-125"><a href="#cb51-125" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit_price =</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">1000</span>, <span class="dv">5</span>, <span class="dv">200</span>), <span class="dv">2</span>),</span>
+<span id="cb51-126"><a href="#cb51-126" aria-hidden="true" tabindex="-1"></a>  <span class="at">discount_pct =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.15</span>, <span class="fl">0.20</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.6</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.05</span>, <span class="fl">0.05</span>)),</span>
+<span id="cb51-127"><a href="#cb51-127" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales_rep =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Alice Johnson"</span>, <span class="st">"Bob Smith"</span>, <span class="st">"Charlie Brown"</span>, <span class="st">"Diana Prince"</span>, <span class="st">"Eve Wilson"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-128"><a href="#cb51-128" aria-hidden="true" tabindex="-1"></a>  <span class="at">region =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"North"</span>, <span class="st">"South"</span>, <span class="st">"East"</span>, <span class="st">"West"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-129"><a href="#cb51-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_type =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Individual"</span>, <span class="st">"Small Business"</span>, <span class="st">"Enterprise"</span>), <span class="dv">1000</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>))</span>
+<span id="cb51-130"><a href="#cb51-130" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb51-131"><a href="#cb51-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-132"><a href="#cb51-132" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add some data entry errors</span></span>
-<span id="cb51-133"><a href="#cb51-133" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit_price =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">5</span>), unit_price <span class="sc">*</span> <span class="dv">100</span>, unit_price),  <span class="co"># Pricing errors</span></span>
-<span id="cb51-134"><a href="#cb51-134" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantity =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">3</span>), <span class="dv">0</span>, quantity)  <span class="co"># Zero quantities</span></span>
-<span id="cb51-135"><a href="#cb51-135" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb51-136"><a href="#cb51-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-137"><a href="#cb51-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Add customer information</span></span>
-<span id="cb51-138"><a href="#cb51-138" aria-hidden="true" tabindex="-1"></a>customers <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb51-139"><a href="#cb51-139" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_id =</span> <span class="fu">paste0</span>(<span class="st">"CUST-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>),</span>
-<span id="cb51-140"><a href="#cb51-140" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_name =</span> <span class="fu">paste</span>(<span class="st">"Customer"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>),</span>
-<span id="cb51-141"><a href="#cb51-141" aria-hidden="true" tabindex="-1"></a>  <span class="at">industry =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Technology"</span>, <span class="st">"Healthcare"</span>, <span class="st">"Finance"</span>, <span class="st">"Retail"</span>, <span class="st">"Manufacturing"</span>), <span class="dv">200</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-142"><a href="#cb51-142" aria-hidden="true" tabindex="-1"></a>  <span class="at">signup_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2020-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2023-12-31"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">200</span>),</span>
-<span id="cb51-143"><a href="#cb51-143" aria-hidden="true" tabindex="-1"></a>  <span class="at">credit_limit =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>, <span class="dv">50000</span>), <span class="dv">200</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb51-144"><a href="#cb51-144" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-145"><a href="#cb51-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-146"><a href="#cb51-146" aria-hidden="true" tabindex="-1"></a><span class="co"># Add product information</span></span>
-<span id="cb51-147"><a href="#cb51-147" aria-hidden="true" tabindex="-1"></a>products <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb51-148"><a href="#cb51-148" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_id =</span> <span class="fu">paste0</span>(<span class="st">"PROD-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>),</span>
-<span id="cb51-149"><a href="#cb51-149" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_name =</span> <span class="fu">paste</span>(<span class="st">"Product"</span>, LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>]),</span>
-<span id="cb51-150"><a href="#cb51-150" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Electronics"</span>, <span class="st">"Software"</span>, <span class="st">"Services"</span>, <span class="st">"Hardware"</span>), <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-151"><a href="#cb51-151" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">2</span>, <span class="dv">100</span>), <span class="dv">2</span>),</span>
-<span id="cb51-152"><a href="#cb51-152" aria-hidden="true" tabindex="-1"></a>  <span class="at">launch_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2020-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2024-01-01"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">50</span>)</span>
-<span id="cb51-153"><a href="#cb51-153" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-154"><a href="#cb51-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-155"><a href="#cb51-155" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Created realistic business dataset:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-156"><a href="#cb51-156" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sales transactions:"</span>, <span class="fu">nrow</span>(sales_raw), <span class="st">"rows</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-157"><a href="#cb51-157" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unique customers:"</span>, <span class="fu">n_distinct</span>(sales_raw<span class="sc">$</span>customer_id), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-158"><a href="#cb51-158" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Date range:"</span>, <span class="fu">as.character</span>(<span class="fu">min</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"to"</span>, <span class="fu">as.character</span>(<span class="fu">max</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-159"><a href="#cb51-159" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total revenue: $"</span>, <span class="fu">format</span>(<span class="fu">sum</span>(sales_raw<span class="sc">$</span>net_amount), <span class="at">big.mark =</span> <span class="st">","</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-160"><a href="#cb51-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-161"><a href="#cb51-161" aria-hidden="true" tabindex="-1"></a><span class="co"># Show data quality issues</span></span>
-<span id="cb51-162"><a href="#cb51-162" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Data quality issues to address:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-163"><a href="#cb51-163" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing sales reps:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>sales_rep)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-164"><a href="#cb51-164" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing discounts:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>discount_pct)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-165"><a href="#cb51-165" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Suspicious high prices (&gt;$500):"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>unit_price <span class="sc">&gt;</span> <span class="dv">500</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-166"><a href="#cb51-166" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zero quantities:"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>quantity <span class="sc">==</span> <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-167"><a href="#cb51-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-168"><a href="#cb51-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-169"><a href="#cb51-169" aria-hidden="true" tabindex="-1"></a>This dataset represents the kind of messy, real-world data you'll encounter in business. Throughout this module, we'll learn how to clean, transform, and analyze it using dplyr's powerful tools.</span>
-<span id="cb51-170"><a href="#cb51-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-171"><a href="#cb51-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Module Structure</span></span>
+<span id="cb51-132"><a href="#cb51-132" aria-hidden="true" tabindex="-1"></a><span class="co"># Add some realistic data quality issues</span></span>
+<span id="cb51-133"><a href="#cb51-133" aria-hidden="true" tabindex="-1"></a>sales_raw <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
+<span id="cb51-134"><a href="#cb51-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb51-135"><a href="#cb51-135" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Some missing values</span></span>
+<span id="cb51-136"><a href="#cb51-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">sales_rep =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">50</span>), <span class="cn">NA</span>, sales_rep),</span>
+<span id="cb51-137"><a href="#cb51-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">discount_pct =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">30</span>), <span class="cn">NA</span>, discount_pct),</span>
+<span id="cb51-138"><a href="#cb51-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-139"><a href="#cb51-139" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate derived fields</span></span>
+<span id="cb51-140"><a href="#cb51-140" aria-hidden="true" tabindex="-1"></a>    <span class="at">gross_amount =</span> quantity <span class="sc">*</span> unit_price,</span>
+<span id="cb51-141"><a href="#cb51-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">discount_amount =</span> gross_amount <span class="sc">*</span> <span class="fu">coalesce</span>(discount_pct, <span class="dv">0</span>),</span>
+<span id="cb51-142"><a href="#cb51-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_amount =</span> gross_amount <span class="sc">-</span> discount_amount,</span>
+<span id="cb51-143"><a href="#cb51-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-144"><a href="#cb51-144" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add some data entry errors</span></span>
+<span id="cb51-145"><a href="#cb51-145" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit_price =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">5</span>), unit_price <span class="sc">*</span> <span class="dv">100</span>, unit_price),  <span class="co"># Pricing errors</span></span>
+<span id="cb51-146"><a href="#cb51-146" aria-hidden="true" tabindex="-1"></a>    <span class="at">quantity =</span> <span class="fu">ifelse</span>(<span class="fu">row_number</span>() <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="dv">3</span>), <span class="dv">0</span>, quantity)  <span class="co"># Zero quantities</span></span>
+<span id="cb51-147"><a href="#cb51-147" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb51-148"><a href="#cb51-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-149"><a href="#cb51-149" aria-hidden="true" tabindex="-1"></a><span class="co"># Add customer information</span></span>
+<span id="cb51-150"><a href="#cb51-150" aria-hidden="true" tabindex="-1"></a>customers <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb51-151"><a href="#cb51-151" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_id =</span> <span class="fu">paste0</span>(<span class="st">"CUST-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>),</span>
+<span id="cb51-152"><a href="#cb51-152" aria-hidden="true" tabindex="-1"></a>  <span class="at">customer_name =</span> <span class="fu">paste</span>(<span class="st">"Customer"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>),</span>
+<span id="cb51-153"><a href="#cb51-153" aria-hidden="true" tabindex="-1"></a>  <span class="at">industry =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Technology"</span>, <span class="st">"Healthcare"</span>, <span class="st">"Finance"</span>, <span class="st">"Retail"</span>, <span class="st">"Manufacturing"</span>), <span class="dv">200</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-154"><a href="#cb51-154" aria-hidden="true" tabindex="-1"></a>  <span class="at">signup_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2020-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2023-12-31"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">200</span>),</span>
+<span id="cb51-155"><a href="#cb51-155" aria-hidden="true" tabindex="-1"></a>  <span class="at">credit_limit =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>, <span class="dv">50000</span>), <span class="dv">200</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb51-156"><a href="#cb51-156" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-157"><a href="#cb51-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-158"><a href="#cb51-158" aria-hidden="true" tabindex="-1"></a><span class="co"># Add product information</span></span>
+<span id="cb51-159"><a href="#cb51-159" aria-hidden="true" tabindex="-1"></a>products <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb51-160"><a href="#cb51-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_id =</span> <span class="fu">paste0</span>(<span class="st">"PROD-"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>),</span>
+<span id="cb51-161"><a href="#cb51-161" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_name =</span> <span class="fu">paste</span>(<span class="st">"Product"</span>, LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>]),</span>
+<span id="cb51-162"><a href="#cb51-162" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Electronics"</span>, <span class="st">"Software"</span>, <span class="st">"Services"</span>, <span class="st">"Hardware"</span>), <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-163"><a href="#cb51-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">cost =</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">2</span>, <span class="dv">100</span>), <span class="dv">2</span>),</span>
+<span id="cb51-164"><a href="#cb51-164" aria-hidden="true" tabindex="-1"></a>  <span class="at">launch_date =</span> <span class="fu">sample</span>(<span class="fu">seq</span>(<span class="fu">ymd</span>(<span class="st">"2020-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2024-01-01"</span>), <span class="at">by =</span> <span class="st">"day"</span>), <span class="dv">50</span>)</span>
+<span id="cb51-165"><a href="#cb51-165" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-166"><a href="#cb51-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-167"><a href="#cb51-167" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Created realistic business dataset:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-168"><a href="#cb51-168" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sales transactions:"</span>, <span class="fu">nrow</span>(sales_raw), <span class="st">"rows</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-169"><a href="#cb51-169" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unique customers:"</span>, <span class="fu">n_distinct</span>(sales_raw<span class="sc">$</span>customer_id), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-170"><a href="#cb51-170" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Date range:"</span>, <span class="fu">as.character</span>(<span class="fu">min</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"to"</span>, <span class="fu">as.character</span>(<span class="fu">max</span>(sales_raw<span class="sc">$</span>order_date)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-171"><a href="#cb51-171" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total revenue: $"</span>, <span class="fu">format</span>(<span class="fu">sum</span>(sales_raw<span class="sc">$</span>net_amount), <span class="at">big.mark =</span> <span class="st">","</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
 <span id="cb51-172"><a href="#cb51-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-173"><a href="#cb51-173" aria-hidden="true" tabindex="-1"></a>This module is organized into five comprehensive sections:</span>
-<span id="cb51-174"><a href="#cb51-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-175"><a href="#cb51-175" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**[Filtering and Selecting](filtering-selecting.qmd)**: Master row and column selection</span>
-<span id="cb51-176"><a href="#cb51-176" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**[Mutating and Arranging](mutating-arranging.qmd)**: Create variables and sort data</span>
-<span id="cb51-177"><a href="#cb51-177" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**[Grouping and Summarizing](grouping-summarizing.qmd)**: Aggregate data by groups</span>
-<span id="cb51-178"><a href="#cb51-178" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**[Joining Data](joining-data.qmd)**: Combine multiple tables</span>
-<span id="cb51-179"><a href="#cb51-179" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**[Advanced Techniques](advanced-techniques.qmd)**: Programming and optimization</span>
+<span id="cb51-173"><a href="#cb51-173" aria-hidden="true" tabindex="-1"></a><span class="co"># Show data quality issues</span></span>
+<span id="cb51-174"><a href="#cb51-174" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Data quality issues to address:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-175"><a href="#cb51-175" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing sales reps:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>sales_rep)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-176"><a href="#cb51-176" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Missing discounts:"</span>, <span class="fu">sum</span>(<span class="fu">is.na</span>(sales_raw<span class="sc">$</span>discount_pct)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-177"><a href="#cb51-177" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Suspicious high prices (&gt;$500):"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>unit_price <span class="sc">&gt;</span> <span class="dv">500</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-178"><a href="#cb51-178" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Zero quantities:"</span>, <span class="fu">sum</span>(sales_raw<span class="sc">$</span>quantity <span class="sc">==</span> <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-179"><a href="#cb51-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb51-180"><a href="#cb51-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-181"><a href="#cb51-181" aria-hidden="true" tabindex="-1"></a>Each section includes:</span>
-<span id="cb51-182"><a href="#cb51-182" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Core concepts with clear explanations</span>
-<span id="cb51-183"><a href="#cb51-183" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Practical examples using real business scenarios</span>
-<span id="cb51-184"><a href="#cb51-184" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Common patterns and best practices</span>
-<span id="cb51-185"><a href="#cb51-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Performance tips and troubleshooting</span>
-<span id="cb51-186"><a href="#cb51-186" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Hands-on exercises</span>
-<span id="cb51-187"><a href="#cb51-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-188"><a href="#cb51-188" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Power of Pipes</span></span>
-<span id="cb51-189"><a href="#cb51-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-190"><a href="#cb51-190" aria-hidden="true" tabindex="-1"></a>Before diving in, let's appreciate the elegance of dplyr's pipe-friendly design:</span>
-<span id="cb51-191"><a href="#cb51-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-194"><a href="#cb51-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb51-195"><a href="#cb51-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pipe-power</span></span>
-<span id="cb51-196"><a href="#cb51-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-197"><a href="#cb51-197" aria-hidden="true" tabindex="-1"></a><span class="co"># Without pipes (nested and hard to read)</span></span>
-<span id="cb51-198"><a href="#cb51-198" aria-hidden="true" tabindex="-1"></a>result_nested <span class="ot">&lt;-</span> <span class="fu">arrange</span>(</span>
-<span id="cb51-199"><a href="#cb51-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb51-200"><a href="#cb51-200" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(</span>
-<span id="cb51-201"><a href="#cb51-201" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(sales_raw, <span class="sc">!</span><span class="fu">is.na</span>(sales_rep)),</span>
-<span id="cb51-202"><a href="#cb51-202" aria-hidden="true" tabindex="-1"></a>      region</span>
-<span id="cb51-203"><a href="#cb51-203" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb51-204"><a href="#cb51-204" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_sales =</span> <span class="fu">sum</span>(net_amount),</span>
-<span id="cb51-205"><a href="#cb51-205" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_order =</span> <span class="fu">mean</span>(net_amount),</span>
-<span id="cb51-206"><a href="#cb51-206" aria-hidden="true" tabindex="-1"></a>    <span class="at">order_count =</span> <span class="fu">n</span>()</span>
-<span id="cb51-207"><a href="#cb51-207" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb51-208"><a href="#cb51-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">desc</span>(total_sales)</span>
-<span id="cb51-209"><a href="#cb51-209" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-210"><a href="#cb51-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-211"><a href="#cb51-211" aria-hidden="true" tabindex="-1"></a><span class="co"># With pipes (readable and intuitive)</span></span>
-<span id="cb51-212"><a href="#cb51-212" aria-hidden="true" tabindex="-1"></a>result_piped <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
-<span id="cb51-213"><a href="#cb51-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(sales_rep)) <span class="sc">%&gt;%</span></span>
-<span id="cb51-214"><a href="#cb51-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(region) <span class="sc">%&gt;%</span></span>
-<span id="cb51-215"><a href="#cb51-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-181"><a href="#cb51-181" aria-hidden="true" tabindex="-1"></a>This dataset represents the kind of messy, real-world data you'll encounter in business. Throughout this module, we'll learn how to clean, transform, and analyze it using dplyr's powerful tools.</span>
+<span id="cb51-182"><a href="#cb51-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-183"><a href="#cb51-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Module Structure</span></span>
+<span id="cb51-184"><a href="#cb51-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-185"><a href="#cb51-185" aria-hidden="true" tabindex="-1"></a>This module is organized into five comprehensive sections:</span>
+<span id="cb51-186"><a href="#cb51-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-187"><a href="#cb51-187" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**[Filtering and Selecting](filtering-selecting.qmd)**: Master row and column selection</span>
+<span id="cb51-188"><a href="#cb51-188" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**[Mutating and Arranging](mutating-arranging.qmd)**: Create variables and sort data</span>
+<span id="cb51-189"><a href="#cb51-189" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**[Grouping and Summarizing](grouping-summarizing.qmd)**: Aggregate data by groups</span>
+<span id="cb51-190"><a href="#cb51-190" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**[Joining Data](joining-data.qmd)**: Combine multiple tables</span>
+<span id="cb51-191"><a href="#cb51-191" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**[Advanced Techniques](advanced-techniques.qmd)**: Programming and optimization</span>
+<span id="cb51-192"><a href="#cb51-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-193"><a href="#cb51-193" aria-hidden="true" tabindex="-1"></a>Each section includes:</span>
+<span id="cb51-194"><a href="#cb51-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Core concepts with clear explanations</span>
+<span id="cb51-195"><a href="#cb51-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Practical examples using real business scenarios</span>
+<span id="cb51-196"><a href="#cb51-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Common patterns and best practices</span>
+<span id="cb51-197"><a href="#cb51-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Performance tips and troubleshooting</span>
+<span id="cb51-198"><a href="#cb51-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Hands-on exercises</span>
+<span id="cb51-199"><a href="#cb51-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-200"><a href="#cb51-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Power of Pipes</span></span>
+<span id="cb51-201"><a href="#cb51-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-202"><a href="#cb51-202" aria-hidden="true" tabindex="-1"></a>Before diving in, let's appreciate the elegance of dplyr's pipe-friendly design:</span>
+<span id="cb51-203"><a href="#cb51-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-206"><a href="#cb51-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb51-207"><a href="#cb51-207" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pipe-power</span></span>
+<span id="cb51-208"><a href="#cb51-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-209"><a href="#cb51-209" aria-hidden="true" tabindex="-1"></a><span class="co"># Without pipes (nested and hard to read)</span></span>
+<span id="cb51-210"><a href="#cb51-210" aria-hidden="true" tabindex="-1"></a>result_nested <span class="ot">&lt;-</span> <span class="fu">arrange</span>(</span>
+<span id="cb51-211"><a href="#cb51-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-212"><a href="#cb51-212" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(</span>
+<span id="cb51-213"><a href="#cb51-213" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(sales_raw, <span class="sc">!</span><span class="fu">is.na</span>(sales_rep)),</span>
+<span id="cb51-214"><a href="#cb51-214" aria-hidden="true" tabindex="-1"></a>      region</span>
+<span id="cb51-215"><a href="#cb51-215" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb51-216"><a href="#cb51-216" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_sales =</span> <span class="fu">sum</span>(net_amount),</span>
 <span id="cb51-217"><a href="#cb51-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_order =</span> <span class="fu">mean</span>(net_amount),</span>
-<span id="cb51-218"><a href="#cb51-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">order_count =</span> <span class="fu">n</span>(),</span>
-<span id="cb51-219"><a href="#cb51-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb51-220"><a href="#cb51-220" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb51-221"><a href="#cb51-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_sales))</span>
+<span id="cb51-218"><a href="#cb51-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">order_count =</span> <span class="fu">n</span>()</span>
+<span id="cb51-219"><a href="#cb51-219" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb51-220"><a href="#cb51-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">desc</span>(total_sales)</span>
+<span id="cb51-221"><a href="#cb51-221" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb51-222"><a href="#cb51-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-223"><a href="#cb51-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Both produce the same result</span></span>
-<span id="cb51-224"><a href="#cb51-224" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(result_nested, result_piped)</span>
-<span id="cb51-225"><a href="#cb51-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-226"><a href="#cb51-226" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the clean, readable result</span></span>
-<span id="cb51-227"><a href="#cb51-227" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Regional sales summary:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-228"><a href="#cb51-228" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_piped)</span>
-<span id="cb51-229"><a href="#cb51-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-230"><a href="#cb51-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-231"><a href="#cb51-231" aria-hidden="true" tabindex="-1"></a>The pipe makes data analysis feel like describing what you want to do in plain English!</span>
-<span id="cb51-232"><a href="#cb51-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-233"><a href="#cb51-233" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Motivating Example</span></span>
+<span id="cb51-223"><a href="#cb51-223" aria-hidden="true" tabindex="-1"></a><span class="co"># With pipes (readable and intuitive)</span></span>
+<span id="cb51-224"><a href="#cb51-224" aria-hidden="true" tabindex="-1"></a>result_piped <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
+<span id="cb51-225"><a href="#cb51-225" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(sales_rep)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-226"><a href="#cb51-226" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(region) <span class="sc">%&gt;%</span></span>
+<span id="cb51-227"><a href="#cb51-227" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-228"><a href="#cb51-228" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_sales =</span> <span class="fu">sum</span>(net_amount),</span>
+<span id="cb51-229"><a href="#cb51-229" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_order =</span> <span class="fu">mean</span>(net_amount),</span>
+<span id="cb51-230"><a href="#cb51-230" aria-hidden="true" tabindex="-1"></a>    <span class="at">order_count =</span> <span class="fu">n</span>(),</span>
+<span id="cb51-231"><a href="#cb51-231" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb51-232"><a href="#cb51-232" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-233"><a href="#cb51-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_sales))</span>
 <span id="cb51-234"><a href="#cb51-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-235"><a href="#cb51-235" aria-hidden="true" tabindex="-1"></a>Here's a taste of what you'll be able to do by the end of this module:</span>
-<span id="cb51-236"><a href="#cb51-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-239"><a href="#cb51-239" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb51-240"><a href="#cb51-240" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: motivating-example</span></span>
-<span id="cb51-241"><a href="#cb51-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-242"><a href="#cb51-242" aria-hidden="true" tabindex="-1"></a><span class="co"># Complex business analysis in a single, readable pipeline</span></span>
-<span id="cb51-243"><a href="#cb51-243" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
-<span id="cb51-244"><a href="#cb51-244" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Data cleaning</span></span>
-<span id="cb51-245"><a href="#cb51-245" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb51-246"><a href="#cb51-246" aria-hidden="true" tabindex="-1"></a>    quantity <span class="sc">&gt;</span> <span class="dv">0</span>,                    <span class="co"># Remove invalid orders</span></span>
-<span id="cb51-247"><a href="#cb51-247" aria-hidden="true" tabindex="-1"></a>    unit_price <span class="sc">&lt;=</span> <span class="dv">500</span>,               <span class="co"># Remove pricing errors</span></span>
-<span id="cb51-248"><a href="#cb51-248" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(sales_rep)                <span class="co"># Only orders with assigned reps</span></span>
-<span id="cb51-249"><a href="#cb51-249" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb51-250"><a href="#cb51-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-251"><a href="#cb51-251" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join with customer and product data</span></span>
-<span id="cb51-252"><a href="#cb51-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(customers, <span class="at">by =</span> <span class="st">"customer_id"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb51-253"><a href="#cb51-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(products, <span class="at">by =</span> <span class="st">"product_id"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb51-254"><a href="#cb51-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-255"><a href="#cb51-255" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create time-based variables</span></span>
-<span id="cb51-256"><a href="#cb51-256" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb51-257"><a href="#cb51-257" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">paste0</span>(<span class="fu">year</span>(order_date), <span class="st">"-Q"</span>, <span class="fu">quarter</span>(order_date)),</span>
-<span id="cb51-258"><a href="#cb51-258" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit =</span> net_amount <span class="sc">-</span> (quantity <span class="sc">*</span> cost),</span>
-<span id="cb51-259"><a href="#cb51-259" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit_margin =</span> profit <span class="sc">/</span> net_amount</span>
-<span id="cb51-260"><a href="#cb51-260" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb51-261"><a href="#cb51-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-262"><a href="#cb51-262" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by multiple dimensions</span></span>
-<span id="cb51-263"><a href="#cb51-263" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter, region, customer_type) <span class="sc">%&gt;%</span></span>
-<span id="cb51-264"><a href="#cb51-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-265"><a href="#cb51-265" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate comprehensive metrics</span></span>
-<span id="cb51-266"><a href="#cb51-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb51-267"><a href="#cb51-267" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Revenue metrics</span></span>
-<span id="cb51-268"><a href="#cb51-268" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_revenue =</span> <span class="fu">sum</span>(net_amount),</span>
-<span id="cb51-269"><a href="#cb51-269" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_profit =</span> <span class="fu">sum</span>(profit),</span>
-<span id="cb51-270"><a href="#cb51-270" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_profit_margin =</span> <span class="fu">mean</span>(profit_margin, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb51-271"><a href="#cb51-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-272"><a href="#cb51-272" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Volume metrics</span></span>
-<span id="cb51-273"><a href="#cb51-273" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_orders =</span> <span class="fu">n</span>(),</span>
-<span id="cb51-274"><a href="#cb51-274" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_units =</span> <span class="fu">sum</span>(quantity),</span>
-<span id="cb51-275"><a href="#cb51-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-276"><a href="#cb51-276" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Customer metrics</span></span>
-<span id="cb51-277"><a href="#cb51-277" aria-hidden="true" tabindex="-1"></a>    <span class="at">unique_customers =</span> <span class="fu">n_distinct</span>(customer_id),</span>
-<span id="cb51-278"><a href="#cb51-278" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_order_value =</span> <span class="fu">mean</span>(net_amount),</span>
-<span id="cb51-279"><a href="#cb51-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-280"><a href="#cb51-280" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb51-281"><a href="#cb51-281" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb51-282"><a href="#cb51-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-283"><a href="#cb51-283" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add rankings and comparisons</span></span>
-<span id="cb51-284"><a href="#cb51-284" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
-<span id="cb51-285"><a href="#cb51-285" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb51-286"><a href="#cb51-286" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(total_revenue)),</span>
-<span id="cb51-287"><a href="#cb51-287" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_pct_of_total =</span> total_revenue <span class="sc">/</span> <span class="fu">sum</span>(total_revenue) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb51-288"><a href="#cb51-288" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb51-289"><a href="#cb51-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb51-290"><a href="#cb51-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-291"><a href="#cb51-291" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Final sorting</span></span>
-<span id="cb51-292"><a href="#cb51-292" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(quarter, revenue_rank)</span>
-<span id="cb51-293"><a href="#cb51-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-294"><a href="#cb51-294" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Quarterly performance analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb51-295"><a href="#cb51-295" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="sc">%&gt;%</span></span>
-<span id="cb51-296"><a href="#cb51-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(quarter <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2024-Q1"</span>, <span class="st">"2024-Q2"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb51-297"><a href="#cb51-297" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(quarter, region, customer_type, total_revenue, revenue_rank, revenue_pct_of_total) <span class="sc">%&gt;%</span></span>
-<span id="cb51-298"><a href="#cb51-298" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span>
-<span id="cb51-299"><a href="#cb51-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-300"><a href="#cb51-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-301"><a href="#cb51-301" aria-hidden="true" tabindex="-1"></a>This analysis combines filtering, joining, grouping, summarizing, and ranking - all in a single, readable pipeline. By the end of this module, this kind of complex analysis will feel natural and intuitive.</span>
+<span id="cb51-235"><a href="#cb51-235" aria-hidden="true" tabindex="-1"></a><span class="co"># Both produce the same result</span></span>
+<span id="cb51-236"><a href="#cb51-236" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(result_nested, result_piped)</span>
+<span id="cb51-237"><a href="#cb51-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-238"><a href="#cb51-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the clean, readable result</span></span>
+<span id="cb51-239"><a href="#cb51-239" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Regional sales summary:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-240"><a href="#cb51-240" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_piped)</span>
+<span id="cb51-241"><a href="#cb51-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb51-242"><a href="#cb51-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-243"><a href="#cb51-243" aria-hidden="true" tabindex="-1"></a>The pipe makes data analysis feel like describing what you want to do in plain English!</span>
+<span id="cb51-244"><a href="#cb51-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-245"><a href="#cb51-245" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Motivating Example</span></span>
+<span id="cb51-246"><a href="#cb51-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-247"><a href="#cb51-247" aria-hidden="true" tabindex="-1"></a>Here's a taste of what you'll be able to do by the end of this module:</span>
+<span id="cb51-248"><a href="#cb51-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-251"><a href="#cb51-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb51-252"><a href="#cb51-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: motivating-example</span></span>
+<span id="cb51-253"><a href="#cb51-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-254"><a href="#cb51-254" aria-hidden="true" tabindex="-1"></a><span class="co"># Complex business analysis in a single, readable pipeline</span></span>
+<span id="cb51-255"><a href="#cb51-255" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="ot">&lt;-</span> sales_raw <span class="sc">%&gt;%</span></span>
+<span id="cb51-256"><a href="#cb51-256" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Data cleaning</span></span>
+<span id="cb51-257"><a href="#cb51-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb51-258"><a href="#cb51-258" aria-hidden="true" tabindex="-1"></a>    quantity <span class="sc">&gt;</span> <span class="dv">0</span>,                    <span class="co"># Remove invalid orders</span></span>
+<span id="cb51-259"><a href="#cb51-259" aria-hidden="true" tabindex="-1"></a>    unit_price <span class="sc">&lt;=</span> <span class="dv">500</span>,               <span class="co"># Remove pricing errors</span></span>
+<span id="cb51-260"><a href="#cb51-260" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(sales_rep)                <span class="co"># Only orders with assigned reps</span></span>
+<span id="cb51-261"><a href="#cb51-261" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-262"><a href="#cb51-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-263"><a href="#cb51-263" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join with customer and product data</span></span>
+<span id="cb51-264"><a href="#cb51-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(customers, <span class="at">by =</span> <span class="st">"customer_id"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-265"><a href="#cb51-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(products, <span class="at">by =</span> <span class="st">"product_id"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-266"><a href="#cb51-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-267"><a href="#cb51-267" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create time-based variables</span></span>
+<span id="cb51-268"><a href="#cb51-268" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb51-269"><a href="#cb51-269" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">paste0</span>(<span class="fu">year</span>(order_date), <span class="st">"-Q"</span>, <span class="fu">quarter</span>(order_date)),</span>
+<span id="cb51-270"><a href="#cb51-270" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit =</span> net_amount <span class="sc">-</span> (quantity <span class="sc">*</span> cost),</span>
+<span id="cb51-271"><a href="#cb51-271" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit_margin =</span> profit <span class="sc">/</span> net_amount</span>
+<span id="cb51-272"><a href="#cb51-272" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-273"><a href="#cb51-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-274"><a href="#cb51-274" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group by multiple dimensions</span></span>
+<span id="cb51-275"><a href="#cb51-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter, region, customer_type) <span class="sc">%&gt;%</span></span>
+<span id="cb51-276"><a href="#cb51-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-277"><a href="#cb51-277" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate comprehensive metrics</span></span>
+<span id="cb51-278"><a href="#cb51-278" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-279"><a href="#cb51-279" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Revenue metrics</span></span>
+<span id="cb51-280"><a href="#cb51-280" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_revenue =</span> <span class="fu">sum</span>(net_amount),</span>
+<span id="cb51-281"><a href="#cb51-281" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_profit =</span> <span class="fu">sum</span>(profit),</span>
+<span id="cb51-282"><a href="#cb51-282" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_profit_margin =</span> <span class="fu">mean</span>(profit_margin, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-283"><a href="#cb51-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-284"><a href="#cb51-284" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Volume metrics</span></span>
+<span id="cb51-285"><a href="#cb51-285" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_orders =</span> <span class="fu">n</span>(),</span>
+<span id="cb51-286"><a href="#cb51-286" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_units =</span> <span class="fu">sum</span>(quantity),</span>
+<span id="cb51-287"><a href="#cb51-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-288"><a href="#cb51-288" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Customer metrics</span></span>
+<span id="cb51-289"><a href="#cb51-289" aria-hidden="true" tabindex="-1"></a>    <span class="at">unique_customers =</span> <span class="fu">n_distinct</span>(customer_id),</span>
+<span id="cb51-290"><a href="#cb51-290" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_order_value =</span> <span class="fu">mean</span>(net_amount),</span>
+<span id="cb51-291"><a href="#cb51-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-292"><a href="#cb51-292" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb51-293"><a href="#cb51-293" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-294"><a href="#cb51-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-295"><a href="#cb51-295" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add rankings and comparisons</span></span>
+<span id="cb51-296"><a href="#cb51-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
+<span id="cb51-297"><a href="#cb51-297" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb51-298"><a href="#cb51-298" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(total_revenue)),</span>
+<span id="cb51-299"><a href="#cb51-299" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_pct_of_total =</span> total_revenue <span class="sc">/</span> <span class="fu">sum</span>(total_revenue) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb51-300"><a href="#cb51-300" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-301"><a href="#cb51-301" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb51-302"><a href="#cb51-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-303"><a href="#cb51-303" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prerequisites</span></span>
-<span id="cb51-304"><a href="#cb51-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-305"><a href="#cb51-305" aria-hidden="true" tabindex="-1"></a>Before starting this module, make sure you have:</span>
-<span id="cb51-306"><a href="#cb51-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-307"><a href="#cb51-307" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Completed Module 3 (Tidyverse Introduction) and Module 4 (Data Types)</span>
-<span id="cb51-308"><a href="#cb51-308" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Understanding of the pipe operator (<span class="in">`%&gt;%`</span>)</span>
-<span id="cb51-309"><a href="#cb51-309" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Basic knowledge of tibbles and data frames</span>
-<span id="cb51-310"><a href="#cb51-310" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Familiarity with tidyverse loading and basic functions</span>
-<span id="cb51-311"><a href="#cb51-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-312"><a href="#cb51-312" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
-<span id="cb51-313"><a href="#cb51-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-314"><a href="#cb51-314" aria-hidden="true" tabindex="-1"></a>Ready to become a data wrangling expert? Let's start with the foundation: **[Filtering and Selecting](filtering-selecting.qmd)**</span>
-<span id="cb51-315"><a href="#cb51-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-316"><a href="#cb51-316" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
-<span id="cb51-317"><a href="#cb51-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-318"><a href="#cb51-318" aria-hidden="true" tabindex="-1"></a>Data wrangling with dplyr is both an art and a science. The key principles to remember:</span>
-<span id="cb51-319"><a href="#cb51-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-320"><a href="#cb51-320" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Think in verbs**: Each dplyr function does one thing well</span>
-<span id="cb51-321"><a href="#cb51-321" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chain operations**: Use pipes to create readable data pipelines</span>
-<span id="cb51-322"><a href="#cb51-322" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Be explicit**: Clear, descriptive code is better than clever shortcuts</span>
-<span id="cb51-323"><a href="#cb51-323" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Test incrementally**: Build complex operations step by step</span>
-<span id="cb51-324"><a href="#cb51-324" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Handle missing data**: Always consider how NAs affect your analysis</span>
+<span id="cb51-303"><a href="#cb51-303" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Final sorting</span></span>
+<span id="cb51-304"><a href="#cb51-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(quarter, revenue_rank)</span>
+<span id="cb51-305"><a href="#cb51-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-306"><a href="#cb51-306" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Quarterly performance analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-307"><a href="#cb51-307" aria-hidden="true" tabindex="-1"></a>quarterly_performance <span class="sc">%&gt;%</span></span>
+<span id="cb51-308"><a href="#cb51-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(quarter <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2024-Q1"</span>, <span class="st">"2024-Q2"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb51-309"><a href="#cb51-309" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(quarter, region, customer_type, total_revenue, revenue_rank, revenue_pct_of_total) <span class="sc">%&gt;%</span></span>
+<span id="cb51-310"><a href="#cb51-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span>
+<span id="cb51-311"><a href="#cb51-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb51-312"><a href="#cb51-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-313"><a href="#cb51-313" aria-hidden="true" tabindex="-1"></a>This analysis combines filtering, joining, grouping, summarizing, and ranking - all in a single, readable pipeline. By the end of this module, this kind of complex analysis will feel natural and intuitive.</span>
+<span id="cb51-314"><a href="#cb51-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-315"><a href="#cb51-315" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prerequisites</span></span>
+<span id="cb51-316"><a href="#cb51-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-317"><a href="#cb51-317" aria-hidden="true" tabindex="-1"></a>Before starting this module, make sure you have:</span>
+<span id="cb51-318"><a href="#cb51-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-319"><a href="#cb51-319" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Completed Module 3 (Tidyverse Introduction) and Module 4 (Data Types)</span>
+<span id="cb51-320"><a href="#cb51-320" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Understanding of the pipe operator (<span class="in">`%&gt;%`</span>)</span>
+<span id="cb51-321"><a href="#cb51-321" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Basic knowledge of tibbles and data frames</span>
+<span id="cb51-322"><a href="#cb51-322" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Familiarity with tidyverse loading and basic functions</span>
+<span id="cb51-323"><a href="#cb51-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-324"><a href="#cb51-324" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
 <span id="cb51-325"><a href="#cb51-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-326"><a href="#cb51-326" aria-hidden="true" tabindex="-1"></a>dplyr transforms messy, real-world data into clean, analysis-ready datasets. With these skills, you'll be able to tackle any data challenge with confidence and clarity.</span>
+<span id="cb51-326"><a href="#cb51-326" aria-hidden="true" tabindex="-1"></a>Ready to become a data wrangling expert? Let's start with the foundation: **[Filtering and Selecting](filtering-selecting.qmd)**</span>
 <span id="cb51-327"><a href="#cb51-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-328"><a href="#cb51-328" aria-hidden="true" tabindex="-1"></a>Let's begin your journey to dplyr mastery! 🚀</span>
-</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb51-328"><a href="#cb51-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb51-329"><a href="#cb51-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-330"><a href="#cb51-330" aria-hidden="true" tabindex="-1"></a>Data wrangling with dplyr is both an art and a science. The key principles to remember:</span>
+<span id="cb51-331"><a href="#cb51-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-332"><a href="#cb51-332" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Think in verbs**: Each dplyr function does one thing well</span>
+<span id="cb51-333"><a href="#cb51-333" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chain operations**: Use pipes to create readable data pipelines</span>
+<span id="cb51-334"><a href="#cb51-334" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Be explicit**: Clear, descriptive code is better than clever shortcuts</span>
+<span id="cb51-335"><a href="#cb51-335" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Test incrementally**: Build complex operations step by step</span>
+<span id="cb51-336"><a href="#cb51-336" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Handle missing data**: Always consider how NAs affect your analysis</span>
+<span id="cb51-337"><a href="#cb51-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-338"><a href="#cb51-338" aria-hidden="true" tabindex="-1"></a>dplyr transforms messy, real-world data into clean, analysis-ready datasets. With these skills, you'll be able to tackle any data challenge with confidence and clarity.</span>
+<span id="cb51-339"><a href="#cb51-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-340"><a href="#cb51-340" aria-hidden="true" tabindex="-1"></a>Let's begin your journey to dplyr mastery! 🚀</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 Simone Santoni</p>
+<p>© 2026 Simone Santoni</p>
 </div>   
     <div class="nav-footer-center">
-<p><a href="https://github.com/simoneSantoni/intro-to-R-IND215">IND215 - Introduction to R</a></p>
+<p><a href="https://github.com/simoneSantoni/intro-to-R-IND218">IND218 - Introduction to R</a></p>
 </div>
     <div class="nav-footer-right">
 <p>Made with <a href="https://quarto.org/">Quarto</a></p>

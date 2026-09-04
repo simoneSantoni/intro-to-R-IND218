@@ -14,6 +14,21 @@ format:
 
 Tidy data is a consistent way to organize data that makes analysis easier and more intuitive. The concept, formalized by Hadley Wickham, provides a standard way to structure datasets that works seamlessly with the tidyverse ecosystem.
 
+::: {.callout-important title="Begin with the observational unit"}
+Do not tidy by appearance alone. Ask what one row should represent: a customer, an order, an order line, or a customer-month? Those are different units and should usually be different tables. Mixing them creates double-counting—for example, repeating an order total on every order line inflates revenue when summed.
+:::
+
+Use a compact “data contract” before transforming an important source:
+
+| Question | Example answer |
+|---|---|
+| What does one row represent? | One product line within an order |
+| Which columns identify it? | `order_id` and `line_number` |
+| Which fields may be missing? | `promotion_code`, but not `quantity` |
+| Which totals must reconcile? | Line revenue must sum to the finance-system extract |
+
+This contract turns tidying into a testable design decision rather than a cosmetic cleanup.
+
 ```{r}
 #| label: setup
 #| message: false

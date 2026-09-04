@@ -37,6 +37,32 @@ $sidebar-hl: #ffe6e6;
   background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
 }
 
+.course-path {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.course-path-card {
+  border: 1px solid #64748b;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+
+  h3 { margin-top: 0; }
+}
+
+@media (max-width: 768px) {
+  .hero-banner { padding: 2rem 1rem; }
+  .hero-banner h1 { font-size: 2rem; }
+  .course-path { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .week-card { transition: none; }
+  .week-card:hover { transform: none; }
+}
+
 .viz-principle {
   background-color: #1e2a3a;
   border-left-color: #5dade2;

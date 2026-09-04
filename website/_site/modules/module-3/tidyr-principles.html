@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.10.18">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="IND218">
-<meta name="dcterms.date" content="2026-09-03">
+<meta name="dcterms.date" content="2026-09-04">
 
 <title>Data Tidying Principles with tidyr – IND218 - Introduction to R</title>
 <style>
@@ -86,9 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-9a476c185fb7076297273cdae135352e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-cb0cd53d62cf798e704710f72f45ab99.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -640,7 +640,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#separating-and-uniting-columns" id="toc-separating-and-uniting-columns" class="nav-link" data-scroll-target="#separating-and-uniting-columns">Separating and Uniting Columns</a>
   <ul class="collapse">
-  <li><a href="#separate-split-one-column-into-multiple" id="toc-separate-split-one-column-into-multiple" class="nav-link" data-scroll-target="#separate-split-one-column-into-multiple">separate(): Split One Column into Multiple</a></li>
+  <li><a href="#separate_wider_delim-split-one-column-into-multiple" id="toc-separate_wider_delim-split-one-column-into-multiple" class="nav-link" data-scroll-target="#separate_wider_delim-split-one-column-into-multiple"><code>separate_wider_delim()</code>: Split One Column into Multiple</a></li>
   <li><a href="#separate_rows-split-and-expand-rows" id="toc-separate_rows-split-and-expand-rows" class="nav-link" data-scroll-target="#separate_rows-split-and-expand-rows">separate_rows(): Split and Expand Rows</a></li>
   <li><a href="#unite-combine-multiple-columns" id="toc-unite-combine-multiple-columns" class="nav-link" data-scroll-target="#unite-combine-multiple-columns">unite(): Combine Multiple Columns</a></li>
   </ul></li>
@@ -706,7 +706,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 3, 2026</p>
+      <p class="date">4 September 2026</p>
     </div>
   </div>
   
@@ -979,8 +979,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="separating-and-uniting-columns" class="level2">
 <h2 class="anchored" data-anchor-id="separating-and-uniting-columns">Separating and Uniting Columns</h2>
-<section id="separate-split-one-column-into-multiple" class="level3">
-<h3 class="anchored" data-anchor-id="separate-split-one-column-into-multiple">separate(): Split One Column into Multiple</h3>
+<section id="separate_wider_delim-split-one-column-into-multiple" class="level3">
+<h3 class="anchored" data-anchor-id="separate_wider_delim-split-one-column-into-multiple"><code>separate_wider_delim()</code>: Split One Column into Multiple</h3>
+<p>Use <code>separate_wider_delim()</code> when one column contains several variables separated by a known delimiter. Supply the source column, the new column names, and the delimiter. The function is the modern replacement for <code>separate()</code> and reports more informative errors when a value has too many or too few pieces.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with combined information</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
@@ -1000,11 +1001,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate into multiple columns</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>separated_data <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(employee, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"first"</span>, <span class="st">"last"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(dept_role, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"department"</span>, <span class="st">"role"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(date_time, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"time"</span>), <span class="at">sep =</span> <span class="st">"_"</span>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(separated_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(employee, <span class="at">delim =</span> <span class="st">"_"</span>, <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"first"</span>, <span class="st">"last"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    dept_role,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">"_"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"department"</span>, <span class="st">"role"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(date_time, <span class="at">delim =</span> <span class="st">"_"</span>, <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"time"</span>))</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(separated_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 6
   first last    department role      date       time 
@@ -1466,19 +1471,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean and tidy the data</span></span>
 <span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a>survey_clean <span class="ot">&lt;-</span> survey_raw <span class="sc">%&gt;%</span></span>
 <span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Separate demographics</span></span>
-<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(demographics, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"age_group"</span>, <span class="st">"gender"</span>, <span class="st">"location"</span>),</span>
-<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a>          <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb70-20"><a href="#cb70-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot questions longer</span></span>
-<span id="cb70-21"><a href="#cb70-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb70-22"><a href="#cb70-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"q"</span>),</span>
-<span id="cb70-23"><a href="#cb70-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"question"</span>, <span class="st">"year"</span>),</span>
-<span id="cb70-24"><a href="#cb70-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
-<span id="cb70-25"><a href="#cb70-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"rating"</span></span>
-<span id="cb70-26"><a href="#cb70-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb70-27"><a href="#cb70-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert year to integer</span></span>
-<span id="cb70-28"><a href="#cb70-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.integer</span>(year))</span>
-<span id="cb70-29"><a href="#cb70-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-30"><a href="#cb70-30" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(survey_clean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb70-18"><a href="#cb70-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb70-19"><a href="#cb70-19" aria-hidden="true" tabindex="-1"></a>    demographics,</span>
+<span id="cb70-20"><a href="#cb70-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">","</span>,</span>
+<span id="cb70-21"><a href="#cb70-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"age_group"</span>, <span class="st">"gender"</span>, <span class="st">"location"</span>)</span>
+<span id="cb70-22"><a href="#cb70-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb70-23"><a href="#cb70-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot questions longer</span></span>
+<span id="cb70-24"><a href="#cb70-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb70-25"><a href="#cb70-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"q"</span>),</span>
+<span id="cb70-26"><a href="#cb70-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"question"</span>, <span class="st">"year"</span>),</span>
+<span id="cb70-27"><a href="#cb70-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb70-28"><a href="#cb70-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"rating"</span></span>
+<span id="cb70-29"><a href="#cb70-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb70-30"><a href="#cb70-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert year to integer</span></span>
+<span id="cb70-31"><a href="#cb70-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.integer</span>(year))</span>
+<span id="cb70-32"><a href="#cb70-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-33"><a href="#cb70-33" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(survey_clean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 7
    respondent_id age_group gender location question  year rating
@@ -1743,10 +1751,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb84-15"><a href="#cb84-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"sales"</span></span>
 <span id="cb84-16"><a href="#cb84-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb84-17"><a href="#cb84-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Separate year from product code</span></span>
-<span id="cb84-18"><a href="#cb84-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(</span>
+<span id="cb84-18"><a href="#cb84-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
 <span id="cb84-19"><a href="#cb84-19" aria-hidden="true" tabindex="-1"></a>    product_code,</span>
-<span id="cb84-20"><a href="#cb84-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"category"</span>, <span class="st">"year"</span>),</span>
-<span id="cb84-21"><a href="#cb84-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">"-"</span></span>
+<span id="cb84-20"><a href="#cb84-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">"-"</span>,</span>
+<span id="cb84-21"><a href="#cb84-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"category"</span>, <span class="st">"year"</span>)</span>
 <span id="cb84-22"><a href="#cb84-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb84-23"><a href="#cb84-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Fill missing sales with 0</span></span>
 <span id="cb84-24"><a href="#cb84-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>))</span>
@@ -1813,14 +1821,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>clean_ids <span class="ot">&lt;-</span> messy_ids <span class="sc">%&gt;%</span></span>
-<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(raw_id, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"country"</span>, <span class="st">"year"</span>, <span class="st">"quarter"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year),</span>
-<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">factor</span>(quarter, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span>))</span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>    raw_id,</span>
+<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">"_"</span>,</span>
+<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"country"</span>, <span class="st">"year"</span>, <span class="st">"quarter"</span>)</span>
 <span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(period, year, quarter, <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(clean_ids)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year),</span>
+<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">factor</span>(quarter, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span>))</span>
+<span id="cb88-16"><a href="#cb88-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb88-17"><a href="#cb88-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(period, year, quarter, <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb88-18"><a href="#cb88-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-19"><a href="#cb88-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(clean_ids)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 5
   country period   year quarter value
@@ -1854,7 +1866,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>tidyr provides essential tools for data tidying:</p>
 <ul>
 <li><strong><code>pivot_longer()</code>/<code>pivot_wider()</code></strong>: Reshape between wide and long formats</li>
-<li><strong><code>separate()</code>/<code>unite()</code></strong>: Split and combine columns</li>
+<li><strong><code>separate_wider_delim()</code>/<code>unite()</code></strong>: Split and combine columns</li>
 <li><strong><code>complete()</code></strong>: Fill in missing combinations</li>
 <li><strong><code>drop_na()</code>/<code>fill()</code>/<code>replace_na()</code></strong>: Handle missing values</li>
 <li><strong><code>nest()</code>/<code>unnest()</code></strong>: Create and expand list-columns</li>
@@ -2521,569 +2533,585 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb90-187"><a href="#cb90-187" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb90-188"><a href="#cb90-188" aria-hidden="true" tabindex="-1"></a><span class="fu">## Separating and Uniting Columns</span></span>
 <span id="cb90-189"><a href="#cb90-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-190"><a href="#cb90-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### separate(): Split One Column into Multiple</span></span>
+<span id="cb90-190"><a href="#cb90-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### `separate_wider_delim()`: Split One Column into Multiple</span></span>
 <span id="cb90-191"><a href="#cb90-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-194"><a href="#cb90-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-195"><a href="#cb90-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: separate</span></span>
+<span id="cb90-192"><a href="#cb90-192" aria-hidden="true" tabindex="-1"></a>Use <span class="in">`separate_wider_delim()`</span> when one column contains several variables separated</span>
+<span id="cb90-193"><a href="#cb90-193" aria-hidden="true" tabindex="-1"></a>by a known delimiter. Supply the source column, the new column names, and the</span>
+<span id="cb90-194"><a href="#cb90-194" aria-hidden="true" tabindex="-1"></a>delimiter. The function is the modern replacement for <span class="in">`separate()`</span> and reports</span>
+<span id="cb90-195"><a href="#cb90-195" aria-hidden="true" tabindex="-1"></a>more informative errors when a value has too many or too few pieces.</span>
 <span id="cb90-196"><a href="#cb90-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-197"><a href="#cb90-197" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with combined information</span></span>
-<span id="cb90-198"><a href="#cb90-198" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-199"><a href="#cb90-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">employee =</span> <span class="fu">c</span>(<span class="st">"John_Smith"</span>, <span class="st">"Jane_Doe"</span>, <span class="st">"Bob_Johnson"</span>),</span>
-<span id="cb90-200"><a href="#cb90-200" aria-hidden="true" tabindex="-1"></a>  <span class="at">dept_role =</span> <span class="fu">c</span>(<span class="st">"Sales_Manager"</span>, <span class="st">"IT_Developer"</span>, <span class="st">"HR_Director"</span>),</span>
-<span id="cb90-201"><a href="#cb90-201" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_time =</span> <span class="fu">c</span>(<span class="st">"2024-01-15_09:30"</span>, <span class="st">"2024-01-15_10:00"</span>, <span class="st">"2024-01-15_14:30"</span>)</span>
-<span id="cb90-202"><a href="#cb90-202" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-203"><a href="#cb90-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-204"><a href="#cb90-204" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_data)</span>
-<span id="cb90-205"><a href="#cb90-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-206"><a href="#cb90-206" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate into multiple columns</span></span>
-<span id="cb90-207"><a href="#cb90-207" aria-hidden="true" tabindex="-1"></a>separated_data <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-208"><a href="#cb90-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(employee, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"first"</span>, <span class="st">"last"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-209"><a href="#cb90-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(dept_role, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"department"</span>, <span class="st">"role"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-210"><a href="#cb90-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(date_time, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"time"</span>), <span class="at">sep =</span> <span class="st">"_"</span>)</span>
-<span id="cb90-211"><a href="#cb90-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-212"><a href="#cb90-212" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(separated_data)</span>
-<span id="cb90-213"><a href="#cb90-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-214"><a href="#cb90-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-215"><a href="#cb90-215" aria-hidden="true" tabindex="-1"></a><span class="fu">### separate_rows(): Split and Expand Rows</span></span>
-<span id="cb90-216"><a href="#cb90-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-219"><a href="#cb90-219" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-220"><a href="#cb90-220" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: separate-rows</span></span>
-<span id="cb90-221"><a href="#cb90-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-222"><a href="#cb90-222" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with multiple values in cells</span></span>
-<span id="cb90-223"><a href="#cb90-223" aria-hidden="true" tabindex="-1"></a>multi_value_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-224"><a href="#cb90-224" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> <span class="fu">c</span>(<span class="st">"Widget A"</span>, <span class="st">"Widget B"</span>, <span class="st">"Widget C"</span>),</span>
-<span id="cb90-225"><a href="#cb90-225" aria-hidden="true" tabindex="-1"></a>  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"red,blue"</span>, <span class="st">"green,yellow,orange"</span>, <span class="st">"black,white"</span>),</span>
-<span id="cb90-226"><a href="#cb90-226" aria-hidden="true" tabindex="-1"></a>  <span class="at">sizes =</span> <span class="fu">c</span>(<span class="st">"S,M,L"</span>, <span class="st">"M,L"</span>, <span class="st">"S,M,L,XL"</span>)</span>
-<span id="cb90-227"><a href="#cb90-227" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-228"><a href="#cb90-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-229"><a href="#cb90-229" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(multi_value_data)</span>
+<span id="cb90-199"><a href="#cb90-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-200"><a href="#cb90-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: separate</span></span>
+<span id="cb90-201"><a href="#cb90-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-202"><a href="#cb90-202" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with combined information</span></span>
+<span id="cb90-203"><a href="#cb90-203" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-204"><a href="#cb90-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">employee =</span> <span class="fu">c</span>(<span class="st">"John_Smith"</span>, <span class="st">"Jane_Doe"</span>, <span class="st">"Bob_Johnson"</span>),</span>
+<span id="cb90-205"><a href="#cb90-205" aria-hidden="true" tabindex="-1"></a>  <span class="at">dept_role =</span> <span class="fu">c</span>(<span class="st">"Sales_Manager"</span>, <span class="st">"IT_Developer"</span>, <span class="st">"HR_Director"</span>),</span>
+<span id="cb90-206"><a href="#cb90-206" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_time =</span> <span class="fu">c</span>(<span class="st">"2024-01-15_09:30"</span>, <span class="st">"2024-01-15_10:00"</span>, <span class="st">"2024-01-15_14:30"</span>)</span>
+<span id="cb90-207"><a href="#cb90-207" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-208"><a href="#cb90-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-209"><a href="#cb90-209" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_data)</span>
+<span id="cb90-210"><a href="#cb90-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-211"><a href="#cb90-211" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate into multiple columns</span></span>
+<span id="cb90-212"><a href="#cb90-212" aria-hidden="true" tabindex="-1"></a>separated_data <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-213"><a href="#cb90-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(employee, <span class="at">delim =</span> <span class="st">"_"</span>, <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"first"</span>, <span class="st">"last"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb90-214"><a href="#cb90-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb90-215"><a href="#cb90-215" aria-hidden="true" tabindex="-1"></a>    dept_role,</span>
+<span id="cb90-216"><a href="#cb90-216" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">"_"</span>,</span>
+<span id="cb90-217"><a href="#cb90-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"department"</span>, <span class="st">"role"</span>)</span>
+<span id="cb90-218"><a href="#cb90-218" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-219"><a href="#cb90-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(date_time, <span class="at">delim =</span> <span class="st">"_"</span>, <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"time"</span>))</span>
+<span id="cb90-220"><a href="#cb90-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-221"><a href="#cb90-221" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(separated_data)</span>
+<span id="cb90-222"><a href="#cb90-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-223"><a href="#cb90-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-224"><a href="#cb90-224" aria-hidden="true" tabindex="-1"></a><span class="fu">### separate_rows(): Split and Expand Rows</span></span>
+<span id="cb90-225"><a href="#cb90-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-228"><a href="#cb90-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-229"><a href="#cb90-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: separate-rows</span></span>
 <span id="cb90-230"><a href="#cb90-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-231"><a href="#cb90-231" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate into multiple rows</span></span>
-<span id="cb90-232"><a href="#cb90-232" aria-hidden="true" tabindex="-1"></a>expanded_data <span class="ot">&lt;-</span> multi_value_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-233"><a href="#cb90-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(colors, <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-234"><a href="#cb90-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(sizes, <span class="at">sep =</span> <span class="st">","</span>)</span>
-<span id="cb90-235"><a href="#cb90-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-236"><a href="#cb90-236" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(expanded_data)</span>
-<span id="cb90-237"><a href="#cb90-237" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-238"><a href="#cb90-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-239"><a href="#cb90-239" aria-hidden="true" tabindex="-1"></a><span class="fu">### unite(): Combine Multiple Columns</span></span>
-<span id="cb90-240"><a href="#cb90-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-243"><a href="#cb90-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-244"><a href="#cb90-244" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: unite</span></span>
-<span id="cb90-245"><a href="#cb90-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-246"><a href="#cb90-246" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with separate columns</span></span>
-<span id="cb90-247"><a href="#cb90-247" aria-hidden="true" tabindex="-1"></a>separate_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-248"><a href="#cb90-248" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2024</span>, <span class="dv">2024</span>, <span class="dv">2024</span>),</span>
-<span id="cb90-249"><a href="#cb90-249" aria-hidden="true" tabindex="-1"></a>  <span class="at">month =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
-<span id="cb90-250"><a href="#cb90-250" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>),</span>
-<span id="cb90-251"><a href="#cb90-251" aria-hidden="true" tabindex="-1"></a>  <span class="at">city =</span> <span class="fu">c</span>(<span class="st">"New York"</span>, <span class="st">"Los Angeles"</span>, <span class="st">"Chicago"</span>),</span>
-<span id="cb90-252"><a href="#cb90-252" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="fu">c</span>(<span class="st">"NY"</span>, <span class="st">"CA"</span>, <span class="st">"IL"</span>)</span>
-<span id="cb90-253"><a href="#cb90-253" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-231"><a href="#cb90-231" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with multiple values in cells</span></span>
+<span id="cb90-232"><a href="#cb90-232" aria-hidden="true" tabindex="-1"></a>multi_value_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-233"><a href="#cb90-233" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> <span class="fu">c</span>(<span class="st">"Widget A"</span>, <span class="st">"Widget B"</span>, <span class="st">"Widget C"</span>),</span>
+<span id="cb90-234"><a href="#cb90-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"red,blue"</span>, <span class="st">"green,yellow,orange"</span>, <span class="st">"black,white"</span>),</span>
+<span id="cb90-235"><a href="#cb90-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">sizes =</span> <span class="fu">c</span>(<span class="st">"S,M,L"</span>, <span class="st">"M,L"</span>, <span class="st">"S,M,L,XL"</span>)</span>
+<span id="cb90-236"><a href="#cb90-236" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-237"><a href="#cb90-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-238"><a href="#cb90-238" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(multi_value_data)</span>
+<span id="cb90-239"><a href="#cb90-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-240"><a href="#cb90-240" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate into multiple rows</span></span>
+<span id="cb90-241"><a href="#cb90-241" aria-hidden="true" tabindex="-1"></a>expanded_data <span class="ot">&lt;-</span> multi_value_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-242"><a href="#cb90-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(colors, <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb90-243"><a href="#cb90-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(sizes, <span class="at">sep =</span> <span class="st">","</span>)</span>
+<span id="cb90-244"><a href="#cb90-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-245"><a href="#cb90-245" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(expanded_data)</span>
+<span id="cb90-246"><a href="#cb90-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-247"><a href="#cb90-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-248"><a href="#cb90-248" aria-hidden="true" tabindex="-1"></a><span class="fu">### unite(): Combine Multiple Columns</span></span>
+<span id="cb90-249"><a href="#cb90-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-252"><a href="#cb90-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-253"><a href="#cb90-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: unite</span></span>
 <span id="cb90-254"><a href="#cb90-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-255"><a href="#cb90-255" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(separate_data)</span>
-<span id="cb90-256"><a href="#cb90-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-257"><a href="#cb90-257" aria-hidden="true" tabindex="-1"></a><span class="co"># Unite columns</span></span>
-<span id="cb90-258"><a href="#cb90-258" aria-hidden="true" tabindex="-1"></a>united_data <span class="ot">&lt;-</span> separate_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-259"><a href="#cb90-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(date, year, month, day, <span class="at">sep =</span> <span class="st">"-"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-260"><a href="#cb90-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(location, city, state, <span class="at">sep =</span> <span class="st">", "</span>)</span>
-<span id="cb90-261"><a href="#cb90-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-262"><a href="#cb90-262" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(united_data)</span>
-<span id="cb90-263"><a href="#cb90-263" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-264"><a href="#cb90-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-265"><a href="#cb90-265" aria-hidden="true" tabindex="-1"></a><span class="fu">## Handling Missing Values</span></span>
-<span id="cb90-266"><a href="#cb90-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-267"><a href="#cb90-267" aria-hidden="true" tabindex="-1"></a><span class="fu">### complete(): Fill in Missing Combinations</span></span>
-<span id="cb90-268"><a href="#cb90-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-271"><a href="#cb90-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-272"><a href="#cb90-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: complete</span></span>
+<span id="cb90-255"><a href="#cb90-255" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with separate columns</span></span>
+<span id="cb90-256"><a href="#cb90-256" aria-hidden="true" tabindex="-1"></a>separate_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-257"><a href="#cb90-257" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2024</span>, <span class="dv">2024</span>, <span class="dv">2024</span>),</span>
+<span id="cb90-258"><a href="#cb90-258" aria-hidden="true" tabindex="-1"></a>  <span class="at">month =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="cb90-259"><a href="#cb90-259" aria-hidden="true" tabindex="-1"></a>  <span class="at">day =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>),</span>
+<span id="cb90-260"><a href="#cb90-260" aria-hidden="true" tabindex="-1"></a>  <span class="at">city =</span> <span class="fu">c</span>(<span class="st">"New York"</span>, <span class="st">"Los Angeles"</span>, <span class="st">"Chicago"</span>),</span>
+<span id="cb90-261"><a href="#cb90-261" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> <span class="fu">c</span>(<span class="st">"NY"</span>, <span class="st">"CA"</span>, <span class="st">"IL"</span>)</span>
+<span id="cb90-262"><a href="#cb90-262" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-263"><a href="#cb90-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-264"><a href="#cb90-264" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(separate_data)</span>
+<span id="cb90-265"><a href="#cb90-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-266"><a href="#cb90-266" aria-hidden="true" tabindex="-1"></a><span class="co"># Unite columns</span></span>
+<span id="cb90-267"><a href="#cb90-267" aria-hidden="true" tabindex="-1"></a>united_data <span class="ot">&lt;-</span> separate_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-268"><a href="#cb90-268" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(date, year, month, day, <span class="at">sep =</span> <span class="st">"-"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb90-269"><a href="#cb90-269" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(location, city, state, <span class="at">sep =</span> <span class="st">", "</span>)</span>
+<span id="cb90-270"><a href="#cb90-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-271"><a href="#cb90-271" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(united_data)</span>
+<span id="cb90-272"><a href="#cb90-272" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb90-273"><a href="#cb90-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-274"><a href="#cb90-274" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with missing combinations</span></span>
-<span id="cb90-275"><a href="#cb90-275" aria-hidden="true" tabindex="-1"></a>incomplete_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-276"><a href="#cb90-276" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2022</span>, <span class="dv">2022</span>, <span class="dv">2023</span>),</span>
-<span id="cb90-277"><a href="#cb90-277" aria-hidden="true" tabindex="-1"></a>  <span class="at">quarter =</span> <span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q3"</span>, <span class="st">"Q2"</span>),</span>
-<span id="cb90-278"><a href="#cb90-278" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">120</span>)</span>
-<span id="cb90-279"><a href="#cb90-279" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-280"><a href="#cb90-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-281"><a href="#cb90-281" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(incomplete_data)</span>
+<span id="cb90-274"><a href="#cb90-274" aria-hidden="true" tabindex="-1"></a><span class="fu">## Handling Missing Values</span></span>
+<span id="cb90-275"><a href="#cb90-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-276"><a href="#cb90-276" aria-hidden="true" tabindex="-1"></a><span class="fu">### complete(): Fill in Missing Combinations</span></span>
+<span id="cb90-277"><a href="#cb90-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-280"><a href="#cb90-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-281"><a href="#cb90-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: complete</span></span>
 <span id="cb90-282"><a href="#cb90-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-283"><a href="#cb90-283" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete all combinations</span></span>
-<span id="cb90-284"><a href="#cb90-284" aria-hidden="true" tabindex="-1"></a>complete_data <span class="ot">&lt;-</span> incomplete_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-285"><a href="#cb90-285" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(year, quarter, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>))</span>
-<span id="cb90-286"><a href="#cb90-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-287"><a href="#cb90-287" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(complete_data)</span>
-<span id="cb90-288"><a href="#cb90-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-289"><a href="#cb90-289" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete with sequences</span></span>
-<span id="cb90-290"><a href="#cb90-290" aria-hidden="true" tabindex="-1"></a>sales_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-291"><a href="#cb90-291" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-03"</span>, <span class="st">"2024-01-07"</span>)),</span>
-<span id="cb90-292"><a href="#cb90-292" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>)</span>
-<span id="cb90-293"><a href="#cb90-293" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-294"><a href="#cb90-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-295"><a href="#cb90-295" aria-hidden="true" tabindex="-1"></a>complete_sales <span class="ot">&lt;-</span> sales_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-296"><a href="#cb90-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(</span>
-<span id="cb90-297"><a href="#cb90-297" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">seq.Date</span>(<span class="fu">min</span>(date), <span class="fu">max</span>(date), <span class="at">by =</span> <span class="st">"day"</span>),</span>
-<span id="cb90-298"><a href="#cb90-298" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>)</span>
-<span id="cb90-299"><a href="#cb90-299" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-300"><a href="#cb90-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-301"><a href="#cb90-301" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(complete_sales)</span>
-<span id="cb90-302"><a href="#cb90-302" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-283"><a href="#cb90-283" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with missing combinations</span></span>
+<span id="cb90-284"><a href="#cb90-284" aria-hidden="true" tabindex="-1"></a>incomplete_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-285"><a href="#cb90-285" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> <span class="fu">c</span>(<span class="dv">2022</span>, <span class="dv">2022</span>, <span class="dv">2023</span>),</span>
+<span id="cb90-286"><a href="#cb90-286" aria-hidden="true" tabindex="-1"></a>  <span class="at">quarter =</span> <span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q3"</span>, <span class="st">"Q2"</span>),</span>
+<span id="cb90-287"><a href="#cb90-287" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">120</span>)</span>
+<span id="cb90-288"><a href="#cb90-288" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-289"><a href="#cb90-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-290"><a href="#cb90-290" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(incomplete_data)</span>
+<span id="cb90-291"><a href="#cb90-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-292"><a href="#cb90-292" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete all combinations</span></span>
+<span id="cb90-293"><a href="#cb90-293" aria-hidden="true" tabindex="-1"></a>complete_data <span class="ot">&lt;-</span> incomplete_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-294"><a href="#cb90-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(year, quarter, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>))</span>
+<span id="cb90-295"><a href="#cb90-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-296"><a href="#cb90-296" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(complete_data)</span>
+<span id="cb90-297"><a href="#cb90-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-298"><a href="#cb90-298" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete with sequences</span></span>
+<span id="cb90-299"><a href="#cb90-299" aria-hidden="true" tabindex="-1"></a>sales_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-300"><a href="#cb90-300" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-03"</span>, <span class="st">"2024-01-07"</span>)),</span>
+<span id="cb90-301"><a href="#cb90-301" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>)</span>
+<span id="cb90-302"><a href="#cb90-302" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb90-303"><a href="#cb90-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-304"><a href="#cb90-304" aria-hidden="true" tabindex="-1"></a><span class="fu">### drop_na(): Remove Rows with Missing Values</span></span>
-<span id="cb90-305"><a href="#cb90-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-308"><a href="#cb90-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-309"><a href="#cb90-309" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: drop-na</span></span>
-<span id="cb90-310"><a href="#cb90-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-311"><a href="#cb90-311" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with missing values</span></span>
-<span id="cb90-312"><a href="#cb90-312" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-313"><a href="#cb90-313" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,</span>
-<span id="cb90-314"><a href="#cb90-314" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>, <span class="dv">4</span>, <span class="cn">NA</span>, <span class="dv">6</span>),</span>
-<span id="cb90-315"><a href="#cb90-315" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>),</span>
-<span id="cb90-316"><a href="#cb90-316" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
-<span id="cb90-317"><a href="#cb90-317" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-318"><a href="#cb90-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-319"><a href="#cb90-319" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(data_with_na)</span>
-<span id="cb90-320"><a href="#cb90-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-321"><a href="#cb90-321" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with any NA</span></span>
-<span id="cb90-322"><a href="#cb90-322" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
-<span id="cb90-323"><a href="#cb90-323" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-324"><a href="#cb90-324" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with NA in specific columns</span></span>
-<span id="cb90-325"><a href="#cb90-325" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>(x)</span>
-<span id="cb90-326"><a href="#cb90-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-327"><a href="#cb90-327" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with NA in multiple specific columns</span></span>
-<span id="cb90-328"><a href="#cb90-328" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>(x, y)</span>
-<span id="cb90-329"><a href="#cb90-329" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-330"><a href="#cb90-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-331"><a href="#cb90-331" aria-hidden="true" tabindex="-1"></a><span class="fu">### fill(): Fill Missing Values</span></span>
+<span id="cb90-304"><a href="#cb90-304" aria-hidden="true" tabindex="-1"></a>complete_sales <span class="ot">&lt;-</span> sales_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-305"><a href="#cb90-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(</span>
+<span id="cb90-306"><a href="#cb90-306" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">seq.Date</span>(<span class="fu">min</span>(date), <span class="fu">max</span>(date), <span class="at">by =</span> <span class="st">"day"</span>),</span>
+<span id="cb90-307"><a href="#cb90-307" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>)</span>
+<span id="cb90-308"><a href="#cb90-308" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-309"><a href="#cb90-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-310"><a href="#cb90-310" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(complete_sales)</span>
+<span id="cb90-311"><a href="#cb90-311" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-312"><a href="#cb90-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-313"><a href="#cb90-313" aria-hidden="true" tabindex="-1"></a><span class="fu">### drop_na(): Remove Rows with Missing Values</span></span>
+<span id="cb90-314"><a href="#cb90-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-317"><a href="#cb90-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-318"><a href="#cb90-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: drop-na</span></span>
+<span id="cb90-319"><a href="#cb90-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-320"><a href="#cb90-320" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with missing values</span></span>
+<span id="cb90-321"><a href="#cb90-321" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-322"><a href="#cb90-322" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,</span>
+<span id="cb90-323"><a href="#cb90-323" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="cn">NA</span>, <span class="dv">4</span>, <span class="cn">NA</span>, <span class="dv">6</span>),</span>
+<span id="cb90-324"><a href="#cb90-324" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb90-325"><a href="#cb90-325" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
+<span id="cb90-326"><a href="#cb90-326" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-327"><a href="#cb90-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-328"><a href="#cb90-328" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(data_with_na)</span>
+<span id="cb90-329"><a href="#cb90-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-330"><a href="#cb90-330" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with any NA</span></span>
+<span id="cb90-331"><a href="#cb90-331" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
 <span id="cb90-332"><a href="#cb90-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-335"><a href="#cb90-335" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-336"><a href="#cb90-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fill</span></span>
-<span id="cb90-337"><a href="#cb90-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-338"><a href="#cb90-338" aria-hidden="true" tabindex="-1"></a><span class="co"># Time series with gaps</span></span>
-<span id="cb90-339"><a href="#cb90-339" aria-hidden="true" tabindex="-1"></a>time_series <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-340"><a href="#cb90-340" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">seq.Date</span>(<span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">"2024-01-01"</span>),</span>
-<span id="cb90-341"><a href="#cb90-341" aria-hidden="true" tabindex="-1"></a>                  <span class="at">to =</span> <span class="fu">as.Date</span>(<span class="st">"2024-01-10"</span>),</span>
-<span id="cb90-342"><a href="#cb90-342" aria-hidden="true" tabindex="-1"></a>                  <span class="at">by =</span> <span class="st">"day"</span>),</span>
-<span id="cb90-343"><a href="#cb90-343" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="cn">NA</span>, <span class="dv">20</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">25</span>, <span class="dv">30</span>)</span>
-<span id="cb90-344"><a href="#cb90-344" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-345"><a href="#cb90-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-346"><a href="#cb90-346" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(time_series)</span>
-<span id="cb90-347"><a href="#cb90-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-348"><a href="#cb90-348" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill down (carry forward)</span></span>
-<span id="cb90-349"><a href="#cb90-349" aria-hidden="true" tabindex="-1"></a>time_series <span class="sc">%&gt;%</span></span>
-<span id="cb90-350"><a href="#cb90-350" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(value, <span class="at">.direction =</span> <span class="st">"down"</span>)</span>
-<span id="cb90-351"><a href="#cb90-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-352"><a href="#cb90-352" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill up (carry backward)</span></span>
-<span id="cb90-353"><a href="#cb90-353" aria-hidden="true" tabindex="-1"></a>time_series <span class="sc">%&gt;%</span></span>
-<span id="cb90-354"><a href="#cb90-354" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(value, <span class="at">.direction =</span> <span class="st">"up"</span>)</span>
-<span id="cb90-355"><a href="#cb90-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-356"><a href="#cb90-356" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill both directions</span></span>
-<span id="cb90-357"><a href="#cb90-357" aria-hidden="true" tabindex="-1"></a>time_series <span class="sc">%&gt;%</span></span>
-<span id="cb90-358"><a href="#cb90-358" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(value, <span class="at">.direction =</span> <span class="st">"downup"</span>)</span>
-<span id="cb90-359"><a href="#cb90-359" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-333"><a href="#cb90-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with NA in specific columns</span></span>
+<span id="cb90-334"><a href="#cb90-334" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>(x)</span>
+<span id="cb90-335"><a href="#cb90-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-336"><a href="#cb90-336" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows with NA in multiple specific columns</span></span>
+<span id="cb90-337"><a href="#cb90-337" aria-hidden="true" tabindex="-1"></a>data_with_na <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>(x, y)</span>
+<span id="cb90-338"><a href="#cb90-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-339"><a href="#cb90-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-340"><a href="#cb90-340" aria-hidden="true" tabindex="-1"></a><span class="fu">### fill(): Fill Missing Values</span></span>
+<span id="cb90-341"><a href="#cb90-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-344"><a href="#cb90-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-345"><a href="#cb90-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fill</span></span>
+<span id="cb90-346"><a href="#cb90-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-347"><a href="#cb90-347" aria-hidden="true" tabindex="-1"></a><span class="co"># Time series with gaps</span></span>
+<span id="cb90-348"><a href="#cb90-348" aria-hidden="true" tabindex="-1"></a>time_series <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-349"><a href="#cb90-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">seq.Date</span>(<span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">"2024-01-01"</span>),</span>
+<span id="cb90-350"><a href="#cb90-350" aria-hidden="true" tabindex="-1"></a>                  <span class="at">to =</span> <span class="fu">as.Date</span>(<span class="st">"2024-01-10"</span>),</span>
+<span id="cb90-351"><a href="#cb90-351" aria-hidden="true" tabindex="-1"></a>                  <span class="at">by =</span> <span class="st">"day"</span>),</span>
+<span id="cb90-352"><a href="#cb90-352" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="cn">NA</span>, <span class="dv">20</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">25</span>, <span class="dv">30</span>)</span>
+<span id="cb90-353"><a href="#cb90-353" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-354"><a href="#cb90-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-355"><a href="#cb90-355" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(time_series)</span>
+<span id="cb90-356"><a href="#cb90-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-357"><a href="#cb90-357" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill down (carry forward)</span></span>
+<span id="cb90-358"><a href="#cb90-358" aria-hidden="true" tabindex="-1"></a>time_series <span class="sc">%&gt;%</span></span>
+<span id="cb90-359"><a href="#cb90-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(value, <span class="at">.direction =</span> <span class="st">"down"</span>)</span>
 <span id="cb90-360"><a href="#cb90-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-361"><a href="#cb90-361" aria-hidden="true" tabindex="-1"></a><span class="fu">### replace_na(): Replace NA with Specific Values</span></span>
-<span id="cb90-362"><a href="#cb90-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-365"><a href="#cb90-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-366"><a href="#cb90-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: replace-na</span></span>
-<span id="cb90-367"><a href="#cb90-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-368"><a href="#cb90-368" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with NAs</span></span>
-<span id="cb90-369"><a href="#cb90-369" aria-hidden="true" tabindex="-1"></a>na_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-370"><a href="#cb90-370" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>),</span>
-<span id="cb90-371"><a href="#cb90-371" aria-hidden="true" tabindex="-1"></a>  <span class="at">price =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="dv">20</span>),</span>
-<span id="cb90-372"><a href="#cb90-372" aria-hidden="true" tabindex="-1"></a>  <span class="at">discount =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
-<span id="cb90-373"><a href="#cb90-373" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">c</span>(<span class="st">"Food"</span>, <span class="cn">NA</span>, <span class="st">"Electronics"</span>, <span class="cn">NA</span>)</span>
-<span id="cb90-374"><a href="#cb90-374" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-375"><a href="#cb90-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-376"><a href="#cb90-376" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(na_data)</span>
-<span id="cb90-377"><a href="#cb90-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-378"><a href="#cb90-378" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace NAs with specific values</span></span>
-<span id="cb90-379"><a href="#cb90-379" aria-hidden="true" tabindex="-1"></a>na_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-380"><a href="#cb90-380" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(</span>
-<span id="cb90-381"><a href="#cb90-381" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="dv">0</span>,</span>
-<span id="cb90-382"><a href="#cb90-382" aria-hidden="true" tabindex="-1"></a>    <span class="at">discount =</span> <span class="dv">0</span>,</span>
-<span id="cb90-383"><a href="#cb90-383" aria-hidden="true" tabindex="-1"></a>    <span class="at">category =</span> <span class="st">"Other"</span></span>
-<span id="cb90-384"><a href="#cb90-384" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb90-385"><a href="#cb90-385" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-361"><a href="#cb90-361" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill up (carry backward)</span></span>
+<span id="cb90-362"><a href="#cb90-362" aria-hidden="true" tabindex="-1"></a>time_series <span class="sc">%&gt;%</span></span>
+<span id="cb90-363"><a href="#cb90-363" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(value, <span class="at">.direction =</span> <span class="st">"up"</span>)</span>
+<span id="cb90-364"><a href="#cb90-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-365"><a href="#cb90-365" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill both directions</span></span>
+<span id="cb90-366"><a href="#cb90-366" aria-hidden="true" tabindex="-1"></a>time_series <span class="sc">%&gt;%</span></span>
+<span id="cb90-367"><a href="#cb90-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(value, <span class="at">.direction =</span> <span class="st">"downup"</span>)</span>
+<span id="cb90-368"><a href="#cb90-368" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-369"><a href="#cb90-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-370"><a href="#cb90-370" aria-hidden="true" tabindex="-1"></a><span class="fu">### replace_na(): Replace NA with Specific Values</span></span>
+<span id="cb90-371"><a href="#cb90-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-374"><a href="#cb90-374" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-375"><a href="#cb90-375" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: replace-na</span></span>
+<span id="cb90-376"><a href="#cb90-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-377"><a href="#cb90-377" aria-hidden="true" tabindex="-1"></a><span class="co"># Data with NAs</span></span>
+<span id="cb90-378"><a href="#cb90-378" aria-hidden="true" tabindex="-1"></a>na_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-379"><a href="#cb90-379" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>),</span>
+<span id="cb90-380"><a href="#cb90-380" aria-hidden="true" tabindex="-1"></a>  <span class="at">price =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="dv">20</span>),</span>
+<span id="cb90-381"><a href="#cb90-381" aria-hidden="true" tabindex="-1"></a>  <span class="at">discount =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb90-382"><a href="#cb90-382" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">c</span>(<span class="st">"Food"</span>, <span class="cn">NA</span>, <span class="st">"Electronics"</span>, <span class="cn">NA</span>)</span>
+<span id="cb90-383"><a href="#cb90-383" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-384"><a href="#cb90-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-385"><a href="#cb90-385" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(na_data)</span>
 <span id="cb90-386"><a href="#cb90-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-387"><a href="#cb90-387" aria-hidden="true" tabindex="-1"></a><span class="fu">## Nesting and Unnesting</span></span>
-<span id="cb90-388"><a href="#cb90-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-389"><a href="#cb90-389" aria-hidden="true" tabindex="-1"></a><span class="fu">### nest(): Create List-Columns</span></span>
-<span id="cb90-390"><a href="#cb90-390" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-393"><a href="#cb90-393" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-394"><a href="#cb90-394" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: nest</span></span>
+<span id="cb90-387"><a href="#cb90-387" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace NAs with specific values</span></span>
+<span id="cb90-388"><a href="#cb90-388" aria-hidden="true" tabindex="-1"></a>na_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-389"><a href="#cb90-389" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(</span>
+<span id="cb90-390"><a href="#cb90-390" aria-hidden="true" tabindex="-1"></a>    <span class="at">price =</span> <span class="dv">0</span>,</span>
+<span id="cb90-391"><a href="#cb90-391" aria-hidden="true" tabindex="-1"></a>    <span class="at">discount =</span> <span class="dv">0</span>,</span>
+<span id="cb90-392"><a href="#cb90-392" aria-hidden="true" tabindex="-1"></a>    <span class="at">category =</span> <span class="st">"Other"</span></span>
+<span id="cb90-393"><a href="#cb90-393" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb90-394"><a href="#cb90-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb90-395"><a href="#cb90-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-396"><a href="#cb90-396" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouped data</span></span>
-<span id="cb90-397"><a href="#cb90-397" aria-hidden="true" tabindex="-1"></a>student_scores <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-398"><a href="#cb90-398" aria-hidden="true" tabindex="-1"></a>  <span class="at">student =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>), <span class="at">each =</span> <span class="dv">4</span>),</span>
-<span id="cb90-399"><a href="#cb90-399" aria-hidden="true" tabindex="-1"></a>  <span class="at">subject =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Math"</span>, <span class="st">"Science"</span>, <span class="st">"English"</span>, <span class="st">"History"</span>), <span class="dv">3</span>),</span>
-<span id="cb90-400"><a href="#cb90-400" aria-hidden="true" tabindex="-1"></a>  <span class="at">score =</span> <span class="fu">c</span>(<span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">88</span>, <span class="dv">92</span>,   <span class="co"># Alice</span></span>
-<span id="cb90-401"><a href="#cb90-401" aria-hidden="true" tabindex="-1"></a>           <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">82</span>, <span class="dv">88</span>,    <span class="co"># Bob</span></span>
-<span id="cb90-402"><a href="#cb90-402" aria-hidden="true" tabindex="-1"></a>           <span class="dv">92</span>, <span class="dv">88</span>, <span class="dv">90</span>, <span class="dv">95</span>)    <span class="co"># Charlie</span></span>
-<span id="cb90-403"><a href="#cb90-403" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-396"><a href="#cb90-396" aria-hidden="true" tabindex="-1"></a><span class="fu">## Nesting and Unnesting</span></span>
+<span id="cb90-397"><a href="#cb90-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-398"><a href="#cb90-398" aria-hidden="true" tabindex="-1"></a><span class="fu">### nest(): Create List-Columns</span></span>
+<span id="cb90-399"><a href="#cb90-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-402"><a href="#cb90-402" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-403"><a href="#cb90-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: nest</span></span>
 <span id="cb90-404"><a href="#cb90-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-405"><a href="#cb90-405" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(student_scores)</span>
-<span id="cb90-406"><a href="#cb90-406" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-407"><a href="#cb90-407" aria-hidden="true" tabindex="-1"></a><span class="co"># Nest by student</span></span>
-<span id="cb90-408"><a href="#cb90-408" aria-hidden="true" tabindex="-1"></a>nested_scores <span class="ot">&lt;-</span> student_scores <span class="sc">%&gt;%</span></span>
-<span id="cb90-409"><a href="#cb90-409" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="fu">c</span>(subject, score))</span>
-<span id="cb90-410"><a href="#cb90-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-411"><a href="#cb90-411" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nested_scores)</span>
-<span id="cb90-412"><a href="#cb90-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-413"><a href="#cb90-413" aria-hidden="true" tabindex="-1"></a><span class="co"># Access nested data</span></span>
-<span id="cb90-414"><a href="#cb90-414" aria-hidden="true" tabindex="-1"></a>nested_scores<span class="sc">$</span>data[[<span class="dv">1</span>]]</span>
-<span id="cb90-415"><a href="#cb90-415" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-416"><a href="#cb90-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-417"><a href="#cb90-417" aria-hidden="true" tabindex="-1"></a><span class="fu">### unnest(): Expand List-Columns</span></span>
-<span id="cb90-418"><a href="#cb90-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-421"><a href="#cb90-421" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-422"><a href="#cb90-422" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: unnest</span></span>
-<span id="cb90-423"><a href="#cb90-423" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-424"><a href="#cb90-424" aria-hidden="true" tabindex="-1"></a><span class="co"># Start with nested data</span></span>
-<span id="cb90-425"><a href="#cb90-425" aria-hidden="true" tabindex="-1"></a>nested_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-426"><a href="#cb90-426" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>),</span>
-<span id="cb90-427"><a href="#cb90-427" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(</span>
-<span id="cb90-428"><a href="#cb90-428" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>),</span>
-<span id="cb90-429"><a href="#cb90-429" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">y =</span> <span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>)</span>
-<span id="cb90-430"><a href="#cb90-430" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-431"><a href="#cb90-431" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-405"><a href="#cb90-405" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouped data</span></span>
+<span id="cb90-406"><a href="#cb90-406" aria-hidden="true" tabindex="-1"></a>student_scores <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-407"><a href="#cb90-407" aria-hidden="true" tabindex="-1"></a>  <span class="at">student =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>), <span class="at">each =</span> <span class="dv">4</span>),</span>
+<span id="cb90-408"><a href="#cb90-408" aria-hidden="true" tabindex="-1"></a>  <span class="at">subject =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Math"</span>, <span class="st">"Science"</span>, <span class="st">"English"</span>, <span class="st">"History"</span>), <span class="dv">3</span>),</span>
+<span id="cb90-409"><a href="#cb90-409" aria-hidden="true" tabindex="-1"></a>  <span class="at">score =</span> <span class="fu">c</span>(<span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">88</span>, <span class="dv">92</span>,   <span class="co"># Alice</span></span>
+<span id="cb90-410"><a href="#cb90-410" aria-hidden="true" tabindex="-1"></a>           <span class="dv">78</span>, <span class="dv">85</span>, <span class="dv">82</span>, <span class="dv">88</span>,    <span class="co"># Bob</span></span>
+<span id="cb90-411"><a href="#cb90-411" aria-hidden="true" tabindex="-1"></a>           <span class="dv">92</span>, <span class="dv">88</span>, <span class="dv">90</span>, <span class="dv">95</span>)    <span class="co"># Charlie</span></span>
+<span id="cb90-412"><a href="#cb90-412" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-413"><a href="#cb90-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-414"><a href="#cb90-414" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(student_scores)</span>
+<span id="cb90-415"><a href="#cb90-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-416"><a href="#cb90-416" aria-hidden="true" tabindex="-1"></a><span class="co"># Nest by student</span></span>
+<span id="cb90-417"><a href="#cb90-417" aria-hidden="true" tabindex="-1"></a>nested_scores <span class="ot">&lt;-</span> student_scores <span class="sc">%&gt;%</span></span>
+<span id="cb90-418"><a href="#cb90-418" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="fu">c</span>(subject, score))</span>
+<span id="cb90-419"><a href="#cb90-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-420"><a href="#cb90-420" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nested_scores)</span>
+<span id="cb90-421"><a href="#cb90-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-422"><a href="#cb90-422" aria-hidden="true" tabindex="-1"></a><span class="co"># Access nested data</span></span>
+<span id="cb90-423"><a href="#cb90-423" aria-hidden="true" tabindex="-1"></a>nested_scores<span class="sc">$</span>data[[<span class="dv">1</span>]]</span>
+<span id="cb90-424"><a href="#cb90-424" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-425"><a href="#cb90-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-426"><a href="#cb90-426" aria-hidden="true" tabindex="-1"></a><span class="fu">### unnest(): Expand List-Columns</span></span>
+<span id="cb90-427"><a href="#cb90-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-430"><a href="#cb90-430" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-431"><a href="#cb90-431" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: unnest</span></span>
 <span id="cb90-432"><a href="#cb90-432" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-433"><a href="#cb90-433" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nested_data)</span>
-<span id="cb90-434"><a href="#cb90-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-435"><a href="#cb90-435" aria-hidden="true" tabindex="-1"></a><span class="co"># Unnest the data</span></span>
-<span id="cb90-436"><a href="#cb90-436" aria-hidden="true" tabindex="-1"></a>unnested_data <span class="ot">&lt;-</span> nested_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-437"><a href="#cb90-437" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(data)</span>
-<span id="cb90-438"><a href="#cb90-438" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-439"><a href="#cb90-439" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(unnested_data)</span>
-<span id="cb90-440"><a href="#cb90-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-433"><a href="#cb90-433" aria-hidden="true" tabindex="-1"></a><span class="co"># Start with nested data</span></span>
+<span id="cb90-434"><a href="#cb90-434" aria-hidden="true" tabindex="-1"></a>nested_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-435"><a href="#cb90-435" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>),</span>
+<span id="cb90-436"><a href="#cb90-436" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">list</span>(</span>
+<span id="cb90-437"><a href="#cb90-437" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>),</span>
+<span id="cb90-438"><a href="#cb90-438" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">y =</span> <span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>)</span>
+<span id="cb90-439"><a href="#cb90-439" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-440"><a href="#cb90-440" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb90-441"><a href="#cb90-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-442"><a href="#cb90-442" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real-World Examples</span></span>
+<span id="cb90-442"><a href="#cb90-442" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nested_data)</span>
 <span id="cb90-443"><a href="#cb90-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-444"><a href="#cb90-444" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example 1: Survey Data Cleaning</span></span>
-<span id="cb90-445"><a href="#cb90-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-448"><a href="#cb90-448" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-449"><a href="#cb90-449" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: survey-example</span></span>
+<span id="cb90-444"><a href="#cb90-444" aria-hidden="true" tabindex="-1"></a><span class="co"># Unnest the data</span></span>
+<span id="cb90-445"><a href="#cb90-445" aria-hidden="true" tabindex="-1"></a>unnested_data <span class="ot">&lt;-</span> nested_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-446"><a href="#cb90-446" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(data)</span>
+<span id="cb90-447"><a href="#cb90-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-448"><a href="#cb90-448" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(unnested_data)</span>
+<span id="cb90-449"><a href="#cb90-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb90-450"><a href="#cb90-450" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-451"><a href="#cb90-451" aria-hidden="true" tabindex="-1"></a><span class="co"># Messy survey data</span></span>
-<span id="cb90-452"><a href="#cb90-452" aria-hidden="true" tabindex="-1"></a>survey_raw <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-453"><a href="#cb90-453" aria-hidden="true" tabindex="-1"></a>  <span class="at">respondent_id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,</span>
-<span id="cb90-454"><a href="#cb90-454" aria-hidden="true" tabindex="-1"></a>  <span class="at">q1_2023 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>),</span>
-<span id="cb90-455"><a href="#cb90-455" aria-hidden="true" tabindex="-1"></a>  <span class="at">q2_2023 =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>),</span>
-<span id="cb90-456"><a href="#cb90-456" aria-hidden="true" tabindex="-1"></a>  <span class="at">q1_2024 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">4</span>),</span>
-<span id="cb90-457"><a href="#cb90-457" aria-hidden="true" tabindex="-1"></a>  <span class="at">q2_2024 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>),</span>
-<span id="cb90-458"><a href="#cb90-458" aria-hidden="true" tabindex="-1"></a>  <span class="at">demographics =</span> <span class="fu">c</span>(<span class="st">"25-34,Male,Urban"</span>,</span>
-<span id="cb90-459"><a href="#cb90-459" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"35-44,Female,Rural"</span>,</span>
-<span id="cb90-460"><a href="#cb90-460" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"18-24,Male,Urban"</span>,</span>
-<span id="cb90-461"><a href="#cb90-461" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"45-54,Female,Suburban"</span>,</span>
-<span id="cb90-462"><a href="#cb90-462" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"25-34,Male,Rural"</span>)</span>
-<span id="cb90-463"><a href="#cb90-463" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-464"><a href="#cb90-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-465"><a href="#cb90-465" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean and tidy the data</span></span>
-<span id="cb90-466"><a href="#cb90-466" aria-hidden="true" tabindex="-1"></a>survey_clean <span class="ot">&lt;-</span> survey_raw <span class="sc">%&gt;%</span></span>
-<span id="cb90-467"><a href="#cb90-467" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Separate demographics</span></span>
-<span id="cb90-468"><a href="#cb90-468" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(demographics, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"age_group"</span>, <span class="st">"gender"</span>, <span class="st">"location"</span>),</span>
-<span id="cb90-469"><a href="#cb90-469" aria-hidden="true" tabindex="-1"></a>          <span class="at">sep =</span> <span class="st">","</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-470"><a href="#cb90-470" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot questions longer</span></span>
-<span id="cb90-471"><a href="#cb90-471" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb90-472"><a href="#cb90-472" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"q"</span>),</span>
-<span id="cb90-473"><a href="#cb90-473" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"question"</span>, <span class="st">"year"</span>),</span>
-<span id="cb90-474"><a href="#cb90-474" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
-<span id="cb90-475"><a href="#cb90-475" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"rating"</span></span>
-<span id="cb90-476"><a href="#cb90-476" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-477"><a href="#cb90-477" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert year to integer</span></span>
-<span id="cb90-478"><a href="#cb90-478" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.integer</span>(year))</span>
-<span id="cb90-479"><a href="#cb90-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-480"><a href="#cb90-480" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(survey_clean)</span>
-<span id="cb90-481"><a href="#cb90-481" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-482"><a href="#cb90-482" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze by demographics</span></span>
-<span id="cb90-483"><a href="#cb90-483" aria-hidden="true" tabindex="-1"></a>survey_summary <span class="ot">&lt;-</span> survey_clean <span class="sc">%&gt;%</span></span>
-<span id="cb90-484"><a href="#cb90-484" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, gender, question) <span class="sc">%&gt;%</span></span>
-<span id="cb90-485"><a href="#cb90-485" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb90-486"><a href="#cb90-486" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_rating =</span> <span class="fu">mean</span>(rating),</span>
-<span id="cb90-487"><a href="#cb90-487" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb90-488"><a href="#cb90-488" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb90-489"><a href="#cb90-489" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-490"><a href="#cb90-490" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb90-491"><a href="#cb90-491" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> question,</span>
-<span id="cb90-492"><a href="#cb90-492" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> avg_rating</span>
-<span id="cb90-493"><a href="#cb90-493" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-494"><a href="#cb90-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-495"><a href="#cb90-495" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(survey_summary)</span>
-<span id="cb90-496"><a href="#cb90-496" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-497"><a href="#cb90-497" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-498"><a href="#cb90-498" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example 2: Financial Data Transformation</span></span>
-<span id="cb90-499"><a href="#cb90-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-502"><a href="#cb90-502" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-503"><a href="#cb90-503" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: financial-example</span></span>
-<span id="cb90-504"><a href="#cb90-504" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-505"><a href="#cb90-505" aria-hidden="true" tabindex="-1"></a><span class="co"># Quarterly financial data in wide format</span></span>
-<span id="cb90-506"><a href="#cb90-506" aria-hidden="true" tabindex="-1"></a>financial_wide <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-507"><a href="#cb90-507" aria-hidden="true" tabindex="-1"></a>  <span class="at">company =</span> <span class="fu">c</span>(<span class="st">"TechCorp"</span>, <span class="st">"RetailCo"</span>, <span class="st">"FinanceInc"</span>),</span>
-<span id="cb90-508"><a href="#cb90-508" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q1_2023 =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">80</span>, <span class="dv">120</span>),</span>
-<span id="cb90-509"><a href="#cb90-509" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q2_2023 =</span> <span class="fu">c</span>(<span class="dv">110</span>, <span class="dv">85</span>, <span class="dv">125</span>),</span>
-<span id="cb90-510"><a href="#cb90-510" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q3_2023 =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">90</span>, <span class="dv">130</span>),</span>
-<span id="cb90-511"><a href="#cb90-511" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q4_2023 =</span> <span class="fu">c</span>(<span class="dv">130</span>, <span class="dv">95</span>, <span class="dv">140</span>),</span>
-<span id="cb90-512"><a href="#cb90-512" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q1_2023 =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="dv">50</span>, <span class="dv">70</span>),</span>
-<span id="cb90-513"><a href="#cb90-513" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q2_2023 =</span> <span class="fu">c</span>(<span class="dv">65</span>, <span class="dv">52</span>, <span class="dv">72</span>),</span>
-<span id="cb90-514"><a href="#cb90-514" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q3_2023 =</span> <span class="fu">c</span>(<span class="dv">68</span>, <span class="dv">54</span>, <span class="dv">75</span>),</span>
-<span id="cb90-515"><a href="#cb90-515" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q4_2023 =</span> <span class="fu">c</span>(<span class="dv">70</span>, <span class="dv">56</span>, <span class="dv">78</span>)</span>
-<span id="cb90-516"><a href="#cb90-516" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-517"><a href="#cb90-517" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-518"><a href="#cb90-518" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform to tidy format</span></span>
-<span id="cb90-519"><a href="#cb90-519" aria-hidden="true" tabindex="-1"></a>financial_tidy <span class="ot">&lt;-</span> financial_wide <span class="sc">%&gt;%</span></span>
-<span id="cb90-520"><a href="#cb90-520" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb90-521"><a href="#cb90-521" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>company,</span>
-<span id="cb90-522"><a href="#cb90-522" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"metric"</span>, <span class="st">"quarter"</span>, <span class="st">"year"</span>),</span>
-<span id="cb90-523"><a href="#cb90-523" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
-<span id="cb90-524"><a href="#cb90-524" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
-<span id="cb90-525"><a href="#cb90-525" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-526"><a href="#cb90-526" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb90-527"><a href="#cb90-527" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year),</span>
-<span id="cb90-528"><a href="#cb90-528" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">str_to_upper</span>(quarter)</span>
-<span id="cb90-529"><a href="#cb90-529" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-530"><a href="#cb90-530" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb90-531"><a href="#cb90-531" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> metric,</span>
-<span id="cb90-532"><a href="#cb90-532" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> value</span>
-<span id="cb90-533"><a href="#cb90-533" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-534"><a href="#cb90-534" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb90-535"><a href="#cb90-535" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit =</span> revenue <span class="sc">-</span> costs,</span>
-<span id="cb90-536"><a href="#cb90-536" aria-hidden="true" tabindex="-1"></a>    <span class="at">margin =</span> profit <span class="sc">/</span> revenue <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb90-537"><a href="#cb90-537" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-538"><a href="#cb90-538" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-539"><a href="#cb90-539" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(financial_tidy)</span>
-<span id="cb90-540"><a href="#cb90-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-541"><a href="#cb90-541" aria-hidden="true" tabindex="-1"></a><span class="co"># Quarterly summary</span></span>
-<span id="cb90-542"><a href="#cb90-542" aria-hidden="true" tabindex="-1"></a>quarterly_summary <span class="ot">&lt;-</span> financial_tidy <span class="sc">%&gt;%</span></span>
-<span id="cb90-543"><a href="#cb90-543" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
-<span id="cb90-544"><a href="#cb90-544" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb90-545"><a href="#cb90-545" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_revenue =</span> <span class="fu">mean</span>(revenue),</span>
-<span id="cb90-546"><a href="#cb90-546" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_costs =</span> <span class="fu">mean</span>(costs),</span>
-<span id="cb90-547"><a href="#cb90-547" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_margin =</span> <span class="fu">mean</span>(margin),</span>
-<span id="cb90-548"><a href="#cb90-548" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb90-549"><a href="#cb90-549" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-550"><a href="#cb90-550" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(quarter)</span>
-<span id="cb90-551"><a href="#cb90-551" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-552"><a href="#cb90-552" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(quarterly_summary)</span>
-<span id="cb90-553"><a href="#cb90-553" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-554"><a href="#cb90-554" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-555"><a href="#cb90-555" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example 3: Time Series Data Preparation</span></span>
-<span id="cb90-556"><a href="#cb90-556" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-559"><a href="#cb90-559" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-560"><a href="#cb90-560" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: timeseries-example</span></span>
-<span id="cb90-561"><a href="#cb90-561" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-562"><a href="#cb90-562" aria-hidden="true" tabindex="-1"></a><span class="co"># Irregular time series data</span></span>
-<span id="cb90-563"><a href="#cb90-563" aria-hidden="true" tabindex="-1"></a>irregular_ts <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-564"><a href="#cb90-564" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-03"</span>, <span class="st">"2024-01-04"</span>,</span>
-<span id="cb90-565"><a href="#cb90-565" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"2024-01-08"</span>, <span class="st">"2024-01-10"</span>)),</span>
-<span id="cb90-566"><a href="#cb90-566" aria-hidden="true" tabindex="-1"></a>  <span class="at">sensor_a =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">12</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="dv">18</span>),</span>
-<span id="cb90-567"><a href="#cb90-567" aria-hidden="true" tabindex="-1"></a>  <span class="at">sensor_b =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="cn">NA</span>, <span class="dv">23</span>, <span class="dv">24</span>, <span class="dv">25</span>),</span>
-<span id="cb90-568"><a href="#cb90-568" aria-hidden="true" tabindex="-1"></a>  <span class="at">sensor_c =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">32</span>, <span class="dv">33</span>, <span class="cn">NA</span>, <span class="dv">36</span>)</span>
-<span id="cb90-569"><a href="#cb90-569" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-570"><a href="#cb90-570" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-571"><a href="#cb90-571" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete and clean the time series</span></span>
-<span id="cb90-572"><a href="#cb90-572" aria-hidden="true" tabindex="-1"></a>regular_ts <span class="ot">&lt;-</span> irregular_ts <span class="sc">%&gt;%</span></span>
-<span id="cb90-573"><a href="#cb90-573" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Complete all dates</span></span>
-<span id="cb90-574"><a href="#cb90-574" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(</span>
-<span id="cb90-575"><a href="#cb90-575" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">seq.Date</span>(<span class="fu">min</span>(date), <span class="fu">max</span>(date), <span class="at">by =</span> <span class="st">"day"</span>)</span>
-<span id="cb90-576"><a href="#cb90-576" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-577"><a href="#cb90-577" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fill missing values</span></span>
-<span id="cb90-578"><a href="#cb90-578" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(<span class="fu">everything</span>(), <span class="at">.direction =</span> <span class="st">"downup"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-579"><a href="#cb90-579" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot to long format for analysis</span></span>
-<span id="cb90-580"><a href="#cb90-580" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb90-581"><a href="#cb90-581" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"sensor"</span>),</span>
-<span id="cb90-582"><a href="#cb90-582" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"sensor"</span>,</span>
-<span id="cb90-583"><a href="#cb90-583" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"reading"</span></span>
-<span id="cb90-584"><a href="#cb90-584" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-585"><a href="#cb90-585" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add derived features</span></span>
-<span id="cb90-586"><a href="#cb90-586" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb90-587"><a href="#cb90-587" aria-hidden="true" tabindex="-1"></a>    <span class="at">day_of_week =</span> <span class="fu">weekdays</span>(date),</span>
-<span id="cb90-588"><a href="#cb90-588" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_weekend =</span> day_of_week <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Saturday"</span>, <span class="st">"Sunday"</span>)</span>
-<span id="cb90-589"><a href="#cb90-589" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-590"><a href="#cb90-590" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-591"><a href="#cb90-591" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(regular_ts)</span>
-<span id="cb90-592"><a href="#cb90-592" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-593"><a href="#cb90-593" aria-hidden="true" tabindex="-1"></a><span class="co"># Daily summary across sensors</span></span>
-<span id="cb90-594"><a href="#cb90-594" aria-hidden="true" tabindex="-1"></a>daily_summary <span class="ot">&lt;-</span> regular_ts <span class="sc">%&gt;%</span></span>
-<span id="cb90-595"><a href="#cb90-595" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, is_weekend) <span class="sc">%&gt;%</span></span>
-<span id="cb90-596"><a href="#cb90-596" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb90-597"><a href="#cb90-597" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_reading =</span> <span class="fu">mean</span>(reading, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb90-598"><a href="#cb90-598" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_reading =</span> <span class="fu">sd</span>(reading, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb90-599"><a href="#cb90-599" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb90-600"><a href="#cb90-600" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-601"><a href="#cb90-601" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-602"><a href="#cb90-602" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(daily_summary)</span>
-<span id="cb90-603"><a href="#cb90-603" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-451"><a href="#cb90-451" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real-World Examples</span></span>
+<span id="cb90-452"><a href="#cb90-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-453"><a href="#cb90-453" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example 1: Survey Data Cleaning</span></span>
+<span id="cb90-454"><a href="#cb90-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-457"><a href="#cb90-457" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-458"><a href="#cb90-458" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: survey-example</span></span>
+<span id="cb90-459"><a href="#cb90-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-460"><a href="#cb90-460" aria-hidden="true" tabindex="-1"></a><span class="co"># Messy survey data</span></span>
+<span id="cb90-461"><a href="#cb90-461" aria-hidden="true" tabindex="-1"></a>survey_raw <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-462"><a href="#cb90-462" aria-hidden="true" tabindex="-1"></a>  <span class="at">respondent_id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb90-463"><a href="#cb90-463" aria-hidden="true" tabindex="-1"></a>  <span class="at">q1_2023 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>),</span>
+<span id="cb90-464"><a href="#cb90-464" aria-hidden="true" tabindex="-1"></a>  <span class="at">q2_2023 =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>),</span>
+<span id="cb90-465"><a href="#cb90-465" aria-hidden="true" tabindex="-1"></a>  <span class="at">q1_2024 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">4</span>),</span>
+<span id="cb90-466"><a href="#cb90-466" aria-hidden="true" tabindex="-1"></a>  <span class="at">q2_2024 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>),</span>
+<span id="cb90-467"><a href="#cb90-467" aria-hidden="true" tabindex="-1"></a>  <span class="at">demographics =</span> <span class="fu">c</span>(<span class="st">"25-34,Male,Urban"</span>,</span>
+<span id="cb90-468"><a href="#cb90-468" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"35-44,Female,Rural"</span>,</span>
+<span id="cb90-469"><a href="#cb90-469" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"18-24,Male,Urban"</span>,</span>
+<span id="cb90-470"><a href="#cb90-470" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"45-54,Female,Suburban"</span>,</span>
+<span id="cb90-471"><a href="#cb90-471" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"25-34,Male,Rural"</span>)</span>
+<span id="cb90-472"><a href="#cb90-472" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-473"><a href="#cb90-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-474"><a href="#cb90-474" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean and tidy the data</span></span>
+<span id="cb90-475"><a href="#cb90-475" aria-hidden="true" tabindex="-1"></a>survey_clean <span class="ot">&lt;-</span> survey_raw <span class="sc">%&gt;%</span></span>
+<span id="cb90-476"><a href="#cb90-476" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Separate demographics</span></span>
+<span id="cb90-477"><a href="#cb90-477" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb90-478"><a href="#cb90-478" aria-hidden="true" tabindex="-1"></a>    demographics,</span>
+<span id="cb90-479"><a href="#cb90-479" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">","</span>,</span>
+<span id="cb90-480"><a href="#cb90-480" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"age_group"</span>, <span class="st">"gender"</span>, <span class="st">"location"</span>)</span>
+<span id="cb90-481"><a href="#cb90-481" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-482"><a href="#cb90-482" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot questions longer</span></span>
+<span id="cb90-483"><a href="#cb90-483" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb90-484"><a href="#cb90-484" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"q"</span>),</span>
+<span id="cb90-485"><a href="#cb90-485" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"question"</span>, <span class="st">"year"</span>),</span>
+<span id="cb90-486"><a href="#cb90-486" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb90-487"><a href="#cb90-487" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"rating"</span></span>
+<span id="cb90-488"><a href="#cb90-488" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-489"><a href="#cb90-489" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert year to integer</span></span>
+<span id="cb90-490"><a href="#cb90-490" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.integer</span>(year))</span>
+<span id="cb90-491"><a href="#cb90-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-492"><a href="#cb90-492" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(survey_clean)</span>
+<span id="cb90-493"><a href="#cb90-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-494"><a href="#cb90-494" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze by demographics</span></span>
+<span id="cb90-495"><a href="#cb90-495" aria-hidden="true" tabindex="-1"></a>survey_summary <span class="ot">&lt;-</span> survey_clean <span class="sc">%&gt;%</span></span>
+<span id="cb90-496"><a href="#cb90-496" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, gender, question) <span class="sc">%&gt;%</span></span>
+<span id="cb90-497"><a href="#cb90-497" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb90-498"><a href="#cb90-498" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_rating =</span> <span class="fu">mean</span>(rating),</span>
+<span id="cb90-499"><a href="#cb90-499" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb90-500"><a href="#cb90-500" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb90-501"><a href="#cb90-501" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-502"><a href="#cb90-502" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb90-503"><a href="#cb90-503" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> question,</span>
+<span id="cb90-504"><a href="#cb90-504" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> avg_rating</span>
+<span id="cb90-505"><a href="#cb90-505" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-506"><a href="#cb90-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-507"><a href="#cb90-507" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(survey_summary)</span>
+<span id="cb90-508"><a href="#cb90-508" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-509"><a href="#cb90-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-510"><a href="#cb90-510" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example 2: Financial Data Transformation</span></span>
+<span id="cb90-511"><a href="#cb90-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-514"><a href="#cb90-514" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-515"><a href="#cb90-515" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: financial-example</span></span>
+<span id="cb90-516"><a href="#cb90-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-517"><a href="#cb90-517" aria-hidden="true" tabindex="-1"></a><span class="co"># Quarterly financial data in wide format</span></span>
+<span id="cb90-518"><a href="#cb90-518" aria-hidden="true" tabindex="-1"></a>financial_wide <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-519"><a href="#cb90-519" aria-hidden="true" tabindex="-1"></a>  <span class="at">company =</span> <span class="fu">c</span>(<span class="st">"TechCorp"</span>, <span class="st">"RetailCo"</span>, <span class="st">"FinanceInc"</span>),</span>
+<span id="cb90-520"><a href="#cb90-520" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q1_2023 =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">80</span>, <span class="dv">120</span>),</span>
+<span id="cb90-521"><a href="#cb90-521" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q2_2023 =</span> <span class="fu">c</span>(<span class="dv">110</span>, <span class="dv">85</span>, <span class="dv">125</span>),</span>
+<span id="cb90-522"><a href="#cb90-522" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q3_2023 =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">90</span>, <span class="dv">130</span>),</span>
+<span id="cb90-523"><a href="#cb90-523" aria-hidden="true" tabindex="-1"></a>  <span class="at">revenue_q4_2023 =</span> <span class="fu">c</span>(<span class="dv">130</span>, <span class="dv">95</span>, <span class="dv">140</span>),</span>
+<span id="cb90-524"><a href="#cb90-524" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q1_2023 =</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="dv">50</span>, <span class="dv">70</span>),</span>
+<span id="cb90-525"><a href="#cb90-525" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q2_2023 =</span> <span class="fu">c</span>(<span class="dv">65</span>, <span class="dv">52</span>, <span class="dv">72</span>),</span>
+<span id="cb90-526"><a href="#cb90-526" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q3_2023 =</span> <span class="fu">c</span>(<span class="dv">68</span>, <span class="dv">54</span>, <span class="dv">75</span>),</span>
+<span id="cb90-527"><a href="#cb90-527" aria-hidden="true" tabindex="-1"></a>  <span class="at">costs_q4_2023 =</span> <span class="fu">c</span>(<span class="dv">70</span>, <span class="dv">56</span>, <span class="dv">78</span>)</span>
+<span id="cb90-528"><a href="#cb90-528" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-529"><a href="#cb90-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-530"><a href="#cb90-530" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform to tidy format</span></span>
+<span id="cb90-531"><a href="#cb90-531" aria-hidden="true" tabindex="-1"></a>financial_tidy <span class="ot">&lt;-</span> financial_wide <span class="sc">%&gt;%</span></span>
+<span id="cb90-532"><a href="#cb90-532" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb90-533"><a href="#cb90-533" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>company,</span>
+<span id="cb90-534"><a href="#cb90-534" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"metric"</span>, <span class="st">"quarter"</span>, <span class="st">"year"</span>),</span>
+<span id="cb90-535"><a href="#cb90-535" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb90-536"><a href="#cb90-536" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb90-537"><a href="#cb90-537" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-538"><a href="#cb90-538" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb90-539"><a href="#cb90-539" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year),</span>
+<span id="cb90-540"><a href="#cb90-540" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">str_to_upper</span>(quarter)</span>
+<span id="cb90-541"><a href="#cb90-541" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-542"><a href="#cb90-542" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb90-543"><a href="#cb90-543" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> metric,</span>
+<span id="cb90-544"><a href="#cb90-544" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> value</span>
+<span id="cb90-545"><a href="#cb90-545" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-546"><a href="#cb90-546" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb90-547"><a href="#cb90-547" aria-hidden="true" tabindex="-1"></a>    <span class="at">profit =</span> revenue <span class="sc">-</span> costs,</span>
+<span id="cb90-548"><a href="#cb90-548" aria-hidden="true" tabindex="-1"></a>    <span class="at">margin =</span> profit <span class="sc">/</span> revenue <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb90-549"><a href="#cb90-549" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-550"><a href="#cb90-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-551"><a href="#cb90-551" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(financial_tidy)</span>
+<span id="cb90-552"><a href="#cb90-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-553"><a href="#cb90-553" aria-hidden="true" tabindex="-1"></a><span class="co"># Quarterly summary</span></span>
+<span id="cb90-554"><a href="#cb90-554" aria-hidden="true" tabindex="-1"></a>quarterly_summary <span class="ot">&lt;-</span> financial_tidy <span class="sc">%&gt;%</span></span>
+<span id="cb90-555"><a href="#cb90-555" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(quarter) <span class="sc">%&gt;%</span></span>
+<span id="cb90-556"><a href="#cb90-556" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb90-557"><a href="#cb90-557" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_revenue =</span> <span class="fu">mean</span>(revenue),</span>
+<span id="cb90-558"><a href="#cb90-558" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_costs =</span> <span class="fu">mean</span>(costs),</span>
+<span id="cb90-559"><a href="#cb90-559" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_margin =</span> <span class="fu">mean</span>(margin),</span>
+<span id="cb90-560"><a href="#cb90-560" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb90-561"><a href="#cb90-561" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-562"><a href="#cb90-562" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(quarter)</span>
+<span id="cb90-563"><a href="#cb90-563" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-564"><a href="#cb90-564" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(quarterly_summary)</span>
+<span id="cb90-565"><a href="#cb90-565" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-566"><a href="#cb90-566" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-567"><a href="#cb90-567" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example 3: Time Series Data Preparation</span></span>
+<span id="cb90-568"><a href="#cb90-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-571"><a href="#cb90-571" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-572"><a href="#cb90-572" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: timeseries-example</span></span>
+<span id="cb90-573"><a href="#cb90-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-574"><a href="#cb90-574" aria-hidden="true" tabindex="-1"></a><span class="co"># Irregular time series data</span></span>
+<span id="cb90-575"><a href="#cb90-575" aria-hidden="true" tabindex="-1"></a>irregular_ts <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-576"><a href="#cb90-576" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-03"</span>, <span class="st">"2024-01-04"</span>,</span>
+<span id="cb90-577"><a href="#cb90-577" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"2024-01-08"</span>, <span class="st">"2024-01-10"</span>)),</span>
+<span id="cb90-578"><a href="#cb90-578" aria-hidden="true" tabindex="-1"></a>  <span class="at">sensor_a =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">12</span>, <span class="cn">NA</span>, <span class="dv">15</span>, <span class="dv">18</span>),</span>
+<span id="cb90-579"><a href="#cb90-579" aria-hidden="true" tabindex="-1"></a>  <span class="at">sensor_b =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="cn">NA</span>, <span class="dv">23</span>, <span class="dv">24</span>, <span class="dv">25</span>),</span>
+<span id="cb90-580"><a href="#cb90-580" aria-hidden="true" tabindex="-1"></a>  <span class="at">sensor_c =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">32</span>, <span class="dv">33</span>, <span class="cn">NA</span>, <span class="dv">36</span>)</span>
+<span id="cb90-581"><a href="#cb90-581" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-582"><a href="#cb90-582" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-583"><a href="#cb90-583" aria-hidden="true" tabindex="-1"></a><span class="co"># Complete and clean the time series</span></span>
+<span id="cb90-584"><a href="#cb90-584" aria-hidden="true" tabindex="-1"></a>regular_ts <span class="ot">&lt;-</span> irregular_ts <span class="sc">%&gt;%</span></span>
+<span id="cb90-585"><a href="#cb90-585" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Complete all dates</span></span>
+<span id="cb90-586"><a href="#cb90-586" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(</span>
+<span id="cb90-587"><a href="#cb90-587" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">seq.Date</span>(<span class="fu">min</span>(date), <span class="fu">max</span>(date), <span class="at">by =</span> <span class="st">"day"</span>)</span>
+<span id="cb90-588"><a href="#cb90-588" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-589"><a href="#cb90-589" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fill missing values</span></span>
+<span id="cb90-590"><a href="#cb90-590" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(<span class="fu">everything</span>(), <span class="at">.direction =</span> <span class="st">"downup"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb90-591"><a href="#cb90-591" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pivot to long format for analysis</span></span>
+<span id="cb90-592"><a href="#cb90-592" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb90-593"><a href="#cb90-593" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"sensor"</span>),</span>
+<span id="cb90-594"><a href="#cb90-594" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"sensor"</span>,</span>
+<span id="cb90-595"><a href="#cb90-595" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"reading"</span></span>
+<span id="cb90-596"><a href="#cb90-596" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-597"><a href="#cb90-597" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add derived features</span></span>
+<span id="cb90-598"><a href="#cb90-598" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb90-599"><a href="#cb90-599" aria-hidden="true" tabindex="-1"></a>    <span class="at">day_of_week =</span> <span class="fu">weekdays</span>(date),</span>
+<span id="cb90-600"><a href="#cb90-600" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_weekend =</span> day_of_week <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Saturday"</span>, <span class="st">"Sunday"</span>)</span>
+<span id="cb90-601"><a href="#cb90-601" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-602"><a href="#cb90-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-603"><a href="#cb90-603" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(regular_ts)</span>
 <span id="cb90-604"><a href="#cb90-604" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-605"><a href="#cb90-605" aria-hidden="true" tabindex="-1"></a><span class="fu">## Best Practices</span></span>
-<span id="cb90-606"><a href="#cb90-606" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-607"><a href="#cb90-607" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Start with Tidy Data in Mind</span></span>
-<span id="cb90-608"><a href="#cb90-608" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-611"><a href="#cb90-611" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-612"><a href="#cb90-612" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: best-practice-tidy</span></span>
-<span id="cb90-613"><a href="#cb90-613" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb90-614"><a href="#cb90-614" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-615"><a href="#cb90-615" aria-hidden="true" tabindex="-1"></a><span class="co"># Design your data collection to be tidy from the start</span></span>
-<span id="cb90-616"><a href="#cb90-616" aria-hidden="true" tabindex="-1"></a><span class="co"># Good: Each observation is a row</span></span>
-<span id="cb90-617"><a href="#cb90-617" aria-hidden="true" tabindex="-1"></a>good_design <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-618"><a href="#cb90-618" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">rep</span>(dates, <span class="at">each =</span> n_products),</span>
-<span id="cb90-619"><a href="#cb90-619" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> <span class="fu">rep</span>(products, n_dates),</span>
-<span id="cb90-620"><a href="#cb90-620" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> value</span>
-<span id="cb90-621"><a href="#cb90-621" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-622"><a href="#cb90-622" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-623"><a href="#cb90-623" aria-hidden="true" tabindex="-1"></a><span class="co"># Avoid: Wide format with dates/products as columns</span></span>
-<span id="cb90-624"><a href="#cb90-624" aria-hidden="true" tabindex="-1"></a>avoid_design <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-625"><a href="#cb90-625" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> products,</span>
-<span id="cb90-626"><a href="#cb90-626" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">2024-01-01</span><span class="st">`</span> <span class="ot">=</span> values1,</span>
-<span id="cb90-627"><a href="#cb90-627" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">2024-01-02</span><span class="st">`</span> <span class="ot">=</span> values2</span>
-<span id="cb90-628"><a href="#cb90-628" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-629"><a href="#cb90-629" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-630"><a href="#cb90-630" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-631"><a href="#cb90-631" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Use Meaningful Column Names</span></span>
-<span id="cb90-632"><a href="#cb90-632" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-635"><a href="#cb90-635" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-636"><a href="#cb90-636" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: best-practice-names</span></span>
-<span id="cb90-637"><a href="#cb90-637" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-638"><a href="#cb90-638" aria-hidden="true" tabindex="-1"></a><span class="co"># Good: Clear, descriptive names</span></span>
-<span id="cb90-639"><a href="#cb90-639" aria-hidden="true" tabindex="-1"></a>good_names <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-640"><a href="#cb90-640" aria-hidden="true" tabindex="-1"></a>  <span class="at">measurement_date =</span> <span class="fu">Sys.Date</span>(),</span>
-<span id="cb90-641"><a href="#cb90-641" aria-hidden="true" tabindex="-1"></a>  <span class="at">temperature_celsius =</span> <span class="dv">25</span>,</span>
-<span id="cb90-642"><a href="#cb90-642" aria-hidden="true" tabindex="-1"></a>  <span class="at">humidity_percent =</span> <span class="dv">60</span></span>
-<span id="cb90-643"><a href="#cb90-643" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-605"><a href="#cb90-605" aria-hidden="true" tabindex="-1"></a><span class="co"># Daily summary across sensors</span></span>
+<span id="cb90-606"><a href="#cb90-606" aria-hidden="true" tabindex="-1"></a>daily_summary <span class="ot">&lt;-</span> regular_ts <span class="sc">%&gt;%</span></span>
+<span id="cb90-607"><a href="#cb90-607" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, is_weekend) <span class="sc">%&gt;%</span></span>
+<span id="cb90-608"><a href="#cb90-608" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb90-609"><a href="#cb90-609" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_reading =</span> <span class="fu">mean</span>(reading, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb90-610"><a href="#cb90-610" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_reading =</span> <span class="fu">sd</span>(reading, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb90-611"><a href="#cb90-611" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb90-612"><a href="#cb90-612" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-613"><a href="#cb90-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-614"><a href="#cb90-614" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(daily_summary)</span>
+<span id="cb90-615"><a href="#cb90-615" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-616"><a href="#cb90-616" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-617"><a href="#cb90-617" aria-hidden="true" tabindex="-1"></a><span class="fu">## Best Practices</span></span>
+<span id="cb90-618"><a href="#cb90-618" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-619"><a href="#cb90-619" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Start with Tidy Data in Mind</span></span>
+<span id="cb90-620"><a href="#cb90-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-623"><a href="#cb90-623" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-624"><a href="#cb90-624" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: best-practice-tidy</span></span>
+<span id="cb90-625"><a href="#cb90-625" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb90-626"><a href="#cb90-626" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-627"><a href="#cb90-627" aria-hidden="true" tabindex="-1"></a><span class="co"># Design your data collection to be tidy from the start</span></span>
+<span id="cb90-628"><a href="#cb90-628" aria-hidden="true" tabindex="-1"></a><span class="co"># Good: Each observation is a row</span></span>
+<span id="cb90-629"><a href="#cb90-629" aria-hidden="true" tabindex="-1"></a>good_design <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-630"><a href="#cb90-630" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">rep</span>(dates, <span class="at">each =</span> n_products),</span>
+<span id="cb90-631"><a href="#cb90-631" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> <span class="fu">rep</span>(products, n_dates),</span>
+<span id="cb90-632"><a href="#cb90-632" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> value</span>
+<span id="cb90-633"><a href="#cb90-633" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-634"><a href="#cb90-634" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-635"><a href="#cb90-635" aria-hidden="true" tabindex="-1"></a><span class="co"># Avoid: Wide format with dates/products as columns</span></span>
+<span id="cb90-636"><a href="#cb90-636" aria-hidden="true" tabindex="-1"></a>avoid_design <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-637"><a href="#cb90-637" aria-hidden="true" tabindex="-1"></a>  <span class="at">product =</span> products,</span>
+<span id="cb90-638"><a href="#cb90-638" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">2024-01-01</span><span class="st">`</span> <span class="ot">=</span> values1,</span>
+<span id="cb90-639"><a href="#cb90-639" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">2024-01-02</span><span class="st">`</span> <span class="ot">=</span> values2</span>
+<span id="cb90-640"><a href="#cb90-640" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-641"><a href="#cb90-641" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-642"><a href="#cb90-642" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-643"><a href="#cb90-643" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Use Meaningful Column Names</span></span>
 <span id="cb90-644"><a href="#cb90-644" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-645"><a href="#cb90-645" aria-hidden="true" tabindex="-1"></a><span class="co"># Better: Consistent naming convention</span></span>
-<span id="cb90-646"><a href="#cb90-646" aria-hidden="true" tabindex="-1"></a>better_names <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-647"><a href="#cb90-647" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_measured =</span> <span class="fu">Sys.Date</span>(),</span>
-<span id="cb90-648"><a href="#cb90-648" aria-hidden="true" tabindex="-1"></a>  <span class="at">temp_c =</span> <span class="dv">25</span>,</span>
-<span id="cb90-649"><a href="#cb90-649" aria-hidden="true" tabindex="-1"></a>  <span class="at">humid_pct =</span> <span class="dv">60</span></span>
-<span id="cb90-650"><a href="#cb90-650" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-651"><a href="#cb90-651" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-652"><a href="#cb90-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-653"><a href="#cb90-653" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Document Your Transformations</span></span>
-<span id="cb90-654"><a href="#cb90-654" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-657"><a href="#cb90-657" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-658"><a href="#cb90-658" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: best-practice-document</span></span>
-<span id="cb90-659"><a href="#cb90-659" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-660"><a href="#cb90-660" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample data for documentation example</span></span>
-<span id="cb90-661"><a href="#cb90-661" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-662"><a href="#cb90-662" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_code =</span> <span class="fu">c</span>(<span class="st">"A-2023"</span>, <span class="st">"B-2023"</span>, <span class="st">"C-2024"</span>),</span>
-<span id="cb90-663"><a href="#cb90-663" aria-hidden="true" tabindex="-1"></a>  <span class="at">jan =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="cn">NA</span>, <span class="dv">150</span>),</span>
-<span id="cb90-664"><a href="#cb90-664" aria-hidden="true" tabindex="-1"></a>  <span class="at">feb =</span> <span class="fu">c</span>(<span class="dv">110</span>, <span class="dv">120</span>, <span class="cn">NA</span>),</span>
-<span id="cb90-665"><a href="#cb90-665" aria-hidden="true" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">130</span>, <span class="dv">170</span>)</span>
-<span id="cb90-666"><a href="#cb90-666" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-667"><a href="#cb90-667" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-668"><a href="#cb90-668" aria-hidden="true" tabindex="-1"></a><span class="co"># Document each step</span></span>
-<span id="cb90-669"><a href="#cb90-669" aria-hidden="true" tabindex="-1"></a>documented_pipeline <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-670"><a href="#cb90-670" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Convert wide sales data to long format</span></span>
-<span id="cb90-671"><a href="#cb90-671" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb90-672"><a href="#cb90-672" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> jan<span class="sc">:</span>mar,</span>
-<span id="cb90-673"><a href="#cb90-673" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"month"</span>,</span>
-<span id="cb90-674"><a href="#cb90-674" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"sales"</span></span>
-<span id="cb90-675"><a href="#cb90-675" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-676"><a href="#cb90-676" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Separate year from product code</span></span>
-<span id="cb90-677"><a href="#cb90-677" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(</span>
-<span id="cb90-678"><a href="#cb90-678" aria-hidden="true" tabindex="-1"></a>    product_code,</span>
-<span id="cb90-679"><a href="#cb90-679" aria-hidden="true" tabindex="-1"></a>    <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"category"</span>, <span class="st">"year"</span>),</span>
-<span id="cb90-680"><a href="#cb90-680" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">"-"</span></span>
-<span id="cb90-681"><a href="#cb90-681" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-682"><a href="#cb90-682" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Fill missing sales with 0</span></span>
-<span id="cb90-683"><a href="#cb90-683" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>))</span>
-<span id="cb90-684"><a href="#cb90-684" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-685"><a href="#cb90-685" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(documented_pipeline)</span>
-<span id="cb90-686"><a href="#cb90-686" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-687"><a href="#cb90-687" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-688"><a href="#cb90-688" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common Patterns</span></span>
-<span id="cb90-689"><a href="#cb90-689" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-690"><a href="#cb90-690" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pattern 1: Wide to Long to Summary</span></span>
-<span id="cb90-691"><a href="#cb90-691" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-694"><a href="#cb90-694" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-695"><a href="#cb90-695" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pattern-wls</span></span>
+<span id="cb90-647"><a href="#cb90-647" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-648"><a href="#cb90-648" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: best-practice-names</span></span>
+<span id="cb90-649"><a href="#cb90-649" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-650"><a href="#cb90-650" aria-hidden="true" tabindex="-1"></a><span class="co"># Good: Clear, descriptive names</span></span>
+<span id="cb90-651"><a href="#cb90-651" aria-hidden="true" tabindex="-1"></a>good_names <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-652"><a href="#cb90-652" aria-hidden="true" tabindex="-1"></a>  <span class="at">measurement_date =</span> <span class="fu">Sys.Date</span>(),</span>
+<span id="cb90-653"><a href="#cb90-653" aria-hidden="true" tabindex="-1"></a>  <span class="at">temperature_celsius =</span> <span class="dv">25</span>,</span>
+<span id="cb90-654"><a href="#cb90-654" aria-hidden="true" tabindex="-1"></a>  <span class="at">humidity_percent =</span> <span class="dv">60</span></span>
+<span id="cb90-655"><a href="#cb90-655" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-656"><a href="#cb90-656" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-657"><a href="#cb90-657" aria-hidden="true" tabindex="-1"></a><span class="co"># Better: Consistent naming convention</span></span>
+<span id="cb90-658"><a href="#cb90-658" aria-hidden="true" tabindex="-1"></a>better_names <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-659"><a href="#cb90-659" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_measured =</span> <span class="fu">Sys.Date</span>(),</span>
+<span id="cb90-660"><a href="#cb90-660" aria-hidden="true" tabindex="-1"></a>  <span class="at">temp_c =</span> <span class="dv">25</span>,</span>
+<span id="cb90-661"><a href="#cb90-661" aria-hidden="true" tabindex="-1"></a>  <span class="at">humid_pct =</span> <span class="dv">60</span></span>
+<span id="cb90-662"><a href="#cb90-662" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-663"><a href="#cb90-663" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-664"><a href="#cb90-664" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-665"><a href="#cb90-665" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Document Your Transformations</span></span>
+<span id="cb90-666"><a href="#cb90-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-669"><a href="#cb90-669" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-670"><a href="#cb90-670" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: best-practice-document</span></span>
+<span id="cb90-671"><a href="#cb90-671" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-672"><a href="#cb90-672" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample data for documentation example</span></span>
+<span id="cb90-673"><a href="#cb90-673" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-674"><a href="#cb90-674" aria-hidden="true" tabindex="-1"></a>  <span class="at">product_code =</span> <span class="fu">c</span>(<span class="st">"A-2023"</span>, <span class="st">"B-2023"</span>, <span class="st">"C-2024"</span>),</span>
+<span id="cb90-675"><a href="#cb90-675" aria-hidden="true" tabindex="-1"></a>  <span class="at">jan =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="cn">NA</span>, <span class="dv">150</span>),</span>
+<span id="cb90-676"><a href="#cb90-676" aria-hidden="true" tabindex="-1"></a>  <span class="at">feb =</span> <span class="fu">c</span>(<span class="dv">110</span>, <span class="dv">120</span>, <span class="cn">NA</span>),</span>
+<span id="cb90-677"><a href="#cb90-677" aria-hidden="true" tabindex="-1"></a>  <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">130</span>, <span class="dv">170</span>)</span>
+<span id="cb90-678"><a href="#cb90-678" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-679"><a href="#cb90-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-680"><a href="#cb90-680" aria-hidden="true" tabindex="-1"></a><span class="co"># Document each step</span></span>
+<span id="cb90-681"><a href="#cb90-681" aria-hidden="true" tabindex="-1"></a>documented_pipeline <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-682"><a href="#cb90-682" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: Convert wide sales data to long format</span></span>
+<span id="cb90-683"><a href="#cb90-683" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb90-684"><a href="#cb90-684" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> jan<span class="sc">:</span>mar,</span>
+<span id="cb90-685"><a href="#cb90-685" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"month"</span>,</span>
+<span id="cb90-686"><a href="#cb90-686" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"sales"</span></span>
+<span id="cb90-687"><a href="#cb90-687" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-688"><a href="#cb90-688" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: Separate year from product code</span></span>
+<span id="cb90-689"><a href="#cb90-689" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb90-690"><a href="#cb90-690" aria-hidden="true" tabindex="-1"></a>    product_code,</span>
+<span id="cb90-691"><a href="#cb90-691" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">"-"</span>,</span>
+<span id="cb90-692"><a href="#cb90-692" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"category"</span>, <span class="st">"year"</span>)</span>
+<span id="cb90-693"><a href="#cb90-693" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-694"><a href="#cb90-694" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: Fill missing sales with 0</span></span>
+<span id="cb90-695"><a href="#cb90-695" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace_na</span>(<span class="fu">list</span>(<span class="at">sales =</span> <span class="dv">0</span>))</span>
 <span id="cb90-696"><a href="#cb90-696" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-697"><a href="#cb90-697" aria-hidden="true" tabindex="-1"></a><span class="co"># Common analysis pattern</span></span>
-<span id="cb90-698"><a href="#cb90-698" aria-hidden="true" tabindex="-1"></a>wide_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-699"><a href="#cb90-699" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>),</span>
-<span id="cb90-700"><a href="#cb90-700" aria-hidden="true" tabindex="-1"></a>  <span class="at">day1 =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>),</span>
-<span id="cb90-701"><a href="#cb90-701" aria-hidden="true" tabindex="-1"></a>  <span class="at">day2 =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">22</span>),</span>
-<span id="cb90-702"><a href="#cb90-702" aria-hidden="true" tabindex="-1"></a>  <span class="at">day3 =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">25</span>)</span>
-<span id="cb90-703"><a href="#cb90-703" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-704"><a href="#cb90-704" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-705"><a href="#cb90-705" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> wide_data <span class="sc">%&gt;%</span></span>
-<span id="cb90-706"><a href="#cb90-706" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"day"</span>),</span>
-<span id="cb90-707"><a href="#cb90-707" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_to =</span> <span class="st">"day"</span>,</span>
-<span id="cb90-708"><a href="#cb90-708" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-709"><a href="#cb90-709" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span></span>
-<span id="cb90-710"><a href="#cb90-710" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb90-711"><a href="#cb90-711" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(value),</span>
-<span id="cb90-712"><a href="#cb90-712" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(value),</span>
-<span id="cb90-713"><a href="#cb90-713" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb90-714"><a href="#cb90-714" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb90-715"><a href="#cb90-715" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-716"><a href="#cb90-716" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary)</span>
-<span id="cb90-717"><a href="#cb90-717" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-718"><a href="#cb90-718" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-719"><a href="#cb90-719" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pattern 2: Separate, Clean, Unite</span></span>
-<span id="cb90-720"><a href="#cb90-720" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-723"><a href="#cb90-723" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb90-724"><a href="#cb90-724" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pattern-scu</span></span>
-<span id="cb90-725"><a href="#cb90-725" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-726"><a href="#cb90-726" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean messy identifiers</span></span>
-<span id="cb90-727"><a href="#cb90-727" aria-hidden="true" tabindex="-1"></a>messy_ids <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb90-728"><a href="#cb90-728" aria-hidden="true" tabindex="-1"></a>  <span class="at">raw_id =</span> <span class="fu">c</span>(<span class="st">"USA_2024_Q1"</span>, <span class="st">"CAN_2024_Q2"</span>, <span class="st">"MEX_2024_Q1"</span>),</span>
-<span id="cb90-729"><a href="#cb90-729" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">120</span>)</span>
-<span id="cb90-730"><a href="#cb90-730" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb90-731"><a href="#cb90-731" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-732"><a href="#cb90-732" aria-hidden="true" tabindex="-1"></a>clean_ids <span class="ot">&lt;-</span> messy_ids <span class="sc">%&gt;%</span></span>
-<span id="cb90-733"><a href="#cb90-733" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(raw_id, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"country"</span>, <span class="st">"year"</span>, <span class="st">"quarter"</span>), <span class="at">sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-734"><a href="#cb90-734" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb90-735"><a href="#cb90-735" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year),</span>
-<span id="cb90-736"><a href="#cb90-736" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">factor</span>(quarter, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span>))</span>
-<span id="cb90-737"><a href="#cb90-737" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb90-738"><a href="#cb90-738" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(period, year, quarter, <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb90-739"><a href="#cb90-739" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-740"><a href="#cb90-740" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(clean_ids)</span>
-<span id="cb90-741"><a href="#cb90-741" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb90-742"><a href="#cb90-742" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-743"><a href="#cb90-743" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
-<span id="cb90-744"><a href="#cb90-744" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-745"><a href="#cb90-745" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 1: Basic Pivoting</span></span>
-<span id="cb90-746"><a href="#cb90-746" aria-hidden="true" tabindex="-1"></a>Create a dataset of monthly temperatures for 3 cities across 4 months. Start in wide format, then:</span>
-<span id="cb90-747"><a href="#cb90-747" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Pivot to long format</span>
-<span id="cb90-748"><a href="#cb90-748" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Calculate average temperature per city</span>
-<span id="cb90-749"><a href="#cb90-749" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Pivot back to wide with cities as columns</span>
-<span id="cb90-750"><a href="#cb90-750" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-751"><a href="#cb90-751" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 2: Data Cleaning Pipeline</span></span>
-<span id="cb90-752"><a href="#cb90-752" aria-hidden="true" tabindex="-1"></a>Given messy survey data with:</span>
-<span id="cb90-753"><a href="#cb90-753" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Combined name fields ("FirstName LastName")</span>
-<span id="cb90-754"><a href="#cb90-754" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple responses in single cells ("option1;option2;option3")</span>
-<span id="cb90-755"><a href="#cb90-755" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Missing value combinations</span>
-<span id="cb90-756"><a href="#cb90-756" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-757"><a href="#cb90-757" aria-hidden="true" tabindex="-1"></a>Clean the data to create a tidy dataset ready for analysis.</span>
+<span id="cb90-697"><a href="#cb90-697" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(documented_pipeline)</span>
+<span id="cb90-698"><a href="#cb90-698" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-699"><a href="#cb90-699" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-700"><a href="#cb90-700" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common Patterns</span></span>
+<span id="cb90-701"><a href="#cb90-701" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-702"><a href="#cb90-702" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pattern 1: Wide to Long to Summary</span></span>
+<span id="cb90-703"><a href="#cb90-703" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-706"><a href="#cb90-706" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-707"><a href="#cb90-707" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pattern-wls</span></span>
+<span id="cb90-708"><a href="#cb90-708" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-709"><a href="#cb90-709" aria-hidden="true" tabindex="-1"></a><span class="co"># Common analysis pattern</span></span>
+<span id="cb90-710"><a href="#cb90-710" aria-hidden="true" tabindex="-1"></a>wide_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-711"><a href="#cb90-711" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>),</span>
+<span id="cb90-712"><a href="#cb90-712" aria-hidden="true" tabindex="-1"></a>  <span class="at">day1 =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>),</span>
+<span id="cb90-713"><a href="#cb90-713" aria-hidden="true" tabindex="-1"></a>  <span class="at">day2 =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">22</span>),</span>
+<span id="cb90-714"><a href="#cb90-714" aria-hidden="true" tabindex="-1"></a>  <span class="at">day3 =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">25</span>)</span>
+<span id="cb90-715"><a href="#cb90-715" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-716"><a href="#cb90-716" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-717"><a href="#cb90-717" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> wide_data <span class="sc">%&gt;%</span></span>
+<span id="cb90-718"><a href="#cb90-718" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"day"</span>),</span>
+<span id="cb90-719"><a href="#cb90-719" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_to =</span> <span class="st">"day"</span>,</span>
+<span id="cb90-720"><a href="#cb90-720" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb90-721"><a href="#cb90-721" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span></span>
+<span id="cb90-722"><a href="#cb90-722" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb90-723"><a href="#cb90-723" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(value),</span>
+<span id="cb90-724"><a href="#cb90-724" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(value),</span>
+<span id="cb90-725"><a href="#cb90-725" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb90-726"><a href="#cb90-726" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb90-727"><a href="#cb90-727" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-728"><a href="#cb90-728" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary)</span>
+<span id="cb90-729"><a href="#cb90-729" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb90-730"><a href="#cb90-730" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-731"><a href="#cb90-731" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pattern 2: Separate, Clean, Unite</span></span>
+<span id="cb90-732"><a href="#cb90-732" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-735"><a href="#cb90-735" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb90-736"><a href="#cb90-736" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pattern-scu</span></span>
+<span id="cb90-737"><a href="#cb90-737" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-738"><a href="#cb90-738" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean messy identifiers</span></span>
+<span id="cb90-739"><a href="#cb90-739" aria-hidden="true" tabindex="-1"></a>messy_ids <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb90-740"><a href="#cb90-740" aria-hidden="true" tabindex="-1"></a>  <span class="at">raw_id =</span> <span class="fu">c</span>(<span class="st">"USA_2024_Q1"</span>, <span class="st">"CAN_2024_Q2"</span>, <span class="st">"MEX_2024_Q1"</span>),</span>
+<span id="cb90-741"><a href="#cb90-741" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">120</span>)</span>
+<span id="cb90-742"><a href="#cb90-742" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb90-743"><a href="#cb90-743" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-744"><a href="#cb90-744" aria-hidden="true" tabindex="-1"></a>clean_ids <span class="ot">&lt;-</span> messy_ids <span class="sc">%&gt;%</span></span>
+<span id="cb90-745"><a href="#cb90-745" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb90-746"><a href="#cb90-746" aria-hidden="true" tabindex="-1"></a>    raw_id,</span>
+<span id="cb90-747"><a href="#cb90-747" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">"_"</span>,</span>
+<span id="cb90-748"><a href="#cb90-748" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"country"</span>, <span class="st">"year"</span>, <span class="st">"quarter"</span>)</span>
+<span id="cb90-749"><a href="#cb90-749" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-750"><a href="#cb90-750" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb90-751"><a href="#cb90-751" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year),</span>
+<span id="cb90-752"><a href="#cb90-752" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">factor</span>(quarter, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span>))</span>
+<span id="cb90-753"><a href="#cb90-753" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb90-754"><a href="#cb90-754" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(period, year, quarter, <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb90-755"><a href="#cb90-755" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-756"><a href="#cb90-756" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(clean_ids)</span>
+<span id="cb90-757"><a href="#cb90-757" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb90-758"><a href="#cb90-758" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-759"><a href="#cb90-759" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 3: Complex Reshaping</span></span>
-<span id="cb90-760"><a href="#cb90-760" aria-hidden="true" tabindex="-1"></a>Create a sales dataset with:</span>
-<span id="cb90-761"><a href="#cb90-761" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple products</span>
-<span id="cb90-762"><a href="#cb90-762" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple regions</span>
-<span id="cb90-763"><a href="#cb90-763" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Quarterly data for 2 years</span>
-<span id="cb90-764"><a href="#cb90-764" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-765"><a href="#cb90-765" aria-hidden="true" tabindex="-1"></a>Practice pivoting between different representations for different types of analysis.</span>
+<span id="cb90-759"><a href="#cb90-759" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb90-760"><a href="#cb90-760" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-761"><a href="#cb90-761" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 1: Basic Pivoting</span></span>
+<span id="cb90-762"><a href="#cb90-762" aria-hidden="true" tabindex="-1"></a>Create a dataset of monthly temperatures for 3 cities across 4 months. Start in wide format, then:</span>
+<span id="cb90-763"><a href="#cb90-763" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Pivot to long format</span>
+<span id="cb90-764"><a href="#cb90-764" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Calculate average temperature per city</span>
+<span id="cb90-765"><a href="#cb90-765" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Pivot back to wide with cities as columns</span>
 <span id="cb90-766"><a href="#cb90-766" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-767"><a href="#cb90-767" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
-<span id="cb90-768"><a href="#cb90-768" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-769"><a href="#cb90-769" aria-hidden="true" tabindex="-1"></a>tidyr provides essential tools for data tidying:</span>
-<span id="cb90-770"><a href="#cb90-770" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-771"><a href="#cb90-771" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`pivot_longer()`/`pivot_wider()`**: Reshape between wide and long formats</span>
-<span id="cb90-772"><a href="#cb90-772" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`separate()`/`unite()`**: Split and combine columns</span>
-<span id="cb90-773"><a href="#cb90-773" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`complete()`**: Fill in missing combinations</span>
-<span id="cb90-774"><a href="#cb90-774" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`drop_na()`/`fill()`/`replace_na()`**: Handle missing values</span>
-<span id="cb90-775"><a href="#cb90-775" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`nest()`/`unnest()`**: Create and expand list-columns</span>
-<span id="cb90-776"><a href="#cb90-776" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-777"><a href="#cb90-777" aria-hidden="true" tabindex="-1"></a>These functions, combined with dplyr, form the foundation of data manipulation in the tidyverse. Tidy data makes subsequent analysis much easier and more intuitive.</span>
-<span id="cb90-778"><a href="#cb90-778" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb90-779"><a href="#cb90-779" aria-hidden="true" tabindex="-1"></a>The key insight: spend time getting your data tidy, and the rest of your analysis will be much simpler!</span>
+<span id="cb90-767"><a href="#cb90-767" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 2: Data Cleaning Pipeline</span></span>
+<span id="cb90-768"><a href="#cb90-768" aria-hidden="true" tabindex="-1"></a>Given messy survey data with:</span>
+<span id="cb90-769"><a href="#cb90-769" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Combined name fields ("FirstName LastName")</span>
+<span id="cb90-770"><a href="#cb90-770" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple responses in single cells ("option1;option2;option3")</span>
+<span id="cb90-771"><a href="#cb90-771" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Missing value combinations</span>
+<span id="cb90-772"><a href="#cb90-772" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-773"><a href="#cb90-773" aria-hidden="true" tabindex="-1"></a>Clean the data to create a tidy dataset ready for analysis.</span>
+<span id="cb90-774"><a href="#cb90-774" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-775"><a href="#cb90-775" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 3: Complex Reshaping</span></span>
+<span id="cb90-776"><a href="#cb90-776" aria-hidden="true" tabindex="-1"></a>Create a sales dataset with:</span>
+<span id="cb90-777"><a href="#cb90-777" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple products</span>
+<span id="cb90-778"><a href="#cb90-778" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Multiple regions</span>
+<span id="cb90-779"><a href="#cb90-779" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Quarterly data for 2 years</span>
+<span id="cb90-780"><a href="#cb90-780" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-781"><a href="#cb90-781" aria-hidden="true" tabindex="-1"></a>Practice pivoting between different representations for different types of analysis.</span>
+<span id="cb90-782"><a href="#cb90-782" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-783"><a href="#cb90-783" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb90-784"><a href="#cb90-784" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-785"><a href="#cb90-785" aria-hidden="true" tabindex="-1"></a>tidyr provides essential tools for data tidying:</span>
+<span id="cb90-786"><a href="#cb90-786" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-787"><a href="#cb90-787" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`pivot_longer()`/`pivot_wider()`**: Reshape between wide and long formats</span>
+<span id="cb90-788"><a href="#cb90-788" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`separate_wider_delim()`/`unite()`**: Split and combine columns</span>
+<span id="cb90-789"><a href="#cb90-789" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`complete()`**: Fill in missing combinations</span>
+<span id="cb90-790"><a href="#cb90-790" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`drop_na()`/`fill()`/`replace_na()`**: Handle missing values</span>
+<span id="cb90-791"><a href="#cb90-791" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`nest()`/`unnest()`**: Create and expand list-columns</span>
+<span id="cb90-792"><a href="#cb90-792" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-793"><a href="#cb90-793" aria-hidden="true" tabindex="-1"></a>These functions, combined with dplyr, form the foundation of data manipulation in the tidyverse. Tidy data makes subsequent analysis much easier and more intuitive.</span>
+<span id="cb90-794"><a href="#cb90-794" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-795"><a href="#cb90-795" aria-hidden="true" tabindex="-1"></a>The key insight: spend time getting your data tidy, and the rest of your analysis will be much simpler!</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 Simone Santoni</p>
+<p>© 2026 Simone Santoni</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://github.com/simoneSantoni/intro-to-R-IND218">IND218 - Introduction to R</a></p>

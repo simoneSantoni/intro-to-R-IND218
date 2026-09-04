@@ -14,6 +14,27 @@ format:
 
 Data pivoting is the cornerstone of data tidying - the ability to transform data between wide and long formats. Think of it as rotating your data table to change its perspective. Wide format spreads variables across columns (good for human reading), while long format stacks data into rows (ideal for analysis and visualization).
 
+### Specify the column-name contract
+
+When names encode several variables, describe the pattern explicitly. The special `.value` sentinel tells `pivot_longer()` that part of each source name should become an output value column:
+
+```{r}
+#| eval: false
+quarterly_metrics |>
+  pivot_longer(
+    cols = matches("^(revenue|cost)_Q[1-4]$"),
+    names_to = c(".value", "quarter"),
+    names_pattern = "(revenue|cost)_(Q[1-4])",
+    values_transform = list(revenue = as.double, cost = as.double)
+  )
+```
+
+For a column called `revenue_Q2`, the regular expression captures `revenue` as the output value-column name and `Q2` as the quarter. `values_transform` enforces numeric types during the pivot. Columns that do not match are excluded deliberately, which prevents an identifier from being reshaped accidentally.
+
+::: {.callout-warning title="Duplicates require a business rule"}
+Before `pivot_wider()`, check whether each identifier/name combination is unique. If it is not, decide whether duplicates are errors or repeated events that require an explicit `values_fn` such as `sum`. Never choose an aggregation solely to silence a list-column warning.
+:::
+
 ## Understanding Wide vs. Long Format
 
 Let's start with a clear comparison:

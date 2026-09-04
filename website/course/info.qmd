@@ -22,7 +22,8 @@ and packages that analytics professionals use daily:
 
 ## Course Structure
 
-The course is organized into four substantive modules:
+The course is organized into six progressive modules. Modules 1--2 establish
+base R foundations; Modules 3--6 apply those foundations in the tidyverse.
 
 ### Module 1: Getting Started with R
 - R and RStudio installation and setup
@@ -43,11 +44,18 @@ The course is organized into four substantive modules:
 - Basic data manipulation with dplyr
 - Data tidying principles with tidyr
 
-### Module 4: Data Wrangling with dplyr
-- Filtering, selecting, and arranging data
-- Creating new variables with mutate
-- Grouping and summarizing data
-- Joining datasets and advanced data manipulation
+### Module 4: Data Types in the Tidyverse
+- Character data, factors, dates, and times
+- Choosing types that preserve analytical meaning
+
+### Module 5: Data Wrangling with dplyr
+- Filtering, selecting, arranging, and creating variables
+- Grouped summaries and joins
+
+### Module 6: Organizing Data with tidyr
+- Diagnosing whether tabular data are tidy
+- Reshaping, separating, and uniting columns
+- Representing and handling missing values
 
 ## Learning Objectives
 
@@ -58,7 +66,7 @@ By the end of this course, students will be able to:
 3. **Manipulate and analyze data** using base R and tidyverse functions
 4. **Process and transform datasets** using dplyr for data wrangling
 5. **Import and export data** from various file formats using readr and base R
-6. **Create reproducible data analysis workflows** with R scripts and R Markdown
+6. **Create reproducible data analysis workflows** with R scripts and Quarto
 7. **Apply statistical thinking** to data exploration and basic analysis tasks
 
 ## Prerequisites
@@ -70,7 +78,7 @@ By the end of this course, students will be able to:
 
 ## Software Requirements
 
-- **R 4.0+** (we recommend R 4.3 or newer)
+- A currently supported release of **R**
 - **RStudio Desktop** (latest version for the best experience)
 - **Essential R packages** (tidyverse, readr, dplyr, ggplot2, and others)
 - **Git** for version control (optional but recommended)
@@ -88,7 +96,7 @@ This course emphasizes practical skill development through:
 
 - Use the course materials and examples as your first reference
 - Practice with the provided exercises and datasets
-- Consult Python documentation and community resources
+- Consult R's built-in help (`?mean`, for example) and package documentation
 - Ask questions during class sessions or office hours
 
 ## Success Tips
@@ -103,6 +111,6 @@ This course emphasizes practical skill development through:
 ## Course Resources
 
 - **Official R Documentation**: [r-project.org](https://www.r-project.org/other-docs.html)
-- **RStudio Resources**: [rstudio.com](https://rstudio.com/resources/)
+- **Posit Education Resources**: [posit.co/resources/](https://posit.co/resources/)
 - **Tidyverse Documentation**: [tidyverse.org](https://www.tidyverse.org/)
-- **R for Data Science Book**: [r4ds.had.co.nz](https://r4ds.had.co.nz/)
+- **R for Data Science (2e)**: [r4ds.hadley.nz](https://r4ds.hadley.nz/)

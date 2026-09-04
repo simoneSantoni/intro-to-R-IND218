@@ -66,6 +66,32 @@ $sidebar-hl: #ffe6e6;
   }
 }
 
+.course-path {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.course-path-card {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+
+  h3 { margin-top: 0; }
+}
+
+@media (max-width: 768px) {
+  .hero-banner { padding: 2rem 1rem; }
+  .hero-banner h1 { font-size: 2rem; }
+  .course-path { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .week-card { transition: none; }
+  .week-card:hover { transform: none; }
+}
+
 // Data viz specific styling
 .viz-principle {
   background-color: #e8f4fd;

@@ -175,7 +175,12 @@ print(multi_wide)
 
 ## Separating and Uniting Columns
 
-### separate(): Split One Column into Multiple
+### `separate_wider_delim()`: Split One Column into Multiple
+
+Use `separate_wider_delim()` when one column contains several variables separated
+by a known delimiter. Supply the source column, the new column names, and the
+delimiter. The function is the modern replacement for `separate()` and reports
+more informative errors when a value has too many or too few pieces.
 
 ```{r}
 #| label: separate
@@ -191,9 +196,13 @@ print(combined_data)
 
 # Separate into multiple columns
 separated_data <- combined_data %>%
-  separate(employee, into = c("first", "last"), sep = "_") %>%
-  separate(dept_role, into = c("department", "role"), sep = "_") %>%
-  separate(date_time, into = c("date", "time"), sep = "_")
+  separate_wider_delim(employee, delim = "_", names = c("first", "last")) %>%
+  separate_wider_delim(
+    dept_role,
+    delim = "_",
+    names = c("department", "role")
+  ) %>%
+  separate_wider_delim(date_time, delim = "_", names = c("date", "time"))
 
 print(separated_data)
 ```
@@ -433,8 +442,11 @@ survey_raw <- tibble(
 # Clean and tidy the data
 survey_clean <- survey_raw %>%
   # Separate demographics
-  separate(demographics, into = c("age_group", "gender", "location"),
-          sep = ",") %>%
+  separate_wider_delim(
+    demographics,
+    delim = ",",
+    names = c("age_group", "gender", "location")
+  ) %>%
   # Pivot questions longer
   pivot_longer(
     cols = starts_with("q"),
@@ -632,10 +644,10 @@ documented_pipeline <- raw_data %>%
     values_to = "sales"
   ) %>%
   # Step 2: Separate year from product code
-  separate(
+  separate_wider_delim(
     product_code,
-    into = c("category", "year"),
-    sep = "-"
+    delim = "-",
+    names = c("category", "year")
   ) %>%
   # Step 3: Fill missing sales with 0
   replace_na(list(sales = 0))
@@ -684,7 +696,11 @@ messy_ids <- tibble(
 )
 
 clean_ids <- messy_ids %>%
-  separate(raw_id, into = c("country", "year", "quarter"), sep = "_") %>%
+  separate_wider_delim(
+    raw_id,
+    delim = "_",
+    names = c("country", "year", "quarter")
+  ) %>%
   mutate(
     year = as.integer(year),
     quarter = factor(quarter, levels = c("Q1", "Q2", "Q3", "Q4"))
@@ -723,7 +739,7 @@ Practice pivoting between different representations for different types of analy
 tidyr provides essential tools for data tidying:
 
 - **`pivot_longer()`/`pivot_wider()`**: Reshape between wide and long formats
-- **`separate()`/`unite()`**: Split and combine columns
+- **`separate_wider_delim()`/`unite()`**: Split and combine columns
 - **`complete()`**: Fill in missing combinations
 - **`drop_na()`/`fill()`/`replace_na()`**: Handle missing values
 - **`nest()`/`unnest()`**: Create and expand list-columns

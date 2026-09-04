@@ -14,7 +14,7 @@ website:
 
   page-footer:
     left: |
-      &copy; 2025 Simone Santoni
+      &copy; 2026 Simone Santoni
     center: |
       [IND218 - Introduction to R](https://github.com/simoneSantoni/intro-to-R-IND218)
     right: |
@@ -131,6 +131,7 @@ website:
 
 format:
   html:
+    lang: en-GB
     theme:
       light: [cosmo, theme.scss]
       dark: [cosmo, theme-dark.scss]

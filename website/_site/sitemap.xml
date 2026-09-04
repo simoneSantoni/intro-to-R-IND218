@@ -2,27 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-6/tidy-principles.html</loc>
-    <lastmod>2026-09-03T15:34:50.704Z</lastmod>
+    <lastmod>2026-09-04T07:18:14.793Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-6/pivoting-data.html</loc>
-    <lastmod>2026-09-03T15:34:50.703Z</lastmod>
+    <lastmod>2026-09-04T07:18:14.793Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-6/index.html</loc>
-    <lastmod>2026-09-03T15:34:50.703Z</lastmod>
+    <lastmod>2026-09-04T07:18:14.792Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-5/joining-data.html</loc>
-    <lastmod>2026-09-03T15:34:50.702Z</lastmod>
+    <lastmod>2026-09-04T07:17:40.430Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-5/grouping-summarizing.html</loc>
-    <lastmod>2026-09-03T15:34:50.702Z</lastmod>
+    <lastmod>2026-09-04T07:17:40.430Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-5/advanced-techniques.html</loc>
-    <lastmod>2026-09-03T15:34:50.702Z</lastmod>
+    <lastmod>2026-09-04T07:17:40.431Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-4/index.html</loc>
@@ -30,7 +30,7 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-4/dates-lubridate.html</loc>
-    <lastmod>2026-09-03T15:34:50.701Z</lastmod>
+    <lastmod>2026-09-04T07:16:40.757Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-3/tibbles.html</loc>
@@ -46,7 +46,7 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-2/vectors.html</loc>
-    <lastmod>2026-09-03T15:34:50.699Z</lastmod>
+    <lastmod>2026-09-04T07:16:42.373Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-2/functions.html</loc>
@@ -62,15 +62,15 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-1/r-as-calculator.html</loc>
-    <lastmod>2026-09-03T15:25:36.217Z</lastmod>
+    <lastmod>2026-09-04T07:16:42.373Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/index.html</loc>
-    <lastmod>2026-09-03T15:34:50.698Z</lastmod>
+    <lastmod>2026-09-04T07:16:41.235Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/course/syllabus.html</loc>
-    <lastmod>2026-09-03T15:34:50.698Z</lastmod>
+    <lastmod>2026-09-04T07:16:23.353Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/course/schedule.html</loc>
@@ -78,7 +78,7 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/course/info.html</loc>
-    <lastmod>2026-09-03T15:34:50.698Z</lastmod>
+    <lastmod>2026-09-04T07:16:23.353Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/course/support.html</loc>
@@ -106,7 +106,7 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-2/index.html</loc>
-    <lastmod>2026-09-03T15:34:50.699Z</lastmod>
+    <lastmod>2026-09-04T07:17:15.175Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-2/working-with-files.html</loc>
@@ -122,11 +122,11 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-3/tidyr-principles.html</loc>
-    <lastmod>2026-09-03T15:34:50.701Z</lastmod>
+    <lastmod>2026-09-04T07:16:40.756Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-4/factors-forcats.html</loc>
-    <lastmod>2026-09-03T15:34:50.701Z</lastmod>
+    <lastmod>2026-09-04T07:20:30.331Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-4/strings-stringr.html</loc>
@@ -134,22 +134,22 @@
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-5/filtering-selecting.html</loc>
-    <lastmod>2026-09-03T15:34:50.702Z</lastmod>
+    <lastmod>2026-09-04T07:17:40.428Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-5/index.html</loc>
-    <lastmod>2026-09-03T15:34:50.702Z</lastmod>
+    <lastmod>2026-09-04T07:17:40.427Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-5/mutating-arranging.html</loc>
-    <lastmod>2026-09-03T15:34:50.703Z</lastmod>
+    <lastmod>2026-09-04T07:17:40.429Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-6/nested-rectangling.html</loc>
-    <lastmod>2026-09-03T15:34:50.703Z</lastmod>
+    <lastmod>2026-09-04T07:18:14.795Z</lastmod>
   </url>
   <url>
     <loc>https://simonesantoni.github.io/intro-to-R-IND218/modules/module-6/separating-uniting.html</loc>
-    <lastmod>2026-09-03T15:34:50.704Z</lastmod>
+    <lastmod>2026-09-04T07:18:14.794Z</lastmod>
   </url>
 </urlset>

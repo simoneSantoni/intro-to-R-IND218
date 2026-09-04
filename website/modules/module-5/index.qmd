@@ -14,6 +14,10 @@ format:
 
 Now that you understand tidyverse fundamentals and can work with different data types, it's time to master the art of data wrangling. The `dplyr` package is the Swiss Army knife of data manipulation, providing intuitive functions that correspond to the most common data analysis tasks.
 
+::: {.callout-note title="The analyst's contract"}
+Every pipeline should make three things explicit: the question being answered, the table's unit of observation, and the checks that make the result trustworthy. In this module, the working table usually contains **one row per order**. A regional total therefore answers “How much order revenue was recorded?”—not “How profitable is each customer?” Keep that distinction visible when interpreting output.
+:::
+
 ## What You'll Learn
 
 In this module, we'll dive deep into the powerful world of dplyr, covering:
@@ -47,6 +51,14 @@ In this module, we'll dive deep into the powerful world of dplyr, covering:
 - Programming with dplyr using {{ and !!
 - Custom functions and non-standard evaluation
 - Performance optimization and best practices
+
+### A repeatable decision workflow
+
+1. **Define** the decision, metric, and unit of observation.
+2. **Diagnose** keys, missingness, ranges, and duplicate records.
+3. **Transform** with small, named steps whose intermediate results can be inspected.
+4. **Validate** row counts and totals before and after joins or filters.
+5. **Communicate** the result, assumptions, and limitations—not only the final number.
 
 ## Learning Objectives
 

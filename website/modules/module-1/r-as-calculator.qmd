@@ -6,6 +6,18 @@ title: "R as a Calculator"
 
 One of the best ways to start learning R is to use it as a sophisticated calculator. R excels at mathematical operations and provides many built-in functions that go far beyond what a standard calculator can do. In this lesson, we'll explore R's mathematical capabilities and start building your confidence with the R console.
 
+## Learning Objectives
+
+By the end of this lesson, you should be able to:
+
+- translate a mathematical expression into valid R syntax;
+- store a result with `<-` and inspect the stored object;
+- apply one calculation to every element of a vector; and
+- distinguish an ordinary value from `NA`, `NaN`, and `Inf`.
+
+These outcomes matter beyond arithmetic: the same syntax drives financial
+models, transformations of data-frame columns, and statistical calculations.
+
 ## Getting Started
 
 Open RStudio and look for the **Console** pane (usually in the bottom-left). You'll see a prompt that looks like this:
@@ -215,6 +227,12 @@ x + 10
 x * 2
 ```
 
+R evaluates these expressions element by element. In `x + y`, the first value
+of `x` is paired with the first value of `y`, and so on. A length-one value such
+as `10` is reused for every element. This special case of **recycling** is
+useful; recycling two longer vectors of incompatible lengths is usually a bug
+and produces a warning.
+
 ### Useful Vector Functions
 
 ```{r}
@@ -376,7 +394,25 @@ result
 (result2 <- 10 * 2)
 ```
 
+Assignment and printing are separate actions. `<-` binds a name to a value but
+normally prints nothing; entering the name asks R to display the value. Choose
+meaningful names such as `monthly_revenue`, not names such as `x1`, once an
+object represents a business concept.
+
 ## Common Mistakes to Avoid
+
+### Decimal Comparisons
+
+Computers store most decimal fractions approximately. Consequently, this
+mathematically natural comparison is not a reliable test:
+
+```{r}
+0.1 + 0.2 == 0.3
+isTRUE(all.equal(0.1 + 0.2, 0.3))
+```
+
+Use `all.equal()` (wrapped in `isTRUE()` when a single logical result is
+required) for computed decimal values.
 
 ### Case Sensitivity
 

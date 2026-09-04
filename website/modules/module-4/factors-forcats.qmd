@@ -12,7 +12,12 @@ format:
 
 ## Introduction to Factors
 
-Factors are R's way of representing categorical data - data that can only take on a limited set of values. Examples include survey responses (Poor/Fair/Good/Excellent), education levels (High School/Bachelor's/Master's/PhD), or product categories. The `forcats` package makes working with factors intuitive and powerful.
+Factors represent categorical data using a set of allowed values called
+**levels**. Examples include survey responses (Poor/Fair/Good/Excellent),
+education levels (High School/Bachelor's/Master's/PhD), and product categories.
+Unlike character vectors, factors can retain categories that do not occur in the
+current observations and can record a meaningful display or ranking order. The
+`forcats` package provides focused tools for changing those levels.
 
 ```{r}
 #| label: setup
@@ -42,7 +47,9 @@ cat("- fct_drop(): remove unused levels\n")
 # Character vector vs factor
 satisfaction_char <- c("Good", "Excellent", "Poor", "Good", "Fair", "Excellent")
 satisfaction_factor <- factor(satisfaction_char,
-                             levels = c("Poor", "Fair", "Good", "Excellent"))
+  levels = c("Poor", "Fair", "Good", "Excellent"),
+  ordered = TRUE
+)
 
 # Compare the two
 cat("Character vector:\n")
@@ -57,6 +64,12 @@ print(table(satisfaction_factor))
 satisfaction_subset <- satisfaction_factor[1:3]  # Only has "Good", "Excellent", "Poor"
 print(table(satisfaction_subset))  # Still shows all 4 levels
 ```
+
+The displayed labels are the levels; internally, R stores integer codes that
+point to those labels. Because this factor is ordered, comparisons such as
+`satisfaction_factor[1] > satisfaction_factor[3]` are meaningful. Do not use
+`as.numeric()` to recover labels: it returns the internal codes, not the text or
+the numeric values that the labels might resemble.
 
 ### Factor Properties
 
@@ -308,8 +321,11 @@ cat("\nAfter dropping unused levels:\n")
 print(levels(rating_data$rating_clean))
 print(summary(rating_data$rating_clean))
 
-# Handle NA values explicitly
-rating_data$rating_with_na <- fct_explicit_na(rating_data$rating_clean, na_level = "No Rating")
+# Handle NA values explicitly with the current forcats helper
+rating_data$rating_with_na <- fct_na_value_to_level(
+  rating_data$rating_clean,
+  level = "No Rating"
+)
 
 cat("\nAfter making NA explicit:\n")
 print(summary(rating_data$rating_with_na))
@@ -323,7 +339,7 @@ print(summary(rating_data$rating_with_unknown))
 
 # Convert explicit NA level back to actual NA values
 # Note: fct_na_level_to_value() converts the default "(Missing)" level back to NA
-rating_data$rating_with_missing <- fct_explicit_na(rating_data$rating_clean)
+rating_data$rating_with_missing <- fct_na_value_to_level(rating_data$rating_clean)
 rating_data$rating_back_to_na <- fct_na_level_to_value(rating_data$rating_with_missing)
 
 cat("\nAfter converting '(Missing)' level back to NA:\n")
@@ -610,7 +626,7 @@ education_ordered <- factor(c("High School", "Bachelor's", "Master's"),
 # Best Practice 3: Handle missing data explicitly
 survey_with_na <- c("Yes", "No", "Yes", NA, "No")
 survey_factor <- factor(survey_with_na)
-survey_explicit <- fct_explicit_na(survey_factor, "No Response")
+survey_explicit <- fct_na_value_to_level(survey_factor, level = "No Response")
 
 cat("\nHandling missing data:\n")
 print(summary(survey_factor))
@@ -696,7 +712,7 @@ The `forcats` package makes factor manipulation intuitive and powerful:
 - **Inspection**: `fct_count()`, `levels()`, `nlevels()`
 - **Reordering**: `fct_reorder()`, `fct_relevel()`, `fct_rev()`
 - **Changing levels**: `fct_recode()`, `fct_collapse()`, `fct_lump()`
-- **Missing data**: `fct_explicit_na()`, `fct_drop()`
+- **Missing data**: `fct_na_value_to_level()`, `fct_na_level_to_value()`, `fct_drop()`
 
 ### Best Practices:
 - **Specify levels explicitly** for ordered data

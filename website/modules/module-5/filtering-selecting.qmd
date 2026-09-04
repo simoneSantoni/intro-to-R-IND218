@@ -14,6 +14,21 @@ format:
 
 Filtering and selecting are fundamental operations in data analysis. The `filter()` function chooses which rows to keep based on conditions, while `select()` chooses which columns to keep. These are often the first steps in any data analysis pipeline.
 
+::: {.callout-important title="Filtering changes the population"}
+A filter is a business rule, not merely a technical step. Record why excluded observations are out of scope. For example, `filter(order_status == "completed")` estimates realised sales, while including returned or cancelled orders answers a different question. Report the number and value of rows removed so reviewers can assess the rule's impact.
+:::
+
+Use `if_any()` or `if_all()` when the same test applies across several columns. This is clearer and safer than repeating a long chain of `|` or `&` conditions:
+
+```{r}
+#| eval: false
+flagged_accounts <- accounts |>
+  filter(if_any(c(email, phone, postcode), is.na)) |>
+  select(account_id, email, phone, postcode)
+```
+
+Here, `if_any()` keeps an account when **at least one** selected field is missing. Replace it with `if_all()` only when every selected field must satisfy the test. Selecting identifiers alongside audited fields keeps the result actionable.
+
 ```{r}
 #| label: setup
 #| message: false

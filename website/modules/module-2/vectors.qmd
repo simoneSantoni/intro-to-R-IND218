@@ -16,6 +16,20 @@ Vectors are the most fundamental data structure in R. In fact, even single value
 
 A **vector** is a sequence of data elements of the same type. Think of it as a container that holds multiple values in a specific order.
 
+## Learning Objectives
+
+After this lesson, you should be able to:
+
+- create atomic vectors and inspect their type and length;
+- select values by position, name, or a logical condition;
+- predict the result of element-wise operations and recycling; and
+- handle missing values explicitly when calculating summaries.
+
+An **atomic vector** has one underlying type. If you combine different types,
+R finds a common type rather than retaining each input unchanged. For example,
+`c(10, "unknown")` is a character vector containing `"10"` and `"unknown"`.
+Use `typeof()` and `str()` whenever an unexpected result suggests coercion.
+
 ## Creating Vectors
 
 ### The `c()` Function
@@ -147,6 +161,11 @@ ages[ages < 25 | ages > 40]       # Ages less than 25 OR greater than 40
 adults <- ages >= 18
 ages[adults]
 ```
+
+The expression inside `[` must align with the vector being filtered. First,
+`ages >= 18` produces one `TRUE` or `FALSE` per age. The brackets then retain
+the values whose corresponding condition is `TRUE`. Keeping the condition in
+a named object such as `adults` makes a multi-step analysis easier to inspect.
 
 ### Subsetting with Names
 

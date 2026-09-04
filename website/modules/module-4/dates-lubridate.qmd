@@ -110,18 +110,13 @@ messy_dates <- c(
   "2024/01/21"
 )
 
-# Parse with error handling
-parse_date_safely <- function(date_string) {
-  # Try different parsing functions
-  parsed <- ymd(date_string, quiet = TRUE)
-  if (is.na(parsed)) parsed <- mdy(date_string, quiet = TRUE)
-  if (is.na(parsed)) parsed <- dmy(date_string, quiet = TRUE)
-  return(parsed)
-}
-
-# Apply to messy data
-parsed_dates <- map(messy_dates, parse_date_safely)
-parsed_dates <- as.Date(unlist(parsed_dates), origin = "1970-01-01")
+# Parse the whole vector by listing the formats we expect
+parsed_dates <- parse_date_time(
+  messy_dates,
+  orders = c("ymd", "mdy", "dmy", "dBy"),
+  quiet = TRUE
+) %>%
+  as_date()
 
 cat("Original messy dates:\n")
 print(messy_dates)
@@ -131,6 +126,12 @@ print(parsed_dates)
 # Count parsing failures
 cat("\nParsing success rate:", mean(!is.na(parsed_dates)), "\n")
 ```
+
+`parse_date_time()` is vectorised, so it handles the complete column in one
+call. The strings in `orders` describe the component order: `ymd` means
+year-month-day, while `dBy` allows a day, a full month name, and a year. Invalid
+text and missing input become `NA`; always count those failures rather than
+silently assuming every value parsed correctly.
 
 ## Extracting Date Components
 
@@ -183,7 +184,7 @@ datetime_components <- tibble(
   weekday = wday(datetime, label = TRUE),
   hour = hour(datetime),
   minute = minute(datetime),
-  am_pm = ifelse(am(datetime), "AM", "PM")
+  am_pm = if_else(am(datetime), "AM", "PM")
 )
 
 print(datetime_components)
@@ -278,15 +279,14 @@ business_days[!wday(business_days) %in% c(1, 7)]  # Remove weekends
 period_1_month <- period(1, "month")
 period_30_days <- period(30, "days")
 
-# Duration: Exact time spans (always in seconds)
-duration_1_month <- duration(30, "days")  # Assumes 30 days
-duration_exactly <- ddays(30)             # Exactly 30 days
+# Durations: Exact elapsed time stored in seconds
+duration_30_days <- ddays(30)
 
 # Compare period vs duration
 leap_year_date <- ymd("2024-01-31")  # 2024 is a leap year
 cat("Starting date:", as.character(leap_year_date), "\n")
 cat("Plus 1 month (period):", as.character(leap_year_date + months(1)), "\n")
-cat("Plus 30 days (duration):", as.character(leap_year_date + days(30)), "\n")
+cat("Plus 30 days (duration):", as.character(leap_year_date + duration_30_days), "\n")
 
 # Intervals: Specific time spans between two dates
 start_date <- ymd("2024-01-01")
@@ -301,6 +301,12 @@ cat("Duration in months:", as.numeric(year_interval, "months"), "\n")
 test_dates <- ymd(c("2023-12-31", "2024-06-15", "2025-01-01"))
 test_dates %within% year_interval
 ```
+
+A period such as `months(1)` follows the calendar; 31 January plus one month is
+not a valid calendar date and therefore returns `NA`. The month-safe operators
+`%m+%` and `%m-%` can roll such calculations back to the final valid day. A
+duration such as `ddays(30)` instead adds exactly 30 × 24 hours, which is a
+different business rule.
 
 ### Date Rounding and Truncation
 

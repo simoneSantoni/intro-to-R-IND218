@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.10.18">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="IND218">
-<meta name="dcterms.date" content="2026-09-03">
+<meta name="dcterms.date" content="2026-09-04">
 
 <title>The Pipe Operator: Making R Code Readable – IND218 - Introduction to R</title>
 <style>
@@ -86,9 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-9a476c185fb7076297273cdae135352e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-cb0cd53d62cf798e704710f72f45ab99.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -698,7 +698,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 3, 2026</p>
+      <p class="date">4 September 2026</p>
     </div>
   </div>
   
@@ -860,9 +860,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 3 × 6
   store total_sales total_returns net_revenue avg_daily_sales return_rate
   &lt;chr&gt;       &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;       &lt;dbl&gt;
-1 South       15897           331       15566           3179.        2.08
-2 North       16058           496       15562           3212.        3.09
-3 East        11852           629       11223           2370.        5.31</code></pre>
+1 North       16171           485       15686           3234.        3.00
+2 South       13019           492       12527           2604.        3.78
+3 East        12923           469       12454           2585.        3.63</code></pre>
 </div>
 </div>
 </section>
@@ -1022,16 +1022,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # Groups:   customer_id [6]
    customer_id month   category total_spent n_transactions pct_of_customer_total
          &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;          &lt;int&gt;                 &lt;dbl&gt;
- 1           1 2024-01 Other           433.              1                  45.3
- 2           1 2024-01 Electro…        383.              1                  40.1
- 3           2 2024-02 Other           262.              1                  29.9
- 4           2 2024-02 Clothing        224.              1                  25.5
- 5           3 2024-02 Electro…        274.              1                  32.4
- 6           3 2024-02 Food            236.              1                  28.0
- 7           3 2024-03 Clothing        218.              1                  25.8
- 8           4 2024-01 Other           287.              1                  65.8
- 9           5 2024-02 Food            352.              1                  61.0
-10           6 2024-01 Food            480.              1                  25.4</code></pre>
+ 1           1 2024-02 Other           223.              1                 100  
+ 2           2 2024-03 Clothing        604.              2                  45.7
+ 3           2 2024-03 Other           477.              1                  36.1
+ 4           3 2024-03 Electro…        448.              2                  49.9
+ 5           3 2024-01 Food            404.              1                  45.0
+ 6           4 2024-03 Food            807.              2                  53.9
+ 7           5 2024-03 Other           303.              1                  45.3
+ 8           5 2024-02 Electro…        260.              1                  38.9
+ 9           6 2024-01 Electro…        485.              1                  29.8
+10           6 2024-03 Clothing        473.              2                  29.1</code></pre>
 </div>
 </div>
 </section>
@@ -2117,7 +2117,7 @@ Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1   9.827586</cod
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 Simone Santoni</p>
+<p>© 2026 Simone Santoni</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://github.com/simoneSantoni/intro-to-R-IND218">IND218 - Introduction to R</a></p>

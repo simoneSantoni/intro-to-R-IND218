@@ -14,6 +14,28 @@ format:
 
 Real-world data often comes with information packed into single columns that needs to be split, or scattered across multiple columns that should be combined. The `separate()` and `unite()` functions in tidyr are your surgical tools for precise column manipulation.
 
+### Prefer explicit modern separators
+
+For new code, use `separate_wider_delim()`, `separate_wider_position()`, or `separate_wider_regex()`. They make the parsing strategy explicit and provide clearer handling of malformed records than superseded `separate()`:
+
+```{r}
+#| eval: false
+products |>
+  separate_wider_delim(
+    sku,
+    delim = "-",
+    names = c("division", "family", "size", "colour", "variant"),
+    too_few = "debug",
+    too_many = "debug"
+  )
+```
+
+The expected five fields form a contract. Debug mode retains diagnostic columns when a supplier sends too few or too many components, allowing analysts to quarantine exceptions instead of silently losing text. After parsing, validate allowed division codes and convert numeric fields explicitly.
+
+::: {.callout-note title="Do not split opaque identifiers"}
+Separate a code only when its components have documented business meaning. If an identifier is merely a key, keep it intact: inferred substrings can change when a source system revises its numbering scheme.
+:::
+
 ## Understanding the Problem
 
 ```{r}

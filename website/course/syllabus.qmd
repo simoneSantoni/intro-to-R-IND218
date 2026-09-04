@@ -7,7 +7,7 @@ title: "Course Syllabus"
 ### What You'll Learn
 
 This course provides a comprehensive foundation in R programming tailored
-for analytics. By the end of this module, you will be able to:
+for analytics. By the end of this course, you will be able to:
 
 ::: {.callout-note}
 ## Core Competencies
@@ -17,7 +17,7 @@ for analytics. By the end of this module, you will be able to:
 - **Write clean, efficient R code** using tidyverse principles and best practices
 - **Manipulate and analyze data** using base R and tidyverse functions
 - **Process and transform datasets** using dplyr for advanced data wrangling
-- **Develop reproducible data analysis workflows** with R scripts and R Markdown
+- **Develop reproducible data analysis workflows** with R scripts and Quarto
 - **Debug and troubleshoot** common R programming issues
 - **Apply statistical thinking** to real-world analytics problems
 :::
@@ -46,7 +46,7 @@ R scripts, and essential development practices.
 **Key Topics**: R and RStudio installation, R as calculator, RStudio interface, R projects
 
 ### 🔧 Module 2: R Language Fundamentals
-**Duration**: Weeks 2
+**Duration**: Week 2
 
 Master R's fundamental building blocks including data types, data structures, and control flow.
 
@@ -131,8 +131,7 @@ the cornerstone of learning in this module. Students are encouraged to:
 - Essential R packages: tidyverse, readr, dplyr, ggplot2, and others (installed during the course) 
 
 ### 📖 Recommended Textbooks
-- Aphalo, Pedro J. *Learn R: As a Language*. Chapman and Hall/CRC, 2020.Aphalo,
-  Pedro J. Learn R: as a language. Chapman and Hall/CRC, 2020. [Available
+- Aphalo, Pedro J. *Learn R: As a Language*. Chapman and Hall/CRC, 2020. [Available
   online](https://www.learnr-book.info/contents-2ed.html)
 - Bonnell, Jerry, and Mitsunori Ogihara. *Exploring Data Science with R and the
   Tidyverse: A Concise Introduction*. Chapman and Hall/CRC, 2023. [Available on line](https://mathematics.foi.hr/Rprojekti/knjige/exploring-data-science-with-r-and-the-tidyverse.pdf)

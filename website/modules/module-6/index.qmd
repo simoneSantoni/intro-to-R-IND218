@@ -14,6 +14,18 @@ format:
 
 Data rarely comes in the format you need for analysis. Sometimes it's too wide, sometimes too long, sometimes messy with multiple values in single cells. The `tidyr` package provides powerful tools to reshape and tidy your data, transforming it into the clean, analysis-ready format that other tidyverse packages expect.
 
+::: {.callout-note title="Shape follows purpose"}
+“Wide” and “long” are not measures of data quality. Long data often suits analysis and visualisation; wide data can suit a management report or modelling matrix. First define the observational unit and intended consumer, then choose a shape. Always retain stable identifiers so the transformation can be validated or reversed.
+:::
+
+### A safe reshaping workflow
+
+1. State what one row represents before and after the transformation.
+2. Check that identifier columns uniquely locate each observation.
+3. Reshape with explicit `cols`, `names_to`, and `values_to` arguments.
+4. Compare row counts, totals, missingness, and duplicates.
+5. Keep analysis-ready data separate from presentation-ready tables.
+
 ## What You'll Learn
 
 In this module, we'll master the art of data reshaping and tidying with tidyr:
@@ -31,7 +43,7 @@ In this module, we'll master the art of data reshaping and tidying with tidyr:
 - Real-world reshaping scenarios
 
 ### 3. Separating and Uniting
-- `separate()`: Splitting one column into multiple columns
+- `separate_wider_delim()` and related functions: splitting one column into multiple columns
 - `unite()`: Combining multiple columns into one
 - Working with delimiters and patterns
 - Handling missing values in separation

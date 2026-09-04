@@ -14,6 +14,32 @@ format:
 
 In real-world data analysis, information is rarely contained in a single table. The ability to combine data from multiple sources is essential. dplyr provides a comprehensive set of join functions that mirror SQL operations while maintaining the tidyverse philosophy.
 
+### Treat joins as assertions
+
+Before joining, identify whether each key is unique. Current dplyr can enforce the expected relationship and fail early when the data violates it:
+
+```{r}
+#| eval: false
+orders_enriched <- orders |>
+  left_join(
+    customers,
+    by = join_by(customer_id),
+    relationship = "many-to-one"
+  )
+```
+
+The assertion says that many orders may belong to one customer, but each `customer_id` may appear at most once in `customers`. If duplicate customer records exist, the join stops instead of silently multiplying revenue rows.
+
+```{r}
+#| eval: false
+stopifnot(nrow(orders_enriched) == nrow(orders))
+
+orders_enriched |>
+  summarise(unmatched_customers = sum(is.na(customer_name)))
+```
+
+The row-count check protects the order grain; the missing-value check quantifies unmatched keys. Investigate mismatches rather than immediately discarding them—they may reveal delayed master-data updates or inconsistent identifiers.
+
 ```{r}
 #| label: setup
 #| message: false

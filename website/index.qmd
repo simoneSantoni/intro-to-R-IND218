@@ -1,169 +1,53 @@
 ---
 title: "Introduction to R—IND218"
-subtitle: "A curated set of R materials for analytics students"
+subtitle: "Reproducible data analysis for business decisions"
+page-layout: full
 ---
 
-## Welcome to IND218
+::: {.hero-banner}
+# Turn raw data into defensible decisions
 
-This interactive website provides a comprehensive four-part introduction to
-R programming specifically designed for students in analytics curricula.
-The course emphasizes R's language fundamentals, the tidyverse ecosystem,
-and data manipulation for statistical computing and data science.
+Learn R by solving realistic analytics problems: importing untidy data, checking its quality, transforming it, and communicating results in a reproducible workflow.
 
-## Why R for Analytics?
+[Start with Module 1](modules/module-1/installing-r.qmd){.btn .btn-light .btn-lg role="button"} [View the course schedule](course/schedule.qmd){.btn .btn-outline-light .btn-lg role="button"}
+:::
 
-R has been the **gold standard** for statistical computing and data analysis for good reasons:
+## What you will learn
 
-### 🌟 Statistical Foundation
-- Created by statisticians for statistical analysis
-- Standard tool in academia, research, and data science
-- Preferred language for statistical modeling and hypothesis testing
+:::: {.course-path}
+::: {.course-path-card}
+### 1. Work confidently in R
 
-### 💪 Rich Ecosystem
-- Comprehensive statistical libraries (stats, MASS)
-- Elegant data manipulation (tidyverse: dplyr, tidyr, ggplot2)
-- Advanced visualization capabilities (ggplot2, plotly, shiny)
-- Machine learning and predictive modeling (caret, randomForest)
+Use RStudio projects, scripts, objects, vectors, functions, and control flow to make analyses repeatable.
+:::
 
-### 🎯 Data-First Design
-- Built-in support for statistical data types (factors, time series)
-- Vectorized operations for efficient data processing
-- Seamless integration with databases and file formats
-- Interactive data exploration and analysis
-- Publication-ready graphics and reports
+::: {.course-path-card}
+### 2. Prepare real data
 
-## The R Learning Journey: A Humorous Reality Check
+Import files, diagnose data types, handle missing values, and use `dplyr` and `tidyr` to create analysis-ready tables.
+:::
 
-Learning R is an adventure filled with "aha!" moments, head-scratching
-confusion, and the occasional existential crisis about why your data frame
-suddenly became a factor (again). Every R programmer has traveled this path,
-from their first `2 + 2` to their thousandth Google search about why their
-ggplot won't cooperate.
+::: {.course-path-card}
+### 3. Answer business questions
 
-Below is a humorous, fictitious R function that captures the universal
-experiences every R learner encounters. As you progress through this
-course, you'll gradually understand why each of these moments is both
-frustrating and funny. Consider it a preview of coming attractions – if you
-don't find it amusing now, bookmark it and return after a few weeks of R.
-You'll be laughing (or crying) in recognition!
+Translate questions into measurable indicators, validate joins and aggregations, and distinguish evidence from interpretation.
+:::
+::::
 
-### The Universal R Learning Timeline
+## How to use this site
 
-This function documents real phenomena you'll encounter:
-- **Days 1-10**: The honeymoon phase where everything seems logical until you
-  meet factors
-- **Days 10-100**: The valley of despair where you discover R's "quirks"
-- **Days 100-365**: The plateau of productivity where you can actually wrangle
-  data (while still Googling constantly)
-- **Days 365+**: The eternal journey where you realize the tidyverse keeps evolving
+Each lesson combines a business question, an executable example, an explanation of what each transformation changes, and practice tasks. Run the code yourself: change one input, predict the result, and then inspect the output. That cycle is more valuable than copying a finished pipeline.
 
-```{r}
-#| eval: false
-r_newbie_experience <- function(day) {
-  # Simulates the emotional journey of learning R.
-  # Warning: Results may vary. Side effects include: false confidence,
-  # existential dread about factors, sudden urges to pipe everything,
-  # and an unhealthy relationship with Stack Overflow.
-  #
-  # Note: This function is 100% accurate based on extensive field research
-  # (aka crying over RStudio worldwide).
+::: {.callout-tip title="A reliable analysis habit"}
+Before writing code, state the **unit of observation** (for example, one row per order) and the **decision metric** (for example, net revenue by region). After every join or pivot, check row counts, key uniqueness, and missing values. These checks prevent technically valid code from producing misleading conclusions.
+:::
 
-  experiences <- list(
-    `1` = "2 + 2  # I AM A DATA SCIENTIST NOW!!!",
-    `2` = "x <- 'R is easy'  # This arrow thing is cool!",
-    `3` = "c(1, 2, 3)  # Everything is a vector? Even single numbers?!",
-    `4` = "data.frame(x = 1:3, y = 4:6)  # Look at me making data!",
-    `5` = "my_data$new_column <- 'value'  # Dollar signs everywhere!",
-    `6` = "factor(c('A', 'B', 'A'))  # Why are my letters ordered weird?",
-    `7` = "mean(c(1, 2, NA))  # Returns NA. R is broken.",
-    `8` = "mean(c(1, 2, NA), na.rm = TRUE)  # Oh... that's embarrassing",
-    `9` = "library(tidyverse)  # Installed 47 packages. Is this normal?",
-    `10` = "data %>% filter()  # What is this pipe thing?",
-    `12` = "ggplot(data, aes(x, y)) + geom_point()  # I made a chart!",
-    `14` = "install.packages('everything')  # Package not found. Dreams crushed.",
-    `15` = "subset(data, condition)  # Why does everyone say this is bad?",
-    `18` = "data %>% select(everything())  # Pipe addiction begins",
-    `20` = "for(i in 1:10) print(i)  # Loops work but everyone judges me",
-    `25` = "apply(matrix, 1, function(x) sum(x))  # Functions have functions?",
-    `30` = "str(object)  # Everything has structure. Mind = blown",
-    `35` = "read.csv('file.csv')  # Why are my numbers now factors?!",
-    `40` = "stringsAsFactors = FALSE  # The magic incantation",
-    `45` = "data$column[data$other_column == 'value']  # Bracket hell",
-    `50` = "library(dplyr); data %>% filter(column == 'value')  # Enlightenment",
-    `55` = "Error: object 'column' not found  # But I can see it right there!",
-    `60` = "data %>% mutate(new = old * 2)  # Mutate sounds violent",
-    `65` = "group_by(category) %>% summarise(mean = mean(value))  # I'm a wizard!",
-    `70` = "left_join(df1, df2, by = 'id')  # Joins without SQL?",
-    `75` = "pivot_longer(data, cols = everything())  # Reshape magic",
-    `80` = "ggplot() + theme_minimal() + labs() + scale_x_continuous()  # Layered grammar",
-    `85` = "ggsave('plot.png', width = 8, height = 6, dpi = 300)  # Publication ready!",
-    `90` = "map(list, ~function(.x))  # Functional programming in R?",
-    `95` = "case_when(condition1 ~ result1, TRUE ~ default)  # Vectorized if-else",
-    `100` = "data[data$x > 5 & data$y < 10, ]  # Back to base R. Feeling dirty.",
-    `110` = "glue('Hello {name}!')  # String interpolation discovered",
-    `120` = "# Started answering R questions (incorrectly) on Stack Overflow",
-    `130` = "options(stringsAsFactors = FALSE)  # Set global defaults",
-    `140` = "library(here); here('data', 'file.csv')  # Path management zen",
-    `150` = "renv::init()  # Environment management. Finally!",
-    `180` = "Discovered R Markdown. Rewrote everything. Literate programming!",
-    `200` = "shiny::fluidPage()  # Interactive web apps in R?!",
-    `250` = "data.table vs dplyr debates. Chose sides. Lost friends.",
-    `300` = "Rcpp::cppFunction()  # C++ in R. Peak performance.",
-    `365` = "# Still googling 'how to exit vim' but my R analysis is solid",
-    `400` = "targets::tar_make()  # Pipeline management. Professional level.",
-    `500` = "Writing R packages. DESCRIPTION file mysteries solved.",
-    `600` = "CRAN submission. Peer review trauma begins.",
-    `700` = "Dreams in dplyr. Nightmares about factors.",
-    `800` = "Discovered {{}}.  Tidy evaluation everywhere.",
-    `900` = "10 years later: Still finding new CRAN packages daily",
-    `1000` = "Achieved enlightenment: Everything is a list (even data frames)"
-  )
+## Learning route
 
-  # Special milestone messages
-  if (day < 0) {
-    return("Error: Time travel not yet implemented in R 4.x (check CRAN)")
-  } else if (day == 0) {
-    return("Day 0: Googling 'R vs Excel' (preparing for enlightenment)")
-  } else if (day == 42) {
-    return("Day 42: The answer to life, universe, and missing values")
-  } else if (day == 404) {
-    return("Day 404: Object not found. Try ls() again later.")
-  } else if (day == 418) {
-    return("Day 418: I'm a teapot. Also, discovered Easter eggs in R")
-  } else if (day == 314) {
-    return(paste0("Day ", day, ": pi  # Built-in constant. Math rocks!"))
-  } else if (as.character(day) %in% names(experiences)) {
-    return(experiences[[as.character(day)]])
-  } else if (day > 1000) {
-    return(paste0("Day ", day, ": Realized the real R was the data we wrangled along the way"))
-  } else if (day > 365) {
-    return(paste0("Day ", day, ": Still discovering that everything is a vector (even confusion)"))
-  } else {
-    states <- c(
-      "Alternating between 'I'm a data wizard' and 'I know nothing'",
-      "Debugging code that worked yesterday without changes",
-      "Adding print() statements everywhere like breadcrumbs",
-      "Copy-pasting from Stack Overflow with pride",
-      "Explaining to rubber duck why dplyr should work",
-      "Discovering the bug was a missing comma. Again.",
-      "Refactoring working code because 'tidyverse is cleaner'",
-      "Breaking production on a Friday at 4:59 PM"
-    )
-    return(paste0("Day ", day, ": ", sample(states, 1)))
-  }
-}
+1. Begin with [R setup and projects](modules/module-1/installing-r.qmd).
+2. Build core programming skills in [R fundamentals](modules/module-2/index.qmd).
+3. Learn tidyverse workflows in [Module 3](modules/module-3/index.qmd) and data types in [Module 4](modules/module-4/index.qmd).
+4. Apply `dplyr` to business data in [Module 5](modules/module-5/index.qmd).
+5. Reshape and validate tabular data in [Module 6](modules/module-6/index.qmd).
 
-# Test the journey with milestone days
-cat("=== The R Newbie Journey: Extended Director's Cut ===\n\n")
-test_days <- c(0, 1, 4, 9, 30, 42, 60, 100, 365, 404, 418, 500, 1000)
-for (day in test_days) {
-  cat(sprintf("Day %4d: %s\n", day, r_newbie_experience(day)))
-}
-```
-## Ready to Begin?
-
-Start your R journey by:
-
-1. 📚 Reading the [Course Syllabus](course/syllabus.qmd)
-2. 📅 Reviewing the [Course Schedule](course/schedule.qmd)
-3. 💻 Setting up R and RStudio with our [Getting Started Guide](modules/module-1/installing-r.qmd)
+Need help? Read the [support guide](course/support.qmd) and include a minimal reproducible example when asking a coding question.

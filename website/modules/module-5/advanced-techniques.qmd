@@ -14,6 +14,31 @@ format:
 
 Once you've mastered the core dplyr verbs, it's time to explore advanced techniques that will make your code more efficient, reusable, and elegant. This section covers programming with dplyr, performance optimization, and sophisticated data manipulation patterns.
 
+::: {.callout-note title="Prefer the simplest abstraction that removes repetition"}
+Advanced code should reduce risk, not showcase syntax. Write an ordinary pipeline first, extract a function only when a rule repeats, and test that function on empty groups, missing values, and unexpected categories. Keep business definitions—such as what counts as an active customer—separate from display formatting.
+:::
+
+A useful reusable function accepts tidy-select columns with `{{ }}` and gives its output stable names:
+
+```{r}
+#| eval: false
+summarise_kpi <- function(data, group, value) {
+  data |>
+    summarise(
+      observations = n(),
+      missing_values = sum(is.na({{ value }})),
+      total = sum({{ value }}, na.rm = TRUE),
+      average = mean({{ value }}, na.rm = TRUE),
+      .by = {{ group }}
+    )
+}
+
+transactions |>
+  summarise_kpi(customer_segment, net_amount)
+```
+
+`{{ group }}` and `{{ value }}` capture unquoted column names supplied by the caller. The companion count of missing values makes the `na.rm = TRUE` choice visible; otherwise a clean-looking total could conceal poor source data.
+
 ```{r}
 #| label: setup
 #| message: false

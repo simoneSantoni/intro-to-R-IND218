@@ -14,6 +14,19 @@ format:
 
 In the real world, data often comes in complex, nested formats - think JSON from APIs, lists within data frames, or hierarchical structures from databases. tidyr's "rectangling" functions help you transform these complex structures into the rectangular, tidy format that R analysis tools expect.
 
+::: {.callout-warning title="An API response is a source, not a schema"}
+Nested payloads can change: fields may disappear, scalar values may become lists, and pagination may omit records. Save a raw response with its retrieval time, inspect its structure, and rectangle only the fields required by the analysis. Avoid embedding credentials or personal data in rendered course documents.
+:::
+
+Choose the narrowest operation that matches the structure:
+
+- `hoist()` extracts selected named components while keeping the remaining list-column.
+- `unnest_wider()` expands named elements into columns.
+- `unnest_longer()` expands vector elements into rows and can retain their indices.
+- `unnest()` expands data-frame list-columns.
+
+After an expansion, check how many rows each source record produced. A longer result may be correct—one order becomes several order lines—but aggregating parent-level values such as delivery charges after that expansion can double-count them.
+
 ## What is Nested Data?
 
 ```{r}

@@ -14,6 +14,31 @@ format:
 
 While `filter()` and `select()` help you subset data, `mutate()` and `arrange()` help you transform and organize it. The `mutate()` function creates new variables or modifies existing ones, while `arrange()` sorts your data. These operations are essential for data preparation and analysis.
 
+::: {.callout-warning title="Define financial measures before calculating them"}
+“Revenue”, “margin”, and “discount” are not universal definitions. State whether prices include tax, whether returns are negative transactions, and whether cost is actual or estimated. A syntactically correct `mutate()` can still encode the wrong accounting rule.
+:::
+
+For reusable analysis, give each assumption a name and guard undefined ratios:
+
+```{r}
+#| eval: false
+estimated_cost_rate <- 0.60
+
+orders |>
+  mutate(
+    net_revenue = quantity * unit_price * (1 - coalesce(discount_rate, 0)),
+    estimated_cost = quantity * unit_price * estimated_cost_rate,
+    contribution = net_revenue - estimated_cost,
+    contribution_margin = if_else(
+      net_revenue == 0,
+      NA_real_,
+      contribution / net_revenue
+    )
+  )
+```
+
+Naming the rate exposes the scenario assumption. `coalesce()` documents how missing discounts are treated, while `if_else()` prevents division by zero from creating infinite values. Preserve full precision during transformation; round only for presentation.
+
 ```{r}
 #| label: setup
 #| message: false

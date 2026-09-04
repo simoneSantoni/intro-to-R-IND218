@@ -14,6 +14,28 @@ format:
 
 One of the most powerful features of dplyr is the ability to perform operations on groups of data. The combination of `group_by()` and `summarise()` allows you to calculate statistics for each group in your data, implementing the split-apply-combine strategy that's fundamental to data analysis.
 
+### Temporary grouping with `.by`
+
+Current dplyr also supports per-operation grouping. It is useful when only one verb needs groups because the output does not retain grouped metadata:
+
+```{r}
+#| eval: false
+regional_kpis <- orders |>
+  summarise(
+    orders = n(),
+    customers = n_distinct(customer_id),
+    net_revenue = sum(net_revenue, na.rm = TRUE),
+    average_order_value = net_revenue / orders,
+    .by = region
+  )
+```
+
+Read this from the inside out: `n()` counts rows, `n_distinct()` counts customers, and `sum()` aggregates revenue. Because one customer can place several orders, the first two indicators have different denominators. Use `group_by()` when several following verbs genuinely need the same grouping; use `.by` for a local summary.
+
+::: {.callout-tip title="Attach uncertainty and context"}
+A KPI without its denominator is easy to misread. Report counts beside averages, inspect small groups, and compare distributions rather than relying only on means. An impressive average based on two orders should not drive the same decision as one based on two thousand.
+:::
+
 ```{r}
 #| label: setup
 #| message: false

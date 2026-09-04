@@ -112,6 +112,23 @@ This simple example demonstrates:
 - Creating data frames
 - Combining different data types
 
+Read the code from the inside out. `c()` collects seven observations into one
+numeric vector. Each summary function reduces that vector to one value. The
+three results have the same length as the three labels, so `data.frame()` can
+place them into aligned columns. Notice that a data frame may contain columns
+of different types, even though each individual atomic vector has only one
+type.
+
+::: {.callout-tip}
+## Check Your Understanding
+
+Before running the code, predict how the table changes if an eighth value,
+`NA`, is appended to `temperatures`. Then try the change and repair the three
+summaries by adding `na.rm = TRUE`. In an analytical report, explain why
+removing missing values from a calculation does not mean that the underlying
+data are complete.
+:::
+
 ## Module Structure
 
 This module is organized into six main sections:
@@ -183,6 +200,13 @@ In just a few lines of R code, we've:
 - Added new variables
 - Found extremes
 - Calculated summaries
+
+The analysis is reproducible because `set.seed(123)` fixes the pseudo-random
+draws. The seed is not part of a real sales analysis; it is present because the
+lesson simulates data. `which.max()` returns the position of the largest
+profit, and `[row, column]` uses that position to retrieve the corresponding
+month. This distinction between locating a value and retrieving its label is a
+common pattern in analytics code.
 
 This is the power of R fundamentals in action!
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.10.18">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="IND218">
-<meta name="dcterms.date" content="2026-09-03">
+<meta name="dcterms.date" content="2026-09-04">
 
 <title>Tibbles: Modern Data Frames – IND218 - Introduction to R</title>
 <style>
@@ -86,9 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-9a476c185fb7076297273cdae135352e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-cb0cd53d62cf798e704710f72f45ab99.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -696,7 +696,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 3, 2026</p>
+      <p class="date">4 September 2026</p>
     </div>
   </div>
   
@@ -821,16 +821,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 1,000 × 4
       id   value category timestamp          
    &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;dttm&gt;             
- 1     1  0.229  a        2026-09-03 16:40:21
- 2     2 -0.493  a        2026-09-03 16:40:22
- 3     3 -0.182  e        2026-09-03 16:40:23
- 4     4  2.14   e        2026-09-03 16:40:24
- 5     5  0.0658 d        2026-09-03 16:40:25
- 6     6  0.221  e        2026-09-03 16:40:26
- 7     7  0.981  d        2026-09-03 16:40:27
- 8     8  1.28   a        2026-09-03 16:40:28
- 9     9 -0.648  a        2026-09-03 16:40:29
-10    10 -0.908  d        2026-09-03 16:40:30
+ 1     1  0.542  b        2026-09-04 08:15:25
+ 2     2  0.702  a        2026-09-04 08:15:26
+ 3     3  0.0801 b        2026-09-04 08:15:27
+ 4     4  0.283  a        2026-09-04 08:15:28
+ 5     5 -1.11   d        2026-09-04 08:15:29
+ 6     6  0.428  a        2026-09-04 08:15:30
+ 7     7 -1.53   e        2026-09-04 08:15:31
+ 8     8 -0.331  e        2026-09-04 08:15:32
+ 9     9 -1.23   e        2026-09-04 08:15:33
+10    10  0.857  c        2026-09-04 08:15:34
 # ℹ 990 more rows</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame would print all 1000 rows!</span></span>
@@ -995,8 +995,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Rows: 100
 Columns: 3
 $ id    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1…
-$ group &lt;chr&gt; "D", "A", "D", "A", "C", "B", "C", "B", "D", "B", "B", "C", "B",…
-$ value &lt;dbl&gt; 56.48502, 58.05461, 46.03647, 28.18523, 60.26635, 62.20827, 44.1…</code></pre>
+$ group &lt;chr&gt; "C", "A", "A", "B", "B", "B", "A", "A", "C", "C", "C", "B", "A",…
+$ value &lt;dbl&gt; 42.32138, 49.40636, 52.20270, 43.68713, 55.36641, 40.55858, 34.1…</code></pre>
 </div>
 </div>
 </section>
@@ -1167,18 +1167,17 @@ $ value &lt;dbl&gt; 56.48502, 58.05461, 46.03647, 28.18523, 60.26635, 62.20827, 
 <span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a>customer_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 9 × 6
+<pre><code># A tibble: 8 × 6
   region age_group n_customers avg_purchases total_purchases avg_tenure
   &lt;chr&gt;  &lt;chr&gt;           &lt;int&gt;         &lt;dbl&gt;           &lt;int&gt;      &lt;dbl&gt;
-1 South  Middle              4          29.5             118       4.5 
-2 South  Senior              3          20.7              62       3.33
-3 East   Middle              2          27                54       3.5 
-4 West   Middle              4          13.2              53       3.25
-5 North  Middle              2          19                38       2.5 
-6 East   Senior              2          17                34       5   
-7 West   Young               1          30                30       0   
-8 East   Young               1          17                17       2   
-9 South  Young               1          16                16       6   </code></pre>
+1 West   Senior              7          26.9             188       4   
+2 East   Middle              4          35               140       3   
+3 South  Young               3          30.7              92       4.33
+4 West   Young               2          43.5              87       3.5 
+5 North  Middle              1          36                36       6   
+6 South  Middle              1          30                30       6   
+7 East   Senior              1          12                12       6   
+8 West   Middle              1          11                11       2   </code></pre>
 </div>
 </div>
 </section>
@@ -1213,16 +1212,16 @@ $ value &lt;dbl&gt; 56.48502, 58.05461, 46.03647, 28.18523, 60.26635, 62.20827, 
 <pre><code># A tibble: 10 × 6
    sale_id date       product_name quantity price revenue
      &lt;int&gt; &lt;date&gt;     &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1       1 2024-01-01 Tool E              1  25.0    25.0
- 2       2 2024-01-02 Tool E              2  25.0    50.0
- 3       3 2024-01-03 Widget B            5  30.0   150. 
- 4       4 2024-01-04 Widget A            2  20.0    40.0
- 5       5 2024-01-05 Widget B            1  30.0    30.0
- 6       6 2024-01-06 Widget B            1  30.0    30.0
- 7       7 2024-01-07 Widget A            3  20.0    60.0
- 8       8 2024-01-08 Gadget C            3  50.0   150. 
- 9       9 2024-01-09 Widget B            5  30.0   150. 
-10      10 2024-01-10 Widget A            4  20.0    80.0</code></pre>
+ 1       1 2024-01-01 Widget B            3  30.0    90.0
+ 2       2 2024-01-02 Gadget D            3  40.0   120. 
+ 3       3 2024-01-03 Gadget C            4  50.0   200. 
+ 4       4 2024-01-04 Gadget C            3  50.0   150. 
+ 5       5 2024-01-05 Gadget C            4  50.0   200. 
+ 6       6 2024-01-06 Gadget C            1  50.0    50.0
+ 7       7 2024-01-07 Widget B            3  30.0    90.0
+ 8       8 2024-01-08 Gadget D            4  40.0   160. 
+ 9       9 2024-01-09 Tool E              5  25.0   125. 
+10      10 2024-01-10 Widget B            3  30.0    90.0</code></pre>
 </div>
 </div>
 </section>
@@ -1280,8 +1279,8 @@ $ value &lt;dbl&gt; 56.48502, 58.05461, 46.03647, 28.18523, 60.26635, 62.20827, 
 <pre><code>Rows: 5
 Columns: 4
 $ exp_id       &lt;int&gt; 1, 2, 3, 4, 5
-$ start_time   &lt;dttm&gt; 2026-09-03 16:40:20, 2026-09-03 17:40:20, 2026-09-03 18:4…
-$ measurements &lt;list&gt; &lt;0.75626530, -0.40403919, 0.08981611, 1.26991194, -1.096…
+$ start_time   &lt;dttm&gt; 2026-09-04 08:15:24, 2026-09-04 09:15:24, 2026-09-04 10:1…
+$ measurements &lt;list&gt; &lt;1.2009519, -0.3622124, 1.2578473, 0.2650875, -0.8926494…
 $ conditions   &lt;list&gt; [20, 1], [25, 1], [20, 1.5], [25, 1.5], [22.5, 1.25]</code></pre>
 </div>
 </div>
@@ -2441,7 +2440,7 @@ $ conditions   &lt;list&gt; [20, 1], [25, 1], [20, 1.5], [25, 1.5], [22.5, 1.25]
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 Simone Santoni</p>
+<p>© 2026 Simone Santoni</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://github.com/simoneSantoni/intro-to-R-IND218">IND218 - Introduction to R</a></p>

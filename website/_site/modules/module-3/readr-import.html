@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.10.18">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="IND218">
-<meta name="dcterms.date" content="2026-09-03">
+<meta name="dcterms.date" content="2026-09-04">
 
 <title>Data Import with readr – IND218 - Introduction to R</title>
 <style>
@@ -86,9 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-9a476c185fb7076297273cdae135352e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-fb9a05fe51b0a5b87f58fbd8ca147cbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-cb0cd53d62cf798e704710f72f45ab99.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-32177885d80c41e58accde462cdb8d3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -714,7 +714,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 3, 2026</p>
+      <p class="date">4 September 2026</p>
     </div>
   </div>
   
@@ -1155,11 +1155,11 @@ $ datetimes  &lt;dttm&gt; 2024-01-01 09:30:00, 2024-02-01 14:15:00, 2024-03-01 1
 <pre><code># A tibble: 5 × 3
   chunk     n mean_value
   &lt;int&gt; &lt;int&gt;      &lt;dbl&gt;
-1     1  2000    0.00579
-2  2001  2000   -0.0273 
-3  4001  2000   -0.0308 
-4  6001  2000   -0.00161
-5  8001  2000   -0.0133 </code></pre>
+1     1  2000   0.0269  
+2  2001  2000  -0.000409
+3  4001  2000   0.0389  
+4  6001  2000   0.0107  
+5  8001  2000  -0.0138  </code></pre>
 </div>
 </div>
 </section>
@@ -1240,13 +1240,13 @@ $ datetimes  &lt;dttm&gt; 2024-01-01 09:30:00, 2024-02-01 14:15:00, 2024-03-01 1
 <span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>selected</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 4
-     id name    col1   col3
-  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-1     1 A      1.36   0.557
-2     2 B     -0.890  0.289
-3     3 C      0.883  0.833
-4     4 D      1.25   2.69 
-5     5 E      0.457 -0.165</code></pre>
+     id name    col1  col3
+  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     1 A      0.807 1.77 
+2     2 B      0.801 1.33 
+3     3 C     -1.21  0.614
+4     4 D      0.185 0.203
+5     5 E      1.28  2.30 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use tidyselect helpers</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>selected2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
@@ -1256,10 +1256,10 @@ $ datetimes  &lt;dttm&gt; 2024-01-01 09:30:00, 2024-02-01 14:15:00, 2024-03-01 1
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(selected2, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 7
-     id name    col1   col2  col3   col4  col5
-  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-1     1 A      1.36   0.763 0.557  0.982 0.851
-2     2 B     -0.890 -1.80  0.289 -0.658 0.912</code></pre>
+     id name   col1    col2  col3   col4   col5
+  &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1     1 A     0.807  0.0386  1.77 0.0952 -0.711
+2     2 B     0.801 -0.246   1.33 0.854  -0.856</code></pre>
 </div>
 </div>
 </section>
@@ -1431,7 +1431,7 @@ $ hire_date &lt;date&gt; 2020-01-15, 2019-06-01, 2018-03-20, 2021-02-10, 2019-11
 2     5 Eve        32  65000 2019-11-30           6.76
 3     2 Bob        30  60000 2019-06-01           7.26
 4     4 Diana      28  55000 2021-02-10           5.56
-5     1 Alice      25  50000 2020-01-15           6.63</code></pre>
+5     1 Alice      25  50000 2020-01-15           6.64</code></pre>
 </div>
 </div>
 </section>
@@ -1458,23 +1458,23 @@ $ hire_date &lt;date&gt; 2020-01-15, 2019-06-01, 2018-03-20, 2021-02-10, 2019-11
 <span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>combined_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 15 × 3
-   file_id   value category
-     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   
- 1       1 -1.30   A       
- 2       1 -0.218  A       
- 3       1 -0.0374 B       
- 4       1  1.03   A       
- 5       1 -0.0974 B       
- 6       2 -1.74   B       
- 7       2  2.90   B       
- 8       2 -0.0501 B       
- 9       2  0.147  B       
-10       2 -0.359  B       
-11       3  0.212  A       
-12       3  0.599  A       
-13       3 -0.345  B       
-14       3 -0.459  B       
-15       3 -1.40   B       </code></pre>
+   file_id  value category
+     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;   
+ 1       1  2.04  B       
+ 2       1 -2.11  A       
+ 3       1  1.92  B       
+ 4       1  0.745 B       
+ 5       1  1.83  A       
+ 6       2  1.04  B       
+ 7       2  0.420 B       
+ 8       2 -0.323 A       
+ 9       2 -1.01  B       
+10       2 -0.164 B       
+11       3 -0.103 B       
+12       3 -0.537 B       
+13       3 -1.81  A       
+14       3  1.93  A       
+15       3  1.60  A       </code></pre>
 </div>
 </div>
 </section>
@@ -2654,7 +2654,7 @@ $ hire_date &lt;date&gt; 2020-01-15, 2019-06-01, 2018-03-20, 2021-02-10, 2019-11
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025 Simone Santoni</p>
+<p>© 2026 Simone Santoni</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://github.com/simoneSantoni/intro-to-R-IND218">IND218 - Introduction to R</a></p>

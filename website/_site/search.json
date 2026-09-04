@@ -2331,7 +2331,18 @@
     "href": "course/schedule.html",
     "title": "Course Schedule",
     "section": "",
-    "text": "Module\nDate\nTopics\n\n\n\n\nGetting started with R\n09-22 (stream A), 09-22 (stream B)\nInstalling R and RStudio - R as calculator - RStudio interface - R projects\n\n\nR language fundamentals\n09-24 (stream A), 09-25 (stream B)\nObjects and assignment - vectors - lists - data frames - factors - functions\n\n\nIntroduction to tidyverse\n09-25 (stream A), 09-26 (stream B)\nTidyverse ecosystem - data import with readr - basic dplyr operations - tidyr principles\n\n\nData types in tidyverse\n09-30 (stream A), 09-30 (stream B)\nCharacter strings - factors in tidyverse - dates and times with lubridate - categorical data\n\n\nData wrangling with dplyr\n10-3 (stream A), 10-1 (stream B)\nFiltering and selecting - mutating - grouping and summarizing - joining datasets\n\n\nOrganizing tabular data with tidyr\n10-10 (stream A), 10-8 (stream B)\nPivoting data (wide to long, long to wide) - separating and uniting columns - handling missing values\n\n\n\n\n\n\n\n\n\nNoteAdjustments and Updates\n\n\n\nThis schedule is subject to change based on:\n\nClass progress and needs\nUniversity calendar changes\nUnexpected closures\n\nAll changes will be announced in class and posted on the course website.",
+    "text": "WarningProvisional schedule\n\n\n\nTeaching dates, stream allocations, rooms, and session times have not yet been confirmed. Placeholders below will be replaced when the timetable is finalised. Please use Moodle as the authoritative source for announcements and calendar updates.",
+    "crumbs": [
+      "Course Information",
+      "Schedule"
+    ]
+  },
+  {
+    "objectID": "course/schedule.html#additional-sessions",
+    "href": "course/schedule.html#additional-sessions",
+    "title": "Course Schedule",
+    "section": "Additional sessions",
+    "text": "Additional sessions\n\n\n\nActivity\nDate and time\nLocation / access\n\n\n\n\nCourse welcome and software check\nTBC\nTBC\n\n\nGuided practice or office hour\nTBC\nTBC\n\n\nRevision and assessment preparation\nTBC\nTBC\n\n\n\n\n\n\n\n\n\nNoteAdjustments and Updates\n\n\n\nOnce published, the schedule may still change in response to:\n\nClass progress and needs\nUniversity calendar changes\nUnexpected closures\n\nConfirmed details and later changes will be announced through Moodle and reflected on this page.",
     "crumbs": [
       "Course Information",
       "Schedule"

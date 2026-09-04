@@ -23,7 +23,7 @@ website:
   sidebar:
     style: docked
     search: true
-    logo: imgs/r-module-icon-light.svg
+    logo: imgs/r-module-icon-light-218.svg
     #title: "IND218"
     tools:
       - icon: github

@@ -9,7 +9,7 @@ page-layout: full
 
 Learn R by solving realistic analytics problems: importing untidy data, checking its quality, transforming it, and communicating results in a reproducible workflow.
 
-[Start with Module 1](modules/module-1/installing-r.qmd){.btn .btn-light .btn-lg role="button"} [View the course schedule](course/schedule.qmd){.btn .btn-outline-light .btn-lg role="button"}
+[Start with Module 1](modules/module-1/installing-r.qmd){.btn .btn-primary .btn-lg role="button"} [View the course schedule](course/schedule.qmd){.btn .btn-outline-primary .btn-lg role="button"}
 :::
 
 ## What you will learn

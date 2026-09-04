@@ -2338,6 +2338,17 @@
     ]
   },
   {
+    "objectID": "course/schedule.html#additional-sessions",
+    "href": "course/schedule.html#additional-sessions",
+    "title": "Course Schedule",
+    "section": "Additional sessions",
+    "text": "Additional sessions\n\n\n\nActivity\nDate and time\nLocation / access\n\n\n\n\nCourse welcome and software check\nTBC\nTBC\n\n\nGuided practice or office hour\nTBC\nTBC\n\n\nRevision and assessment preparation\nTBC\nTBC\n\n\n\n\n\n\n\n\n\nNoteAdjustments and Updates\n\n\n\nOnce published, the schedule may still change in response to:\n\nClass progress and needs\nUniversity calendar changes\nUnexpected closures\n\nConfirmed details and later changes will be announced through Moodle and reflected on this page.",
+    "crumbs": [
+      "Course Information",
+      "Schedule"
+    ]
+  },
+  {
     "objectID": "course/info.html",
     "href": "course/info.html",
     "title": "Course Information",
@@ -4546,17 +4557,6 @@
     "crumbs": [
       "Module 6: Organizing Tabular Data with tidyr",
       "Separating and Uniting"
-    ]
-  },
-  {
-    "objectID": "course/schedule.html#additional-sessions",
-    "href": "course/schedule.html#additional-sessions",
-    "title": "Course Schedule",
-    "section": "Additional sessions",
-    "text": "Additional sessions\n\n\n\nActivity\nDate and time\nLocation / access\n\n\n\n\nCourse welcome and software check\nTBC\nTBC\n\n\nGuided practice or office hour\nTBC\nTBC\n\n\nRevision and assessment preparation\nTBC\nTBC\n\n\n\n\n\n\n\n\n\nNoteAdjustments and Updates\n\n\n\nOnce published, the schedule may still change in response to:\n\nClass progress and needs\nUniversity calendar changes\nUnexpected closures\n\nConfirmed details and later changes will be announced through Moodle and reflected on this page.",
-    "crumbs": [
-      "Course Information",
-      "Schedule"
     ]
   }
 ]

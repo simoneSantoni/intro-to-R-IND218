@@ -53,7 +53,7 @@ This course provides a practical, hands-on introduction to R programming with em
 
 ## Website
 
-The course materials are available as an interactive website: https://simonesantoni.github.io/intro-to-R-IND215
+The course materials are available as an interactive website: https://simonesantoni.github.io/intro-to-R-IND218
 
 ## Technical Details
 

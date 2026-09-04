@@ -1,6 +1,6 @@
 ---
 title: "Separating and Uniting: Column Manipulation Mastery"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

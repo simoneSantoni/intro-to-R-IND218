@@ -7,4 +7,4 @@
 - `output/` - Results, plots, reports
 - `docs/` - Documentation
 
-Created: 2025-09-22
+Created: 2026-09-03

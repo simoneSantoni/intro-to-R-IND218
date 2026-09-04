@@ -1,6 +1,6 @@
 ---
 title: "Working with Strings using stringr"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:
@@ -208,11 +208,14 @@ str_replace_all(messy_addresses, regex("ST", ignore_case = TRUE), "Street")
 products <- c("LAPTOP-15INCH-8GB", "PHONE-ANDROID-64GB", "TABLET-IPAD-128GB")
 
 # Replace with custom function
+# Note: the function receives all matches at once, so it must be vectorised
 str_replace_all(products, "\\b(\\d+)GB\\b", function(x) {
   gb <- as.numeric(str_extract(x, "\\d+"))
-  if (gb >= 128) "High Storage"
-  else if (gb >= 64) "Medium Storage"
-  else "Low Storage"
+  case_when(
+    gb >= 128 ~ "High Storage",
+    gb >= 64  ~ "Medium Storage",
+    .default  = "Low Storage"
+  )
 })
 
 # Clean and format product names

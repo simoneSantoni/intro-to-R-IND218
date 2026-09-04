@@ -1,6 +1,6 @@
 ---
 title: "Module 2: R Fundamentals"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

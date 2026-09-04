@@ -1,6 +1,6 @@
 ---
 title: "Data Tidying Principles with tidyr"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

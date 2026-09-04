@@ -1,6 +1,6 @@
 ---
 title: "Grouping and Summarizing Data"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

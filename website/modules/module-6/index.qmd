@@ -1,6 +1,6 @@
 ---
 title: "Module 6: Organizing Tabular Data with tidyr"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

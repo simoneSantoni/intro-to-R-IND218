@@ -5,10 +5,10 @@ project:
     - "**/*.qmd"
 
 website:
-  title: "IND215 - Introduction to R"
+  title: "IND218 - Introduction to R"
   description: "MSc Module on R Programming for Analytics - Learn R fundamentals and the tidyverse for data wrangling and statistical computing"
-  site-url: https://simonesantoni.github.io/intro-to-R-IND215
-  repo-url: https://github.com/simoneSantoni/intro-to-R-IND215
+  site-url: https://simonesantoni.github.io/intro-to-R-IND218
+  repo-url: https://github.com/simoneSantoni/intro-to-R-IND218
 
   page-navigation: true
 
@@ -16,7 +16,7 @@ website:
     left: |
       &copy; 2025 Simone Santoni
     center: |
-      [IND215 - Introduction to R](https://github.com/simoneSantoni/intro-to-R-IND215)
+      [IND218 - Introduction to R](https://github.com/simoneSantoni/intro-to-R-IND218)
     right: |
       Made with [Quarto](https://quarto.org/)
 
@@ -24,16 +24,16 @@ website:
     style: docked
     search: true
     logo: imgs/r-module-icon-light.svg
-    #title: "IND216"
+    #title: "IND218"
     tools:
       - icon: github
-        href: https://github.com/simoneSantoni/intro-to-R-IND215
+        href: https://github.com/simoneSantoni/intro-to-R-IND218
         text: "Repository"
       - icon: pencil-square
-        href: https://github.com/simoneSantoni/intro-to-R-IND215/edit/master/{{< meta quarto:source >}}
+        href: https://github.com/simoneSantoni/intro-to-R-IND218/edit/master/{{< meta quarto:source >}}
         text: "Edit this page"
       - icon: bug
-        href: https://github.com/simoneSantoni/intro-to-R-IND215/issues/new
+        href: https://github.com/simoneSantoni/intro-to-R-IND218/issues/new
         text: "Report an issue"
     contents:
       - section: "Course Information"
@@ -157,4 +157,4 @@ jupyter:
   kernelspec:
     name: "ir"
     language: "R"
-    display_name: "R (ind215)"
+    display_name: "R (ind218)"

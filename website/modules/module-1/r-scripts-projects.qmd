@@ -585,7 +585,7 @@ You now understand how to organize R work professionally:
 With Module 1 complete, you're ready to dive deeper into R:
 
 - **Module 2**: [R Language Fundamentals](../module-2/index.qmd) - Objects, data types, and control structures
-- **Module 3**: [Introduction to Tidyverse](../module-3/tidyverse-intro.qmd) - Modern R data manipulation
+- **Module 3**: [Introduction to Tidyverse](../module-3/index.qmd) - Modern R data manipulation
 
 ::: {.callout-tip}
 ## Pro Tips for Success

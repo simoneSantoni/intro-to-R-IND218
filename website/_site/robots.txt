@@ -1,1 +1,1 @@
-Sitemap: https://simonesantoni.github.io/intro-to-R-IND215/sitemap.xml
+Sitemap: https://simonesantoni.github.io/intro-to-R-IND218/sitemap.xml

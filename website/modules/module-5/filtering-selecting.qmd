@@ -1,6 +1,6 @@
 ---
 title: "Filtering and Selecting Data"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

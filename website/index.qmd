@@ -3,7 +3,7 @@ title: "Introduction to R—IND218"
 subtitle: "A curated set of R materials for analytics students"
 ---
 
-## Welcome to IND215
+## Welcome to IND218
 
 This interactive website provides a comprehensive four-part introduction to
 R programming specifically designed for students in analytics curricula.

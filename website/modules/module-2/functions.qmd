@@ -1,6 +1,6 @@
 ---
 title: "Functions in R"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

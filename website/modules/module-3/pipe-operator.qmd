@@ -1,6 +1,6 @@
 ---
 title: "The Pipe Operator: Making R Code Readable"
-author: "IND215"
+author: "IND218"
 date: today
 format:
   html:

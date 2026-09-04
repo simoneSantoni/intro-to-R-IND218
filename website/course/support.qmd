@@ -4,7 +4,7 @@ title: "Course Support"
 
 Learning to program can be challenging, but you don't have to do it alone.
 This page provides information about all the support resources available to
-help you succeed in IND216.
+help you succeed in IND218.
 
 ::: {.callout-tip}
 **Where to get help**:
@@ -20,7 +20,7 @@ help you succeed in IND216.
 
 ### Course Forum
 
-Access the course forum through module IND216's Moodle website for:
+Access the course forum through module IND218's Moodle website for:
 
 - Asking questions (conceptual or technical)
 - Sharing helpful resources
@@ -50,7 +50,7 @@ Access the course forum through module IND216's Moodle website for:
 
 **Email tips**:
 
-- Use clear subject line: "IND216: [Topic]"
+- Use clear subject line: "IND218: [Topic]"
 - Include your student ID
 - Be specific about your issue
 - Attach relevant files if needed

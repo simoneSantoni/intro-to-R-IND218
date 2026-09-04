@@ -110,7 +110,7 @@ We believe in **active learning** where you'll:
 
 #### Formal Assessment
 MSc students enrolled in the Bayes programme must complete online quizzes via
-module IND215's Moodle page. The deadline for quiz submission is **October 10,
+module IND218's Moodle page. The deadline for quiz submission is **October 10,
 2025**.
 
 #### Continuous Self-Assessment
@@ -144,12 +144,12 @@ the cornerstone of learning in this module. Students are encouraged to:
 - [CRAN Task Views](https://cran.r-project.org/web/views/)
 - [RStudio Cheat Sheets](https://rstudio.com/resources/cheatsheets/)
 - The present website (and its underlying [GitHub
-  repository](https://github.com/simoneSantoni/intro-to-R-IND215))
+  repository](https://github.com/simoneSantoni/intro-to-R-IND218))
 
 ## Course Policies
 
 ### Attendance and Participation
-- Regular attendance is mandatory for IND215
+- Regular attendance is mandatory for IND218
 - Active participation in class discussions encouraged
 
 ### Getting Help
